@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
 import { View, Text, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native'
+import { useState, useEffect } from 'react'
+
 import { StatusBar } from 'expo-status-bar'
 import { User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'

@@ -13,7 +13,7 @@ export type Translations = {
 	}
 	home: {
 		title: string
-		hero: string
+		hero?: string
 		uploadSoon: string
 	}
 	common: {

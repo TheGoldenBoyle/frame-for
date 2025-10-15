@@ -1,7 +1,4 @@
 import { TextInput, TextInputProps } from 'react-native'
-import { styled } from 'nativewind'
-
-const StyledTextInput = styled(TextInput)
 
 type InputProps = TextInputProps & {
     className?: string
@@ -9,7 +6,7 @@ type InputProps = TextInputProps & {
 
 export function Input({ className = '', ...props }: InputProps) {
     return (
-        <StyledTextInput
+        <TextInput
             {...props}
             className={`w-full px-4 py-3 bg-surface border border-border text-text rounded-lg ${className}`}
             placeholderTextColor="#a8a29e"

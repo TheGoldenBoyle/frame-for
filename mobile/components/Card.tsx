@@ -1,17 +1,13 @@
-import { View } from 'react-native'
-import { styled } from 'nativewind'
+import { View, ViewProps } from 'react-native'
 
-const StyledView = styled(View)
-
-type CardProps = {
+type CardProps = ViewProps & {
     children: React.ReactNode
-    className?: string
 }
 
-export function Card({ children, className = '' }: CardProps) {
+export function Card({ children, className = '', ...props }: CardProps) {
     return (
-        <StyledView className={`bg-surface border border-border rounded-xl p-8 ${className}`}>
+        <View className={`bg-surface border border-border rounded-xl p-8 ${className}`} {...props}>
             {children}
-        </StyledView>
+        </View>
     )
 }
