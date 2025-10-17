@@ -1,4 +1,7 @@
-declare module "*.css" {
-    const content: Record<string, string>
-    export default content
+export type PlaygroundResult = {
+	modelId: string
+	modelName: string
+	imageUrl: string
 }
+
+export {}
