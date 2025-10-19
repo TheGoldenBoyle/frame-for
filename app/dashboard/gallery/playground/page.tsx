@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/Button'
-import { Card } from '@/components/Card'
+import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
 import { useAuth } from '@/hooks/useAuth'
 import { useI18n } from '@/lib/i18n/context'
 import { PlaygroundResult } from '@shared/globals'
@@ -50,7 +50,7 @@ export default function PlaygroundGalleryPage() {
   }
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen p-4 md:p-8">
       <div className="mx-auto max-w-7xl">
         <div className="flex items-center justify-between mb-8">
           <div>

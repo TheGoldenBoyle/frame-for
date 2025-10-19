@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Card } from './Card'
+import { Card } from './ui/Card'
 
 type GenerationLoaderProps = {
     message?: string
@@ -46,17 +46,17 @@ export function GenerationLoader({ message, modelCount = 1 }: GenerationLoaderPr
             <Card className="max-w-md mx-4">
                 <div className="space-y-6 text-center">
                     <div className="relative w-16 h-16 mx-auto">
-                        <div className="absolute inset-0 border-4 border-blue-200 rounded-full"></div>
-                        <div className="absolute inset-0 border-4 border-transparent rounded-full border-t-blue-600 animate-spin"></div>
+                        <div className="absolute inset-0 border-4 rounded-full border-border"></div>
+                        <div className="absolute inset-0 border-4 border-transparent rounded-full border-t-primary animate-spin"></div>
                     </div>
                     <div>
-                        <h3 className="mb-2 text-xl font-bold">
+                        <h3 className="mb-2 text-xl font-bold text-text">
                             {modelCount > 1 ? `Generating ${modelCount} Images` : 'Creating Your Image'}
                         </h3>
-                        <p className="text-stone-600">{message || loadingStep}</p>
+                        <p className="text-muted">{message || loadingStep}</p>
                     </div>
-                    <div className="w-full h-2 overflow-hidden rounded-full bg-stone-200">
-                        <div className="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-500 animate-pulse"></div>
+                    <div className="w-full h-2 overflow-hidden rounded-full bg-border">
+                        <div className="h-full rounded-full bg-gradient-to-r from-primary to-primary-dark animate-pulse"></div>
                     </div>
                 </div>
             </Card>

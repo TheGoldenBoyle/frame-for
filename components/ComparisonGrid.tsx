@@ -22,7 +22,8 @@ export function ComparisonGrid({
     if (results.length === 0) return null
 
     return (
-        <div className={`grid gap-6 ${results.length === 1
+        <div className={`grid gap-6 ${
+            results.length === 1
                 ? 'grid-cols-1 max-w-2xl mx-auto'
                 : results.length === 2
                     ? 'grid-cols-1 md:grid-cols-2'

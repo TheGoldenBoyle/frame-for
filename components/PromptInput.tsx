@@ -23,7 +23,7 @@ export function PromptInput({
 
     return (
         <div>
-            <label className="block mb-2 text-sm font-medium">
+            <label className="block mb-2 text-sm font-medium text-text">
                 {label}
             </label>
             <div className="relative">
@@ -35,13 +35,13 @@ export function PromptInput({
                     placeholder={placeholder}
                     maxLength={maxLength}
                     disabled={disabled}
-                    className={`w-full px-4 py-3 rounded-lg border resize-none transition-all min-h-[120px] ${isFocused
-                            ? 'border-blue-500 ring-2 ring-blue-100'
-                            : 'border-stone-300'
-                        } ${disabled ? 'bg-stone-50 cursor-not-allowed' : ''} focus:outline-none`}
+                    className={`w-full px-4 py-3 rounded-lg border resize-none transition-all min-h-[120px] bg-surface text-text placeholder:text-muted ${isFocused
+                            ? 'border-primary ring-2 ring-primary/20'
+                            : 'border-border'
+                        } ${disabled ? 'opacity-60 cursor-not-allowed' : ''} focus:outline-none`}
                 />
                 <div
-                    className={`absolute bottom-3 right-3 text-xs transition-colors ${isNearLimit ? 'text-orange-500 font-medium' : 'text-stone-400'
+                    className={`absolute bottom-3 right-3 text-xs transition-colors ${isNearLimit ? 'text-orange-500 font-medium' : 'text-muted'
                         }`}
                 >
                     {charCount}/{maxLength}

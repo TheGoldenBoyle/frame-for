@@ -4,9 +4,9 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useI18n } from '@/lib/i18n/context'
-import { Button } from '@/components/Button'
-import { Input } from '@/components/Input'
-import { Card } from '@/components/Card'
+import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
+import { Card } from '@/components/ui/Card'
 import Link from 'next/link'
 
 export default function SignupPage() {

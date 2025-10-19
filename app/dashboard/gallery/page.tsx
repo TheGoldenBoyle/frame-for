@@ -2,15 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/Button'
-import { Card } from '@/components/Card'
-import { useAuth } from '@/hooks/useAuth'
 
-type Photo = {
-    id: string
-    generatedUrl: string
-    createdAt: string
-}
+import { useAuth } from '@/hooks/useAuth'
+import { Photo } from '@/types/globals'
+import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
 
 export default function GalleryPage() {
     const router = useRouter()
@@ -39,7 +35,7 @@ export default function GalleryPage() {
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
-                <p className="text-stone-500">Loading...</p>
+                <p className="text-muted">Loading...</p>
             </div>
         )
     }
@@ -50,16 +46,16 @@ export default function GalleryPage() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <Button variant="ghost" onClick={() => router.push('/dashboard')}>
-                            ← Back
+                            Back
                         </Button>
                     </div>
                     <div className="flex gap-4">
                         <Button variant="ghost" onClick={() => router.push('/dashboard/gallery/playground')}>
                             Playground Gallery
                         </Button>
-                        <Button onClick={() => router.push('/dashboard')}>
+                        {/* <Button onClick={() => router.push('/dashboard')}>
                             Create New
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
 
@@ -68,10 +64,10 @@ export default function GalleryPage() {
                 {photos.length === 0 ? (
                     <Card>
                         <div className="py-12 text-center">
-                            <p className="mb-4 text-stone-500">No photos yet</p>
-                            <Button onClick={() => router.push('/dashboard')}>
+                            <p className="mb-4 text-muted">No photos yet</p>
+                            {/* <Button onClick={() => router.push('/dashboard')}>
                                 Create Your First Memory
-                            </Button>
+                            </Button> */}
                         </div>
                     </Card>
                 ) : (
@@ -79,7 +75,7 @@ export default function GalleryPage() {
                         {photos.map((photo) => (
                             <div
                                 key={photo.id}
-                                className="relative overflow-hidden transition-opacity rounded-lg cursor-pointer aspect-square bg-stone-100 hover:opacity-90"
+                                className="relative overflow-hidden transition-opacity rounded-lg cursor-pointer aspect-square bg-surface border border-border hover:opacity-90"
                                 onClick={() => window.open(photo.generatedUrl, '_blank')}
                             >
                                 <img

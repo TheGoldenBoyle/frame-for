@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button } from './Button'
+import { Button } from './ui/Button'
 import { BeforeAfterSlider } from './BeforeAfterSlider'
 
 type ResultCardProps = {
@@ -44,14 +44,14 @@ export function ResultCard({
     }
 
     return (
-        <div className="overflow-hidden border rounded-lg border-stone-200">
-            <div className="p-3 border-b bg-stone-50 border-stone-200">
+        <div className="overflow-hidden border rounded-lg bg-surface border-border">
+            <div className="p-3 border-b bg-background border-border">
                 <div className="flex items-center justify-between">
-                    <div className="font-medium text-stone-900">{modelName}</div>
+                    <div className="font-medium text-text">{modelName}</div>
                     {originalImageUrl && (
                         <button
                             onClick={() => setShowComparison(!showComparison)}
-                            className="text-xs text-blue-600 hover:text-blue-700"
+                            className="text-xs transition-colors text-primary hover:text-primary-dark"
                         >
                             {showComparison ? 'Show Result' : 'Compare'}
                         </button>
@@ -59,7 +59,7 @@ export function ResultCard({
                 </div>
             </div>
 
-            <div className="bg-stone-100">
+            <div className="bg-background">
                 {showComparison && originalImageUrl ? (
                     <BeforeAfterSlider
                         beforeImage={originalImageUrl}

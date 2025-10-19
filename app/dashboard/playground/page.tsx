@@ -2,16 +2,16 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/Button'
-import { Card } from '@/components/Card'
+
 import { ImageUpload } from '@/components/ImageUpload'
 import { PromptInput } from '@/components/PromptInput'
 import { ModelSelector } from '@/components/ModelSelector'
 import { GenerationLoader } from '@/components/GenerationLoader'
 import { ComparisonGrid } from '@/components/ComparisonGrid'
 import { useAuth } from '@/hooks/useAuth'
-import { PlaygroundResult } from '@/app/types/globals'
-
+import { PlaygroundResult } from '@/types/globals'
+import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
 
 export default function PlaygroundPage() {
   const router = useRouter()
@@ -127,7 +127,7 @@ export default function PlaygroundPage() {
 
   if (results.length > 0) {
     return (
-      <div className="min-h-screen p-8">
+      <div className="min-h-screen p-2 md:p-4 md:p-8">
         <div className="mx-auto max-w-7xl">
           <div className="flex items-center justify-between mb-8">
             <Button variant="ghost" onClick={() => router.push('/dashboard')}>
@@ -143,7 +143,7 @@ export default function PlaygroundPage() {
           <Card>
             <div className="mb-6">
               <h2 className="mb-2 text-2xl font-bold">Results</h2>
-              <p className="text-sm text-stone-600">{prompt}</p>
+              <p className="text-sm text-muted">{prompt}</p>
             </div>
 
             <ComparisonGrid
@@ -165,76 +165,68 @@ export default function PlaygroundPage() {
   }
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen p-4 md:p-8">
       <div className="mx-auto max-w-7xl">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="mb-2 text-3xl font-bold">Playground</h1>
-            <p className="text-stone-600">
+            <p className="text-muted">
               Experiment with the latest AI image generation models
             </p>
           </div>
         </div>
 
-        <Card>
-          <div className="space-y-6">
-            <PromptInput
-              value={prompt}
-              onChange={setPrompt}
-              placeholder="A serene mountain landscape at sunset with vibrant colors..."
-              label="Prompt"
-              maxLength={1000}
-              disabled={loading}
-            />
-
+        <div className="space-y-6">
+          <Card>
             <ModelSelector
               selectedModels={selectedModels}
               onSelect={handleModelSelect}
               maxSelection={3}
               disabled={loading}
             />
+          </Card>
 
-            <div>
-              <label className="block mb-3 text-sm font-medium">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <Card>
+              <PromptInput
+                value={prompt}
+                onChange={setPrompt}
+                placeholder="A serene mountain landscape at sunset with vibrant colors..."
+                label="Prompt"
+                maxLength={1000}
+                disabled={loading}
+              />
+            </Card>
+
+            <Card>
+              <label className="block mb-3 text-sm font-medium text-text">
                 Input Image (Optional)
               </label>
               <ImageUpload
                 onImagesChange={handleImageChange}
                 maxImages={1}
               />
-              <p className="mt-2 text-sm text-stone-500">
+              <p className="mt-2 text-sm text-muted">
                 Add an image for image-to-image generation, or leave empty for text-to-image
               </p>
-            </div>
-
-            {error && (
-              <div className="p-4 text-sm text-red-600 border border-red-200 rounded-lg bg-red-50">
-                {error}
-              </div>
-            )}
-
-            <div className="flex gap-4">
-              <Button
-                onClick={handleGenerate}
-                disabled={loading || !prompt.trim() || selectedModels.length === 0}
-                className="flex-1"
-              >
-                {selectedModels.length > 1 
-                  ? `Compare ${selectedModels.length} Models` 
-                  : 'Generate Image'}
-              </Button>
-            </div>
+            </Card>
           </div>
-        </Card>
 
-        <div className="p-6 mt-8 border border-blue-200 rounded-lg bg-blue-50">
-          <h3 className="mb-2 font-bold text-blue-900">💡 Tips</h3>
-          <ul className="space-y-1 text-sm text-blue-800">
-            <li>• Select multiple models to compare their outputs side-by-side</li>
-            <li>• Nano Banana requires an input image for editing</li>
-            <li>• Be specific in your prompts for better results</li>
-            <li>• Save your favorite results to the playground gallery</li>
-          </ul>
+          {error && (
+            <div className="p-4 text-sm text-red-600 border border-red-200 rounded-lg bg-red-50">
+              {error}
+            </div>
+          )}
+
+          <Button
+            onClick={handleGenerate}
+            disabled={loading || !prompt.trim() || selectedModels.length === 0}
+            className="w-full"
+          >
+            {selectedModels.length > 1 
+              ? `Compare ${selectedModels.length} Models` 
+              : 'Generate Image'}
+          </Button>
         </div>
       </div>
     </div>

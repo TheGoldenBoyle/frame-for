@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ImageUpload } from '@/components/ImageUpload'
-import { Button } from '@/components/Button'
-import { Card } from '@/components/Card'
+import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
 import { GenerationLoader } from '@/components/GenerationLoader'
 import { PromptInput } from '@/components/PromptInput'
 import { useAuth } from '@/hooks/useAuth'
@@ -193,7 +193,7 @@ export default function GeneratePage() {
 
   if (result) {
     return (
-      <div className="min-h-screen p-8">
+      <div className="min-h-screen p-4 md:p-8">
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
             <Button variant="ghost" onClick={() => router.push('/')}>
@@ -265,7 +265,7 @@ export default function GeneratePage() {
   }
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <Button variant="ghost" onClick={() => router.push('/')}>

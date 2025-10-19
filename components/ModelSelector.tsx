@@ -1,3 +1,5 @@
+import { Zap, Clock } from 'lucide-react'
+
 type Model = {
     id: string
     name: string
@@ -90,7 +92,7 @@ export function ModelSelector({
 
     return (
         <div>
-            <label className="block mb-3 text-sm font-medium">
+            <label className="block mb-3 text-sm font-medium text-text">
                 Select Model{maxSelection > 1 ? `s (up to ${maxSelection})` : ''}
             </label>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -104,36 +106,27 @@ export function ModelSelector({
                             onClick={() => handleSelect(model.id)}
                             disabled={disabled || !canSelect}
                             className={`p-4 text-left border-2 rounded-lg transition-all relative ${isSelected
-                                    ? 'border-blue-500 bg-blue-50'
+                                    ? 'border-primary bg-primary/10'
                                     : canSelect
-                                        ? 'border-stone-200 hover:border-stone-300'
-                                        : 'border-stone-100 opacity-50 cursor-not-allowed'
+                                        ? 'border-border hover:border-primary/50 bg-surface'
+                                        : 'border-border opacity-50 cursor-not-allowed bg-surface'
                                 }`}
                         >
                             {model.badge && (
-                                <div className="absolute px-2 py-0.5 text-xs font-medium text-white bg-blue-500 rounded-full top-2 right-2">
+                                <div className="absolute px-2 py-1 text-xs font-medium text-white bg-primary rounded-full top-2 right-2">
                                     {model.badge}
                                 </div>
                             )}
 
                             {isSelected && (
-                                <div className="absolute flex items-center justify-center w-6 h-6 text-sm font-bold text-white bg-blue-500 rounded-full top-2 left-2">
+                                <div className="absolute flex items-center justify-center w-6 h-6 text-sm font-bold text-white rounded-full bg-primary top-2 left-2">
                                     {selectedModels.indexOf(model.id) + 1}
                                 </div>
                             )}
 
-                            <div className="mt-6 mb-2 font-bold">{model.name}</div>
-                            <div className="mb-2 text-xs text-stone-500">{model.provider}</div>
-                            <div className="text-sm text-stone-600">{model.description}</div>
-
-                            <div className="flex items-center gap-2 mt-3">
-                                <div className={`px-2 py-0.5 text-xs rounded-full ${model.speed === 'fast'
-                                        ? 'bg-green-100 text-green-700'
-                                        : 'bg-yellow-100 text-yellow-700'
-                                    }`}>
-                                    {model.speed === 'fast' ? '⚡ Fast' : '🐢 Medium'}
-                                </div>
-                            </div>
+                            <div className="mt-6 mb-2 font-bold text-text">{model.name}</div>
+                            <div className="mb-2 text-xs text-muted">{model.provider}</div>
+                            <div className="text-sm text-muted">{model.description}</div>
                         </button>
                     )
                 })}
@@ -141,6 +134,3 @@ export function ModelSelector({
         </div>
     )
 }
-
-export { MODELS }
-export type { Model }

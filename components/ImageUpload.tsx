@@ -50,7 +50,7 @@ export function ImageUpload({ onImagesChange, maxImages = 3 }: ImageUploadProps)
         <div className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
                 {previews.map((preview, index) => (
-                    <div key={index} className="relative overflow-hidden rounded-lg aspect-square bg-stone-100">
+                    <div key={index} className="relative overflow-hidden rounded-lg aspect-square bg-surface">
                         <img
                             src={preview}
                             alt={`Upload ${index + 1}`}
@@ -58,17 +58,17 @@ export function ImageUpload({ onImagesChange, maxImages = 3 }: ImageUploadProps)
                         />
                         <button
                             onClick={() => removeImage(index)}
-                            className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-lg hover:bg-stone-50"
+                            className="absolute top-2 right-2 p-1.5 bg-surface rounded-full shadow-lg hover:bg-border transition-colors"
                         >
-                            <X className="w-4 h-4" />
+                            <X className="w-4 h-4 text-text" />
                         </button>
                     </div>
                 ))}
 
                 {canAddMore && (
-                    <label className="relative flex flex-col items-center justify-center gap-2 transition-colors border-2 border-dashed rounded-lg cursor-pointer aspect-square border-stone-300 hover:border-stone-400 bg-stone-50 hover:bg-stone-100">
-                        <Upload className="w-8 h-8 text-stone-400" />
-                        <span className="text-sm text-stone-500">Add Photo</span>
+                    <label className="relative flex flex-col items-center justify-center gap-2 transition-colors border-2 border-dashed rounded-lg cursor-pointer aspect-square border-border hover:border-primary bg-surface hover:bg-background">
+                        <Upload className="w-8 h-8 text-muted" />
+                        <span className="text-sm text-muted">Add Photo</span>
                         <input
                             type="file"
                             accept="image/*"
@@ -80,7 +80,7 @@ export function ImageUpload({ onImagesChange, maxImages = 3 }: ImageUploadProps)
                 )}
             </div>
 
-            <p className="text-xs text-center text-stone-400">
+            <p className="text-xs text-center text-muted">
                 {files.length} of {maxImages} photos • Max 10MB each
             </p>
         </div>
