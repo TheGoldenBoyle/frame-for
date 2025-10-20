@@ -39,8 +39,8 @@ export default function DashboardLayout({
                 user={user}
                 t={t}
                 locale={locale}
-                onLocaleChange={() => setLocale(locale === 'en' ? 'de' : 'en')}
-                onSignOut={signOut}
+                onLocaleChangeAction={() => setLocale(locale === 'en' ? 'de' : 'en')}
+                onSignOutAction={signOut}
             />
             <main>{children}</main>
         </div>
