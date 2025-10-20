@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from "next/server"
 import Replicate from "replicate"
 import { prisma } from "@/lib/prisma"
 import { createClient } from "@/lib/superbase-server"
-
 import { PlaygroundResult } from "@shared/globals"
-import { getOptionalFile, getString } from "@/lib/form-utils"
+import { FormDataError, getOptionalFile, getString } from "@/lib/form-utils"
+import { checkTokens, deductTokens } from "@/lib/tokens"
+import { TOKEN_CONFIG } from "@/lib/config/tokens"
 
 const replicate = new Replicate({
 	auth: process.env.REPLICATE_API_TOKEN!,
@@ -210,6 +211,22 @@ export async function POST(request: NextRequest) {
 			)
 		}
 
+		const tokensNeeded = modelIds.length * TOKEN_CONFIG.COSTS.PLAYGROUND_PER_MODEL
+		const hasTokens = await checkTokens(user.id, tokensNeeded)
+		
+		if (!hasTokens) {
+			return NextResponse.json(
+				{ 
+					error: "INSUFFICIENT_TOKENS",
+					message: `Out of tokens? DM ${TOKEN_CONFIG.CONTACT.handle} on ${TOKEN_CONFIG.CONTACT.platform}`,
+					contactUrl: TOKEN_CONFIG.CONTACT.url,
+					tokensNeeded,
+					tokensPerModel: TOKEN_CONFIG.COSTS.PLAYGROUND_PER_MODEL
+				},
+				{ status: 402 }
+			)
+		}
+
 		let uploadedImageUrl: string | undefined
 
 		if (imageFile) {
@@ -294,12 +311,15 @@ export async function POST(request: NextRequest) {
 			}
 		}
 
+		await deductTokens(user.id, tokensNeeded, `Playground generation with ${modelIds.length} models`)
+
 		const playgroundPhoto = await prisma.playgroundPhoto.create({
 			data: {
 				userId: user.id,
 				prompt,
 				originalUrl: uploadedImageUrl || null,
 				results: results as any,
+				tokensCost: tokensNeeded
 			},
 		})
 
@@ -310,6 +330,17 @@ export async function POST(request: NextRequest) {
 		})
 	} catch (error) {
 		console.error("Playground generation error:", error)
+		
+		if (error instanceof Error && error.message === 'INSUFFICIENT_TOKENS') {
+			return NextResponse.json(
+				{ 
+					error: "INSUFFICIENT_TOKENS",
+					message: `Out of tokens? DM ${TOKEN_CONFIG.CONTACT.handle} on ${TOKEN_CONFIG.CONTACT.platform}`,
+					contactUrl: TOKEN_CONFIG.CONTACT.url
+				},
+				{ status: 402 }
+			)
+		}
 		
 		if (error instanceof FormDataError) {
 			return NextResponse.json(

@@ -3,7 +3,8 @@ import Replicate from "replicate"
 import { prisma } from "@/lib/prisma"
 import { createClient } from "@/lib/superbase-server"
 import { FormDataError, getFiles, getOptionalString, getString } from "@/lib/form-utils"
-
+import { checkTokens, deductTokens } from "@/lib/tokens"
+import { TOKEN_CONFIG } from "@/lib/config/tokens"
 
 const replicate = new Replicate({
 	auth: process.env.REPLICATE_API_TOKEN!,
@@ -158,6 +159,18 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 		}
 
+		const hasTokens = await checkTokens(user.id, TOKEN_CONFIG.COSTS.GENERATE)
+		if (!hasTokens) {
+			return NextResponse.json(
+				{ 
+					error: "INSUFFICIENT_TOKENS",
+					message: `Out of tokens? DM ${TOKEN_CONFIG.CONTACT.handle} on ${TOKEN_CONFIG.CONTACT.platform}`,
+					contactUrl: TOKEN_CONFIG.CONTACT.url
+				},
+				{ status: 402 }
+			)
+		}
+
 		const formData = await request.formData()
 		
 		const preset = getString(formData, "preset")
@@ -254,6 +267,8 @@ export async function POST(request: NextRequest) {
 			.from("photos")
 			.getPublicUrl(resultUpload.path)
 
+		await deductTokens(user.id, TOKEN_CONFIG.COSTS.GENERATE, `Generated image with preset: ${preset}`)
+
 		const photo = await prisma.photo.create({
 			data: {
 				userId: user.id,
@@ -261,6 +276,7 @@ export async function POST(request: NextRequest) {
 				generatedUrl: resultUrlData.publicUrl,
 				preset: preset.toLowerCase(),
 				isWatermarked: true,
+				tokensCost: TOKEN_CONFIG.COSTS.GENERATE
 			},
 		})
 
@@ -271,6 +287,17 @@ export async function POST(request: NextRequest) {
 		})
 	} catch (error) {
 		console.error("Generation error:", error)
+		
+		if (error instanceof Error && error.message === 'INSUFFICIENT_TOKENS') {
+			return NextResponse.json(
+				{ 
+					error: "INSUFFICIENT_TOKENS",
+					message: `Out of tokens? DM ${TOKEN_CONFIG.CONTACT.handle} on ${TOKEN_CONFIG.CONTACT.platform}`,
+					contactUrl: TOKEN_CONFIG.CONTACT.url
+				},
+				{ status: 402 }
+			)
+		}
 		
 		if (error instanceof FormDataError) {
 			return NextResponse.json(

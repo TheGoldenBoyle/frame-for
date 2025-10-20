@@ -20,6 +20,12 @@ export type PlaygroundResult = {
   error?: string
 }
 
+export type TokenBalanceType = {
+	tokens: number
+	tokenType: 'free' | 'subscription' | 'onetime'
+	subscriptionStatus: string
+}
+
 export type Photo = {
   id: string
   generatedUrl: string

@@ -3,7 +3,8 @@ import Replicate from "replicate"
 import { prisma } from "@/lib/prisma"
 import { createClient } from "@/lib/superbase-server"
 import { FormDataError, getString } from "@/lib/form-utils"
-
+import { checkTokens, deductTokens } from "@/lib/tokens"
+import { TOKEN_CONFIG } from "@/lib/config/tokens"
 
 const replicate = new Replicate({
 	auth: process.env.REPLICATE_API_TOKEN!,
@@ -127,6 +128,18 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 		}
 
+		const hasTokens = await checkTokens(user.id, TOKEN_CONFIG.COSTS.REVISE)
+		if (!hasTokens) {
+			return NextResponse.json(
+				{ 
+					error: "INSUFFICIENT_TOKENS",
+					message: `Out of tokens? DM ${TOKEN_CONFIG.CONTACT.handle} on ${TOKEN_CONFIG.CONTACT.platform}`,
+					contactUrl: TOKEN_CONFIG.CONTACT.url
+				},
+				{ status: 402 }
+			)
+		}
+
 		const formData = await request.formData()
 		
 		const photoId = getString(formData, "photoId")
@@ -191,6 +204,8 @@ export async function POST(request: NextRequest) {
 			.from("photos")
 			.getPublicUrl(resultUpload.path)
 
+		await deductTokens(user.id, TOKEN_CONFIG.COSTS.REVISE, `Revised photo: ${photoId}`)
+
 		const updatedPhoto = await prisma.photo.update({
 			where: {
 				id: photoId,
@@ -200,6 +215,15 @@ export async function POST(request: NextRequest) {
 			},
 		})
 
+		await prisma.revision.create({
+			data: {
+				photoId,
+				prompt: revisionPrompt,
+				resultUrl: resultUrlData.publicUrl,
+				tokensCost: TOKEN_CONFIG.COSTS.REVISE
+			}
+		})
+
 		return NextResponse.json({
 			success: true,
 			imageUrl: resultUrlData.publicUrl,
@@ -207,6 +231,17 @@ export async function POST(request: NextRequest) {
 		})
 	} catch (error) {
 		console.error("Revision error:", error)
+		
+		if (error instanceof Error && error.message === 'INSUFFICIENT_TOKENS') {
+			return NextResponse.json(
+				{ 
+					error: "INSUFFICIENT_TOKENS",
+					message: `Out of tokens? DM ${TOKEN_CONFIG.CONTACT.handle} on ${TOKEN_CONFIG.CONTACT.platform}`,
+					contactUrl: TOKEN_CONFIG.CONTACT.url
+				},
+				{ status: 402 }
+			)
+		}
 		
 		if (error instanceof FormDataError) {
 			return NextResponse.json(

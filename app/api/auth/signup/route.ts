@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
-
 import { prisma } from "@/lib/prisma"
 import { createClient } from "@/lib/superbase-server"
+import { TOKEN_CONFIG } from "@/lib/config/tokens"
 
 export async function POST(request: NextRequest) {
 	try {
@@ -31,8 +31,8 @@ export async function POST(request: NextRequest) {
 					id: data.user.id,
 					email: data.user.email!,
 					subscriptionStatus: "free",
-					photosRemaining: 1,
-					revisionsRemaining: 0,
+					tokens: TOKEN_CONFIG.FREE_TOKENS,
+					tokenType: "free",
 				},
 			})
 		}
