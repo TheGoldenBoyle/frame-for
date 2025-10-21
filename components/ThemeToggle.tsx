@@ -12,7 +12,7 @@ export function ThemeToggle() {
             variant="ghost"
             size="sm"
             onClick={toggleTheme}
-            aria-label="Toggle theme"
+            aria-label="Toggle theme "
         >
             {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
         </Button>
