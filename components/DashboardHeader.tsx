@@ -44,7 +44,7 @@ export function DashboardHeader({
                             onClick={() => router.push('/dashboard')}
                             className="text-2xl font-bold text-text"
                         >
-                            FF
+                            TGG
                         </button>
 
                         <div className="hidden gap-4 md:flex">

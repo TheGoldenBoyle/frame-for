@@ -24,6 +24,8 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	transition: background-color 0.2s, color 0.2s;
+	background-color: var(--color-background);
+	color: var(--color-text);
 }
 
 body[data-theme="light"] {
@@ -35,8 +37,8 @@ body[data-theme="light"] {
 }
 
 body[data-theme="dark"] {
-	--color-background: #1c1917;
-	--color-surface: #292524;
+	--color-background: #0a0a0a;
+	--color-surface: #1c1917;
 	--color-text: #fafaf9;
 	--color-muted: #a8a29e;
 	--color-border: #44403c;

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useI18n } from '@/lib/i18n/context'
@@ -17,6 +17,14 @@ export default function SignupPage() {
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
+
+    useEffect(() => {
+        const plan = sessionStorage.getItem('selectedPlan')
+        if (plan) {
+            setSelectedPlan(plan)
+        }
+    }, [])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -40,9 +48,29 @@ export default function SignupPage() {
             const { error: signInError } = await signIn(email, password)
             if (signInError) {
                 setError(signInError.message)
-            } else {
-                router.push('/dashboard')
+                return
             }
+
+            const plan = sessionStorage.getItem('selectedPlan')
+            
+            if (plan) {
+                sessionStorage.removeItem('selectedPlan')
+                
+                const checkoutResponse = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: plan })
+                })
+
+                const checkoutData = await checkoutResponse.json()
+
+                if (checkoutData.url) {
+                    window.location.href = checkoutData.url
+                    return
+                }
+            }
+
+            router.push('/dashboard')
         } catch (err) {
             setError(t.common.error)
         } finally {
@@ -63,6 +91,12 @@ export default function SignupPage() {
                             {locale === 'en' ? 'DE' : 'EN'}
                         </button>
                     </div>
+
+                    {selectedPlan && (
+                        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded text-sm text-green-800">
+                            Selected plan: {selectedPlan === 'subscription' ? 'Monthly (€4.99/mo)' : 'One-Time (€9.99)'}
+                        </div>
+                    )}
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <Input
@@ -86,7 +120,7 @@ export default function SignupPage() {
                         )}
 
                         <Button type="submit" disabled={isSubmitting} className="w-full">
-                            {t.auth.signup}
+                            {selectedPlan ? t.auth.signup + ' & Checkout' : t.auth.signup}
                         </Button>
                     </form>
 

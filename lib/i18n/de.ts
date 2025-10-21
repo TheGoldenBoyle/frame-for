@@ -13,7 +13,7 @@ export const de: Translations = {
 		error: "Authentifizierungsfehler",
 	},
 	home: {
-		title: "FrameFor",
+		title: "TheGoldenGenerator",
 		hero: "Kombiniere Fotos von geliebten Menschen zu einem schönen Bild",
 		uploadSoon: "Upload-Funktion kommt bald...",
 		dashboard: "Dashboard",

@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useI18n } from '@/lib/i18n/context'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Button } from '@/components/ui/Button'
-
+import { PricingCards } from '@/components/PricingCards'
 
 export default function LandingPage() {
     const router = useRouter()
@@ -23,7 +23,7 @@ export default function LandingPage() {
     return (
         <div className="min-h-screen">
             <nav className="flex items-center justify-between px-8 py-6">
-                <h1 className="text-2xl font-bold">FrameFor</h1>
+                <h1 className="text-2xl font-bold">TheGoldenGenerator</h1>
                 <div className="flex items-center gap-4">
                     <ThemeToggle />
                     <button
@@ -61,6 +61,16 @@ export default function LandingPage() {
                 >
                     {t.landing.cta}
                 </Button>
+            </div>
+
+            <div className="px-8 py-24 bg-muted/30">
+                <div className="max-w-6xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl font-bold mb-4">Simple Pricing</h2>
+                        <p className="text-xl text-muted">Choose the plan that works for you</p>
+                    </div>
+                    <PricingCards isLoggedIn={!!user} />
+                </div>
             </div>
         </div>
     )

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { useAuth } from '@/hooks/useAuth'
 import { useI18n } from '@/lib/i18n/context'
-import { PlaygroundResult } from '@shared/globals'
+import { PlaygroundResult } from "@/types/globals" 
 
 type PlaygroundPhoto = {
   id: string

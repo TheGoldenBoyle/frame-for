@@ -1,4 +1,4 @@
-# FrameFor
+# TheGoldenGenerator
 
 Combine photos of loved ones into beautiful images. Access the latest AI image generation models in one place.
 
