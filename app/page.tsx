@@ -23,7 +23,7 @@ export default function LandingPage() {
     return (
         <div className="min-h-screen">
             <nav className="flex items-center justify-between px-8 py-6">
-                <h1 className="text-2xl font-bold">TheGoldenGenerator</h1>
+                <h1 className="text-2xl font-bold">BildOro</h1>
                 <div className="flex items-center gap-4">
                     <ThemeToggle />
                     <button

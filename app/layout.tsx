@@ -6,7 +6,7 @@ import { AuthProvider } from '@/lib/auth/provider'
 import { ThemeProvider } from '@/lib/theme/provider'
 
 export const metadata: Metadata = {
-  title: 'TheGoldenGenerator - Beautiful Photo Memories',
+  title: 'BildOro - Beautiful Photo Memories',
   description: 'Combine photos of loved ones into one beautiful image. Access the latest AI image generation models in one playground.',
 }
 

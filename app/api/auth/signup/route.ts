@@ -19,6 +19,9 @@ export async function POST(request: NextRequest) {
 		const { data, error } = await supabase.auth.signUp({
 			email,
 			password,
+			options: {
+				emailRedirectTo: `${process.env.NEXT_PUBLIC_URL}/dashboard`
+			}
 		})
 
 		if (error) {
@@ -26,18 +29,31 @@ export async function POST(request: NextRequest) {
 		}
 
 		if (data.user) {
-			await prisma.user.create({
-				data: {
-					id: data.user.id,
-					email: data.user.email!,
-					subscriptionStatus: "free",
-					tokens: TOKEN_CONFIG.FREE_TOKENS,
-					tokenType: "free",
-				},
+			const existingUser = await prisma.user.findUnique({
+				where: { id: data.user.id }
 			})
+
+			if (!existingUser) {
+				await prisma.user.create({
+					data: {
+						id: data.user.id,
+						email: data.user.email!,
+						subscriptionStatus: "free",
+						tokens: TOKEN_CONFIG.FREE_TOKENS,
+						tokenType: "free"
+					},
+				})
+			}
 		}
 
-		return NextResponse.json({ user: data.user })
+		if (data.session) {
+			return NextResponse.json({ user: data.user })
+		} else {
+			return NextResponse.json({ 
+				user: data.user,
+				message: "Check your email to confirm your account"
+			})
+		}
 	} catch (error) {
 		console.error("Signup error", error)
 		return NextResponse.json(

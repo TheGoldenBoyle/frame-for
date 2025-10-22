@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
 import Link from 'next/link'
+import { TOKEN_CONFIG } from '@/lib/config/tokens'
 
 export default function SignupPage() {
     const router = useRouter()
@@ -26,9 +27,20 @@ export default function SignupPage() {
         }
     }, [])
 
+    const handlePlanChange = (plan: string) => {
+        setSelectedPlan(plan)
+        sessionStorage.setItem('selectedPlan', plan)
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setError('')
+
+        if (!selectedPlan) {
+            setError('Please select a plan to continue')
+            return
+        }
+
         setIsSubmitting(true)
 
         try {
@@ -51,23 +63,19 @@ export default function SignupPage() {
                 return
             }
 
-            const plan = sessionStorage.getItem('selectedPlan')
+            sessionStorage.removeItem('selectedPlan')
             
-            if (plan) {
-                sessionStorage.removeItem('selectedPlan')
-                
-                const checkoutResponse = await fetch('/api/checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: plan })
-                })
+            const checkoutResponse = await fetch('/api/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: selectedPlan })
+            })
 
-                const checkoutData = await checkoutResponse.json()
+            const checkoutData = await checkoutResponse.json()
 
-                if (checkoutData.url) {
-                    window.location.href = checkoutData.url
-                    return
-                }
+            if (checkoutData.url) {
+                window.location.href = checkoutData.url
+                return
             }
 
             router.push('/dashboard')
@@ -92,11 +100,53 @@ export default function SignupPage() {
                         </button>
                     </div>
 
-                    {selectedPlan && (
-                        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded text-sm text-green-800">
-                            Selected plan: {selectedPlan === 'subscription' ? 'Monthly (€4.99/mo)' : 'One-Time (€9.99)'}
+                    <div className="mb-6">
+                        <p className="text-sm font-medium mb-3">Select your plan:</p>
+                        
+                        <div className="space-y-3 mb-6">
+                            <button
+                                type="button"
+                                onClick={() => handlePlanChange('subscription')}
+                                className={`w-full p-4 border-2 rounded-lg text-left transition-all ${
+                                    selectedPlan === 'subscription'
+                                        ? 'border-green-500 bg-green-50 text-green-900'
+                                        : 'border-gray-200 hover:border-green-300'
+                                }`}
+                            >
+                                <div className="flex items-center justify-between mb-1">
+                                    <div className="font-bold text-lg">Monthly</div>
+                                    <div className="font-bold text-lg">€{TOKEN_CONFIG.SUBSCRIPTION_PRICE}/mo</div>
+                                </div>
+                                <div className="text-sm text-muted">
+                                    {TOKEN_CONFIG.SUBSCRIPTION_TOKENS} tokens per month • Best value • Cancel anytime
+                                </div>
+                                {selectedPlan === 'subscription' && (
+                                    <div className="mt-2 text-xs text-green-700 font-medium">✓ Selected</div>
+                                )}
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => handlePlanChange('onetime')}
+                                className={`w-full p-4 border-2 rounded-lg text-left transition-all ${
+                                    selectedPlan === 'onetime'
+                                        ? 'border-green-500 bg-green-50 text-green-900'
+                                        : 'border-gray-200 hover:border-green-300'
+                                }`}
+                            >
+                                <div className="flex items-center justify-between mb-1">
+                                    <div className="font-bold text-lg">One-Time</div>
+                                    <div className="font-bold text-lg">€{TOKEN_CONFIG.ONETIME_PRICE}</div>
+                                </div>
+                                <div className="text-sm text-muted">
+                                    {TOKEN_CONFIG.ONETIME_TOKENS} tokens • Never expire • No commitment
+                                </div>
+                                {selectedPlan === 'onetime' && (
+                                    <div className="mt-2 text-xs text-green-700 font-medium">✓ Selected</div>
+                                )}
+                            </button>
                         </div>
-                    )}
+                    </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <Input
@@ -119,9 +169,17 @@ export default function SignupPage() {
                             <p className="text-sm text-center text-red-600">{error}</p>
                         )}
 
-                        <Button type="submit" disabled={isSubmitting} className="w-full">
-                            {selectedPlan ? t.auth.signup + ' & Checkout' : t.auth.signup}
+                        <Button 
+                            type="submit" 
+                            disabled={isSubmitting || !selectedPlan} 
+                            className="w-full"
+                        >
+                            {isSubmitting ? 'Processing...' : 'Continue to Payment'}
                         </Button>
+
+                        <p className="text-xs text-center text-muted">
+                            You'll be redirected to Stripe to complete payment
+                        </p>
                     </form>
 
                     <div className="mt-6 text-center">
