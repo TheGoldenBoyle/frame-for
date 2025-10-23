@@ -1,9 +1,27 @@
-
 declare module "*.globals.css";
+
 export type PlaygroundResult = {
-	modelId: string
-	modelName: string
-	imageUrl: string
+  modelId: string
+  modelName: string
+  imageUrl: string | null
+  error?: string
+}
+
+export type ComparisonResult = {
+  modelId: string
+  modelName: string
+  imageUrl: string
+}
+
+export function toComparisonResult(result: PlaygroundResult): ComparisonResult | null {
+  if (result.imageUrl) {
+    return {
+      modelId: result.modelId,
+      modelName: result.modelName,
+      imageUrl: result.imageUrl
+    }
+  }
+  return null
 }
 
 export type Locale = 'en' | 'de'
@@ -11,13 +29,6 @@ export type Locale = 'en' | 'de'
 export type User = {
   id: string
   email: string
-}
-
-export type PlaygroundResult = {
-  modelId: string
-  modelName: string
-  imageUrl: string | null
-  error?: string
 }
 
 export type TokenBalanceType = {
@@ -47,5 +58,3 @@ export type PresetConfig = {
 }
 
 export type Theme = 'light' | 'dark'
-
-export {}

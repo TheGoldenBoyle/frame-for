@@ -200,10 +200,12 @@ export async function POST(request: NextRequest) {
 			throw new Error(`Result upload failed: ${resultError.message}`)
 		}
 
+		const explicitUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/user-images/${resultUpload.path.replace('user-images/', '')}`
+
 		const { data: resultUrlData } = supabase.storage
 			.from("user-images")
 			.getPublicUrl(resultUpload.path)
-
+		
 		await deductTokens(user.id, TOKEN_CONFIG.COSTS.REVISE, `Revised photo: ${photoId}`)
 
 		const updatedPhoto = await prisma.photo.update({

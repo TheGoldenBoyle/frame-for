@@ -23,7 +23,8 @@ export const de: Translations = {
         hero: "Befreie dich von Einschränkungen. Generiere ohne Grenzen.",
         uploadSoon: "Unbegrenzte Modelle Erkunden",
         dashboard: "Erstellen",
-		studio: "Studio"
+		studio: "Studio",
+		tokens: "Tokens"
     },
 	dashboard: {
 		createNew: "Neue Erinnerung erstellen",

@@ -18,6 +18,7 @@ export type Translations = {
 		uploadSoon: string
 		dashboard?: string
 		studio: string
+		tokens: string
 	}
 	landing: {
 		headline: string

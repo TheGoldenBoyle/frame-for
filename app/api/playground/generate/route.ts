@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import Replicate from "replicate"
 import { prisma } from "@/lib/prisma"
 import { createClient } from "@/lib/superbase-server"
-import { PlaygroundResult } from "@/types/globals" 
+import { PlaygroundResult } from "@/types/globals"
 
 import { FormDataError, getOptionalFile, getString } from "@/lib/form-utils"
 import { checkTokens, deductTokens } from "@/lib/tokens"
@@ -194,7 +194,7 @@ export async function POST(request: NextRequest) {
 		}
 
 		const formData = await request.formData()
-		
+
 		const prompt = getString(formData, "prompt")
 		const modelIdsString = getString(formData, "modelIds")
 		const imageFile = getOptionalFile(formData, "image")
@@ -212,17 +212,18 @@ export async function POST(request: NextRequest) {
 			)
 		}
 
-		const tokensNeeded = modelIds.length * TOKEN_CONFIG.COSTS.PLAYGROUND_PER_MODEL
+		const tokensNeeded =
+			modelIds.length * TOKEN_CONFIG.COSTS.PLAYGROUND_PER_MODEL
 		const hasTokens = await checkTokens(user.id, tokensNeeded)
-		
+
 		if (!hasTokens) {
 			return NextResponse.json(
-				{ 
+				{
 					error: "INSUFFICIENT_TOKENS",
 					message: `Out of tokens? DM ${TOKEN_CONFIG.CONTACT.handle} on ${TOKEN_CONFIG.CONTACT.platform}`,
 					contactUrl: TOKEN_CONFIG.CONTACT.url,
 					tokensNeeded,
-					tokensPerModel: TOKEN_CONFIG.COSTS.PLAYGROUND_PER_MODEL
+					tokensPerModel: TOKEN_CONFIG.COSTS.PLAYGROUND_PER_MODEL,
 				},
 				{ status: 402 }
 			)
@@ -272,6 +273,12 @@ export async function POST(request: NextRequest) {
 				)
 
 				const response = await fetch(generatedUrl)
+				if (!response.ok) {
+					throw new Error(
+						`Failed to fetch generated image: ${response.statusText}`
+					)
+				}
+
 				const blob = await response.blob()
 				const arrayBuffer = await blob.arrayBuffer()
 				const buffer = Buffer.from(arrayBuffer)
@@ -288,31 +295,50 @@ export async function POST(request: NextRequest) {
 						})
 
 				if (resultError) {
-					throw new Error(
-						`Result upload failed: ${resultError.message}`
-					)
+					console.error(`Upload error for ${modelId}:`, resultError)
+					continue
 				}
 
 				const { data: resultUrlData } = supabase.storage
 					.from("user-images")
 					.getPublicUrl(resultUpload.path)
 
+				const explicitUrl = `${
+					process.env.NEXT_PUBLIC_SUPABASE_URL
+				}/storage/v1/object/public/user-images/${resultUpload.path.replace(
+					"user-images/",
+					""
+				)}`
+
 				results.push({
 					modelId,
 					modelName: config.name,
-					imageUrl: resultUrlData.publicUrl,
+					imageUrl: explicitUrl,
 				})
 			} catch (error) {
 				console.error(`Failed to generate with ${modelId}:`, error)
-				results.push({
-					modelId,
-					modelName: config.name,
-					imageUrl: "",
-				})
+				// Optionally, you can choose to add failed models to results array
+				// results.push({
+				//   modelId,
+				//   modelName: config.name,
+				//   imageUrl: null,
+				// })
 			}
 		}
 
-		await deductTokens(user.id, tokensNeeded, `Playground generation with ${modelIds.length} models`)
+		// Only proceed if at least one model succeeded
+		if (results.length === 0) {
+			return NextResponse.json(
+				{ error: "Failed to generate images for any model" },
+				{ status: 500 }
+			)
+		}
+
+		await deductTokens(
+			user.id,
+			tokensNeeded,
+			`Playground generation with ${modelIds.length} models`
+		)
 
 		const playgroundPhoto = await prisma.playgroundPhoto.create({
 			data: {
@@ -320,7 +346,7 @@ export async function POST(request: NextRequest) {
 				prompt,
 				originalUrl: uploadedImageUrl || null,
 				results: results as any,
-				tokensCost: tokensNeeded
+				tokensCost: tokensNeeded,
 			},
 		})
 
@@ -331,23 +357,20 @@ export async function POST(request: NextRequest) {
 		})
 	} catch (error) {
 		console.error("Playground generation error:", error)
-		
-		if (error instanceof Error && error.message === 'INSUFFICIENT_TOKENS') {
+
+		if (error instanceof Error && error.message === "INSUFFICIENT_TOKENS") {
 			return NextResponse.json(
-				{ 
+				{
 					error: "INSUFFICIENT_TOKENS",
 					message: `Out of tokens? DM ${TOKEN_CONFIG.CONTACT.handle} on ${TOKEN_CONFIG.CONTACT.platform}`,
-					contactUrl: TOKEN_CONFIG.CONTACT.url
+					contactUrl: TOKEN_CONFIG.CONTACT.url,
 				},
 				{ status: 402 }
 			)
 		}
-		
+
 		if (error instanceof FormDataError) {
-			return NextResponse.json(
-				{ error: error.message },
-				{ status: 400 }
-			)
+			return NextResponse.json({ error: error.message }, { status: 400 })
 		}
 
 		return NextResponse.json(

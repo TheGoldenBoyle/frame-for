@@ -9,10 +9,34 @@ import { ModelSelector } from '@/components/ModelSelector'
 import { GenerationLoader } from '@/components/GenerationLoader'
 import { ComparisonGrid } from '@/components/ComparisonGrid'
 import { useAuth } from '@/hooks/useAuth'
-import { PlaygroundResult } from '@/types/globals'
+
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 
+type PlaygroundResult = {
+  modelId: string
+  modelName: string
+  imageUrl: string | null
+  error?: string
+}
+
+type ComparisonResult = {
+  modelId: string
+  modelName: string
+  imageUrl: string
+}
+
+function toComparisonResult(result: PlaygroundResult): ComparisonResult | null {
+  if (result.imageUrl) {
+    return {
+      modelId: result.modelId,
+      modelName: result.modelName,
+      imageUrl: result.imageUrl
+    }
+  }
+  return null
+}
+  
 export default function PlaygroundPage() {
     const router = useRouter()
     const { user } = useAuth()
@@ -21,7 +45,7 @@ export default function PlaygroundPage() {
     const [selectedModels, setSelectedModels] = useState<string[]>(['nano-banana'])
     const [image, setImage] = useState<File | null>(null)
     const [loading, setLoading] = useState(false)
-    const [results, setResults] = useState<PlaygroundResult[]>([])
+    const [results, setResults] = useState<ComparisonResult[]>([])
     const [playgroundPhotoId, setPlaygroundPhotoId] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [savingStates, setSavingStates] = useState<Record<string, boolean>>({})
@@ -133,6 +157,7 @@ export default function PlaygroundPage() {
     }
 
     if (results.length > 0) {
+        console.log(results)
         return (
             <div className="min-h-screen p-2 md:p-4">
                 <div className="mx-auto max-w-7xl">
@@ -154,7 +179,10 @@ export default function PlaygroundPage() {
                         </div>
 
                         <ComparisonGrid
-                            results={results.filter(r => r.imageUrl)}
+                            results={results
+                                .map(toComparisonResult)
+                                .filter((result): result is ComparisonResult => result !== null)
+                            }
                             originalImageUrl={image ? URL.createObjectURL(image) : undefined}
                             onSaveResult={handleSaveResult}
                             savingStates={savingStates}
@@ -189,6 +217,7 @@ export default function PlaygroundPage() {
                         onSelect={handleModelSelect}
                         maxSelection={3}
                         disabled={loading}
+                        hasImage={!!image}
                     />
                 </Card>
 

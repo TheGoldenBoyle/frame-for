@@ -23,6 +23,7 @@ export const en: Translations = {
         hero: "Break free from limitations. Generate without boundaries.",
         uploadSoon: "Explore Unlimited Models",
         studio: "Studio",
+		tokens: "Tokens"
     },
 
 	dashboard: {

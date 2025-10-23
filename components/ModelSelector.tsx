@@ -1,5 +1,3 @@
-import { Zap, Clock } from 'lucide-react'
-
 type Model = {
     id: string
     name: string
@@ -8,6 +6,7 @@ type Model = {
     description: string
     badge?: string
     speed: 'fast' | 'medium' | 'slow'
+    requiresImage?: boolean
 }
 
 type ModelSelectorProps = {
@@ -15,6 +14,7 @@ type ModelSelectorProps = {
     onSelect: (modelId: string) => void
     maxSelection?: number
     disabled?: boolean
+    hasImage?: boolean
 }
 
 const MODELS: Model[] = [
@@ -25,7 +25,8 @@ const MODELS: Model[] = [
         path: 'google/nano-banana',
         description: 'Latest Gemini 2.5 editing model',
         badge: 'Best for Editing',
-        speed: 'fast'
+        speed: 'fast',
+        requiresImage: true
     },
     {
         id: 'flux-1.1-pro',
@@ -78,7 +79,8 @@ export function ModelSelector({
     selectedModels,
     onSelect,
     maxSelection = 3,
-    disabled = false
+    disabled = false,
+    hasImage = false
 }: ModelSelectorProps) {
     const handleSelect = (modelId: string) => {
         if (disabled) return
@@ -98,14 +100,20 @@ export function ModelSelector({
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
                 {MODELS.map((model) => {
                     const isSelected = selectedModels.includes(model.id)
-                    const canSelect = selectedModels.length < maxSelection || isSelected
+                    const requiresImage = model.requiresImage
+                    const isDisabledDueToImage = requiresImage && !hasImage
+                    const canSelect = 
+                        selectedModels.length < maxSelection || 
+                        isSelected ||
+                        !(isDisabledDueToImage)
 
                     return (
                         <button
                             key={model.id}
                             onClick={() => handleSelect(model.id)}
                             disabled={disabled || !canSelect}
-                            className={`p-4 text-left border-2 rounded-lg transition-all relative ${isSelected
+                            className={`p-4 text-left border-2 rounded-lg transition-all relative 
+                                ${isSelected
                                     ? 'border-primary bg-primary/10'
                                     : canSelect
                                         ? 'border-border hover:border-primary/50 bg-surface'
@@ -126,7 +134,14 @@ export function ModelSelector({
 
                             <div className="mt-6 mb-2 font-bold text-text">{model.name}</div>
                             <div className="mb-2 text-xs text-muted">{model.provider}</div>
-                            <div className="text-sm text-muted">{model.description}</div>
+                            <div className="text-sm text-muted">
+                                {model.description}
+                                {requiresImage && !hasImage && (
+                                    <span className="block mt-1 text-xs text-orange-600">
+                                        Requires input image
+                                    </span>
+                                )}
+                            </div>
                         </button>
                     )
                 })}

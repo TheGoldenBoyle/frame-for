@@ -1,10 +1,6 @@
 import { ResultCard } from './ResultCard'
+import { ComparisonResult } from '@/types/globals'
 
-type ComparisonResult = {
-    modelId: string
-    modelName: string
-    imageUrl: string
-}
 
 type ComparisonGridProps = {
     results: ComparisonResult[]
@@ -29,16 +25,19 @@ export function ComparisonGrid({
                     ? 'grid-cols-1 md:grid-cols-2'
                     : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
             }`}>
-            {results.map((result) => (
-                <ResultCard
-                    key={result.modelId}
-                    imageUrl={result.imageUrl}
-                    modelName={result.modelName}
-                    originalImageUrl={originalImageUrl}
-                    onSave={onSaveResult ? () => onSaveResult(result.modelId) : undefined}
-                    saving={savingStates[result.modelId]}
-                />
-            ))}
+            {results
+                .filter(result => result.imageUrl)  
+                .map((result) => (
+                    <ResultCard
+                        key={result.modelId}
+                        imageUrl={result.imageUrl} 
+                        modelName={result.modelName}
+                        originalImageUrl={originalImageUrl}
+                        onSave={onSaveResult ? () => onSaveResult(result.modelId) : undefined}
+                        saving={savingStates[result.modelId]}
+                    />
+                ))
+            }
         </div>
     )
 }

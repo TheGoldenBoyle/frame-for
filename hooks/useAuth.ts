@@ -10,12 +10,16 @@ export function useAuth() {
     useEffect(() => {
         async function syncUserWithAPI(supabaseUser: User) {
             try {
-                await fetch('/api/user/sync', { 
+                const response = await fetch('/api/user/sync', { 
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 })
+                if (!response.ok) {
+                    const errorData = await response.json()
+                    console.error("User sync API error:", errorData)
+                }
             } catch (error) {
                 console.error("User sync API error:", error)
             }

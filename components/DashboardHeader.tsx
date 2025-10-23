@@ -25,6 +25,7 @@ export function DashboardHeader({
     const isVisible = useScrollDirection()
 
     const navItems = [
+        { path: '/dashboard', label: t.home.tokens },
         { path: '/dashboard/studio', label: t.home.studio },
         { path: '/dashboard/playground', label: t.playground.title },
         { path: '/dashboard/gallery', label: t.dashboard.viewGallery },
@@ -44,7 +45,7 @@ export function DashboardHeader({
                             onClick={() => router.push('/dashboard')}
                             className="text-2xl font-bold text-text"
                         >
-                            TGG
+                            BildOro
                         </button>
 
                         <div className="hidden gap-4 md:flex">
