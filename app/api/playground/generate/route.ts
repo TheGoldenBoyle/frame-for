@@ -286,6 +286,7 @@ export async function POST(request: NextRequest) {
 				const resultFileName = `${
 					user.id
 				}/playground-result-${Date.now()}-${modelId}.webp`
+
 				const { data: resultUpload, error: resultError } =
 					await supabase.storage
 						.from("user-images")
@@ -299,30 +300,28 @@ export async function POST(request: NextRequest) {
 					continue
 				}
 
-				const { data: resultUrlData } = supabase.storage
+				// Generate signed URL with 1-hour expiration
+				const { data: signedUrlData } = await supabase.storage
 					.from("user-images")
-					.getPublicUrl(resultUpload.path)
+					.createSignedUrl(resultUpload.path, 3600) // 1 hour expiration
 
-				const explicitUrl = `${
-					process.env.NEXT_PUBLIC_SUPABASE_URL
-				}/storage/v1/object/public/user-images/${resultUpload.path.replace(
-					"user-images/",
-					""
-				)}`
+				// Fallback to public URL if signed URL generation fails
+				const imageUrl = signedUrlData?.signedUrl || 
+					supabase.storage.from("user-images").getPublicUrl(resultUpload.path).data.publicUrl
 
 				results.push({
 					modelId,
 					modelName: config.name,
-					imageUrl: explicitUrl,
+					imageUrl,
+				})
+
+				// Log the generated URLs for debugging
+				console.log(`Model ${modelId} URLs:`, {
+					signedUrl: signedUrlData?.signedUrl,
+					publicUrl: supabase.storage.from("user-images").getPublicUrl(resultUpload.path).data.publicUrl
 				})
 			} catch (error) {
 				console.error(`Failed to generate with ${modelId}:`, error)
-				// Optionally, you can choose to add failed models to results array
-				// results.push({
-				//   modelId,
-				//   modelName: config.name,
-				//   imageUrl: null,
-				// })
 			}
 		}
 

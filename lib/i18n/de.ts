@@ -30,7 +30,7 @@ export const de: Translations = {
 		createNew: "Neue Erinnerung erstellen",
 		createDescription:
 			"Kombiniere Fotos von geliebten Menschen zu einem schönen Bild",
-		viewGallery: "Galerie ansehen",
+		viewGallery: "Galerie",
 		galleryDescription: "Alle deine erstellten Erinnerungen ansehen",
 	},
 	playground: {

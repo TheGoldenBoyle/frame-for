@@ -57,62 +57,89 @@ function buildRevisionPrompt(preset: string, revisionPrompt: string, usePrimary:
 }
 
 async function generateWithModel(
-	modelPath: ReplicateModel,
-	prompt: string,
-	imageUrls: string[],
-	preset: string
+    modelPath: ReplicateModel,
+    prompt: string,
+    imageUrls: string[],
+    preset: string
 ): Promise<string> {
-	if (modelPath === "flux-kontext-apps/restore-image") {
-		const imageResponse = await fetch(imageUrls[0])
-		if (!imageResponse.ok) {
-			throw new Error(`Failed to fetch image: ${imageResponse.statusText}`)
-		}
-		const imageBlob = await imageResponse.blob()
-		
-		const output = await replicate.run(modelPath, {
-			input: {
-				input_image: imageBlob,
-				output_format: "png",
-			},
-		})
+    console.log(`Generating with model: ${modelPath}`);
+    console.log(`Image URLs: ${imageUrls}`);
+    console.log(`Prompt: ${prompt}`);
+    console.log(`Preset: ${preset}`);
 
-		if (typeof output === 'string') return output
-		if (output && typeof output === 'object' && 'url' in output && typeof output.url === 'function') return output.url()
-		if (Array.isArray(output) && output.length > 0) return output[0]
-		throw new Error('Unexpected output format from restore-image')
-	}
+    type ModelProcessor = () => Promise<string>
 
-	if (modelPath === "black-forest-labs/flux-kontext-pro") {
-		const imageResponse = await fetch(imageUrls[0])
-		if (!imageResponse.ok) {
-			throw new Error(`Failed to fetch image: ${imageResponse.statusText}`)
-		}
-		const imageBlob = await imageResponse.blob()
-		
-		const output = await replicate.run(modelPath, {
-			input: {
-				prompt: prompt,
-				image: imageBlob,
-				aspect_ratio: "1:1",
-				output_format: "webp",
-				output_quality: 100,
-			},
-		})
+    const MODELS: Record<string, ModelProcessor> = {
+        "restore-image": async () => {
+            try {
+                const imageResponse = await fetch(imageUrls[0], { method: 'HEAD' })
+                if (!imageResponse.ok) {
+                    throw new Error(`Invalid image URL: ${imageResponse.status} ${imageResponse.statusText}`)
+                }
 
-		if (typeof output === 'string') return output
-		if (output && typeof output === 'object' && 'url' in output && typeof output.url === 'function') return output.url()
-		if (Array.isArray(output) && output.length > 0) return output[0]
-		throw new Error('Unexpected output format from flux-kontext-pro')
-	}
+                const fullImageResponse = await fetch(imageUrls[0])
+                const imageBlob = await fullImageResponse.blob()
 
-	const output = await replicate.run(modelPath, {
-		input: {
-			prompt,
-			image_input: imageUrls,
-		},
-	}) as { url: () => string }
+                const output = await replicate.run(modelPath, {
+                    input: {
+                        input_image: imageBlob,
+                        output_format: "png",
+                    },
+                })
 
-	return output.url()
+                if (typeof output === "string") return output
+                if (output && typeof output === "object" && "url" in output && typeof output.url === "function") 
+                    return output.url()
+                if (Array.isArray(output) && output.length > 0) return output[0]
+                throw new Error("Unexpected output format from restore-image")
+            } catch (error) {
+                console.error(`Restore image error: ${error}`);
+                throw error;
+            }
+        },
+        "flux-kontext-pro": async () => {
+            try {
+                const imageResponse = await fetch(imageUrls[0], { method: 'HEAD' })
+                if (!imageResponse.ok) {
+                    throw new Error(`Invalid image URL: ${imageResponse.status} ${imageResponse.statusText}`)
+                }
+
+                const fullImageResponse = await fetch(imageUrls[0])
+                const imageBlob = await fullImageResponse.blob()
+
+                const output = await replicate.run(modelPath, {
+                    input: {
+                        prompt: prompt,
+                        image: imageBlob,
+                        aspect_ratio: "1:1",
+                        output_format: "webp",
+                        output_quality: 100,
+                    },
+                })
+
+                if (typeof output === "string") return output
+                if (output && typeof output === "object" && "url" in output && typeof output.url === "function") 
+                    return output.url()
+                if (Array.isArray(output) && output.length > 0) return output[0]
+                throw new Error("Unexpected output format from flux-kontext-pro")
+            } catch (error) {
+                console.error(`Flux Kontext Pro error: ${error}`);
+                throw error;
+            }
+        }
+    }
+
+    const getModelProcessor = (path: string) => {
+        const modelKey = path.split('/').pop() || ''
+        return MODELS[modelKey]
+    }
+
+    const modelProcessor = getModelProcessor(modelPath)
+    if (!modelProcessor) {
+        throw new Error(`Unsupported model: ${modelPath}`)
+    }
+
+    return await modelProcessor()
 }
 
 export async function POST(request: NextRequest) {
@@ -200,12 +227,22 @@ export async function POST(request: NextRequest) {
 			throw new Error(`Result upload failed: ${resultError.message}`)
 		}
 
-		const explicitUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/user-images/${resultUpload.path.replace('user-images/', '')}`
-
-		const { data: resultUrlData } = supabase.storage
+		// Generate signed URL with 1-hour expiration
+		const { data: signedUrlData } = await supabase.storage
 			.from("user-images")
-			.getPublicUrl(resultUpload.path)
-		
+			.createSignedUrl(resultUpload.path, 3600) // 1 hour expiration
+
+		// Fallback to public URL if signed URL generation fails
+		const imageUrl = signedUrlData?.signedUrl || 
+			supabase.storage.from("user-images").getPublicUrl(resultUpload.path).data.publicUrl
+
+		// Extensive logging for debugging
+		console.log('URL Generation Debug:', {
+			signedUrl: signedUrlData?.signedUrl,
+			publicUrl: supabase.storage.from("user-images").getPublicUrl(resultUpload.path).data.publicUrl,
+			uploadPath: resultUpload.path
+		})
+
 		await deductTokens(user.id, TOKEN_CONFIG.COSTS.REVISE, `Revised photo: ${photoId}`)
 
 		const updatedPhoto = await prisma.photo.update({
@@ -213,7 +250,7 @@ export async function POST(request: NextRequest) {
 				id: photoId,
 			},
 			data: {
-				generatedUrl: resultUrlData.publicUrl,
+				generatedUrl: imageUrl,
 			},
 		})
 
@@ -221,14 +258,14 @@ export async function POST(request: NextRequest) {
 			data: {
 				photoId,
 				prompt: revisionPrompt,
-				resultUrl: resultUrlData.publicUrl,
+				resultUrl: imageUrl,
 				tokensCost: TOKEN_CONFIG.COSTS.REVISE
 			}
 		})
 
 		return NextResponse.json({
 			success: true,
-			imageUrl: resultUrlData.publicUrl,
+			imageUrl,
 			photoId: updatedPhoto.id,
 		})
 	} catch (error) {

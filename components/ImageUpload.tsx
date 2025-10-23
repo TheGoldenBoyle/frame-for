@@ -5,9 +5,10 @@ type ImageUploadProps = {
     onImagesChange: (files: File[]) => void
     maxImages?: number
     disabled?: boolean
+    label?: string
 }
 
-export function ImageUpload({ onImagesChange, maxImages = 3, disabled = false }: ImageUploadProps) {
+export function ImageUpload({ onImagesChange, maxImages = 3, disabled = false, label = "" }: ImageUploadProps) {
     const [previews, setPreviews] = useState<string[]>([])
     const [files, setFiles] = useState<File[]>([])
 
@@ -88,6 +89,7 @@ export function ImageUpload({ onImagesChange, maxImages = 3, disabled = false }:
                         ${files.length === 0 ? 'col-span-full' : ''}
                     `}>
                         <Upload className="w-8 h-8 text-muted" />
+                        <span>{label}</span>
                         <span className="text-sm text-muted">Add Photo</span>
                         <input
                             type="file"

@@ -57,59 +57,65 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="container mx-auto p-6 max-w-4xl">
-            <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                    <h2 className="text-2xl font-bold mb-4">Your Tokens</h2>
-                    <div className="flex justify-between items-center mb-4">
-                        <span className="text-lg">Current Balance:</span>
-                        <span className="text-2xl font-bold">
-                            {tokens} {tokenType === 'free' ? 'Free Tokens' : 'Tokens'}
-                        </span>
-                    </div>
-
-                    <Button 
-                        onClick={() => router.push('/dashboard/studio')} 
-                        className="w-full mb-4"
-                    >
-                        Go to Studio
-                    </Button>
-
-                    {tokens === 0 && (
-                        <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
-                            <p className="text-yellow-700">
-                                You've used all your free tokens. Purchase more to continue generating images.
-                            </p>
+        <div className="min-h-screen flex items-center justify-center p-6 bg-background">
+            <div className="w-full max-w-4xl space-y-8">
+                <div className="text-center">
+                    <div className="bg-surface border-border border rounded-lg p-6 inline-block">
+                        <div className="flex items-center justify-center space-x-4">
+                            <span className="text-lg text-muted">Current Balance:</span>
+                            <span className="text-3xl font-bold">
+                                {tokens} {tokenType === 'free' ? 'Free Tokens' : 'Tokens'}
+                            </span>
                         </div>
-                    )}
-                </Card>
+                    </div>
+                </div>
 
-                <Card>
-                    <h2 className="text-2xl font-bold mb-4">Add Tokens</h2>
-                    <div className="space-y-4">
-                        <div>
-                            <h3 className="text-lg font-semibold mb-2">One-Time Purchase</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+                    <Card className="p-8 hover:shadow-xl transition-all duration-300 ease-in-out">
+                        <div className="space-y-6 text-center">
+                            <h2 className="text-2xl font-bold mb-4">Monthly Subscription</h2>
+                            <p className="text-muted mb-4">Unlimited creativity with our monthly plan</p>
+                            <div className="mb-6">
+                                <span className="text-4xl font-bold">€4.99</span>
+                                <p className="text-muted">per month</p>
+                            </div>
+                            <Button 
+                                onClick={() => handlePurchaseTokens('subscription')}
+                                className="w-full"
+                                size="lg"
+                            >
+                                Subscribe Now
+                            </Button>
+                        </div>
+                    </Card>
+
+                    <Card className="p-8 hover:shadow-xl transition-all duration-300 ease-in-out">
+                        <div className="space-y-6 text-center">
+                            <h2 className="text-2xl font-bold mb-4">Token Pack</h2>
+                            <p className="text-muted mb-4">One-time purchase for flexible use</p>
+                            <div className="mb-6">
+                                <span className="text-4xl font-bold">€9.99</span>
+                                <p className="text-muted">per pack</p>
+                            </div>
                             <Button 
                                 onClick={() => handlePurchaseTokens('onetime')}
                                 className="w-full"
                                 variant="outline"
+                                size="lg"
                             >
-                                {TOKEN_CONFIG.ONETIME_TOKENS} Tokens - €{TOKEN_CONFIG.ONETIME_PRICE}
+                                Buy Token Pack
                             </Button>
                         </div>
-                        <div>
-                            <h3 className="text-lg font-semibold mb-2">Monthly Subscription</h3>
-                            <Button 
-                                onClick={() => handlePurchaseTokens('subscription')}
-                                className="w-full"
-                            >
-                                {TOKEN_CONFIG.SUBSCRIPTION_TOKENS} Tokens - €{TOKEN_CONFIG.SUBSCRIPTION_PRICE}/mo
-                            </Button>
-                        </div>
+                    </Card>
+                </div>
+
+                {tokens === 0 && (
+                    <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg text-center">
+                        <p className="text-yellow-700">
+                            You've used all your free tokens. Purchase more to continue generating images.
+                        </p>
                     </div>
-                </Card>
+                )}
             </div>
         </div>
     )

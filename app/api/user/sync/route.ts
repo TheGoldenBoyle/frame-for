@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/superbase-server"
 import { prisma } from "@/lib/prisma"
-// In route.ts
+
 export async function POST(request: NextRequest) {
     try {
         const supabase = await createClient()
@@ -20,6 +20,9 @@ export async function POST(request: NextRequest) {
         }
 
         try {
+            // Verify database connection first
+            await prisma.$connect()
+
             const dbUser = await prisma.user.upsert({
                 where: { id: user.id },
                 update: {
@@ -41,12 +44,15 @@ export async function POST(request: NextRequest) {
         } catch (dbError) {
             console.error("Database sync error:", dbError)
             return NextResponse.json(
-                { 
-                    error: "Database synchronization failed", 
-                    details: String(dbError) 
+                {
+                    error: "Database synchronization failed",
+                    details: String(dbError)
                 },
                 { status: 500 }
             )
+        } finally {
+            // Disconnect to prevent connection pooling issues
+            await prisma.$disconnect()
         }
     } catch (error) {
         console.error("User sync error:", error)
