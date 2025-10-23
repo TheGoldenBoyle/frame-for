@@ -16,7 +16,8 @@ export type Translations = {
 		title: string
 		hero: string
 		uploadSoon: string
-		dashboard: string
+		dashboard?: string
+		studio: string
 	}
 	landing: {
 		headline: string

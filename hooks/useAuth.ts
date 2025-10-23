@@ -3,39 +3,72 @@ import { createClient } from "@/lib/supabase"
 import { User, Session } from "@supabase/supabase-js"
 
 export function useAuth() {
-	const [user, setUser] = useState<User | null>(null)
-	const [loading, setLoading] = useState(true)
-	const supabase = createClient()
+    const [user, setUser] = useState<User | null>(null)
+    const [loading, setLoading] = useState(true)
+    const supabase = createClient()
 
-	useEffect(() => {
-		supabase.auth.getSession().then(({ data: { session } }) => {
-			setUser(session?.user ?? null)
-			setLoading(false)
-		})
+    useEffect(() => {
+        async function syncUserWithAPI(supabaseUser: User) {
+            try {
+                await fetch('/api/user/sync', { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+            } catch (error) {
+                console.error("User sync API error:", error)
+            }
+        }
 
-		const {
-			data: { subscription },
-		} = supabase.auth.onAuthStateChange(
-			(_event, session: Session | null) => {
-				setUser(session?.user ?? null)
-			}
-		)
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setUser(session?.user ?? null)
+            
+            if (session?.user) {
+                syncUserWithAPI(session.user)
+            }
+            
+            setLoading(false)
+        })
 
-		return () => subscription.unsubscribe()
-	}, [supabase])
+        const {
+            data: { subscription },
+        } = supabase.auth.onAuthStateChange(
+            async (_event, session: Session | null) => {
+                setUser(session?.user ?? null)
+                
+                if (session?.user) {
+                    await syncUserWithAPI(session.user)
+                }
+            }
+        )
 
-	const signIn = async (email: string, password: string) => {
-		const { data, error } = await supabase.auth.signInWithPassword({
-			email,
-			password,
-		})
-		return { data, error }
-	}
+        return () => subscription.unsubscribe()
+    }, [supabase])
 
-	const signOut = async () => {
-		const { error } = await supabase.auth.signOut()
-		return { error }
-	}
+    const signIn = async (email: string, password: string) => {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        })
+        
+        if (data.user) {
+            // Trigger API sync
+            await fetch('/api/user/sync', { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+        }
+        
+        return { data, error }
+    }
 
-	return { user, loading, signIn, signOut }
+    const signOut = async () => {
+        const { error } = await supabase.auth.signOut()
+        return { error }
+    }
+
+    return { user, loading, signIn, signOut }
 }

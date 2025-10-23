@@ -237,7 +237,7 @@ export async function POST(request: NextRequest) {
 
 			const { data: uploadData, error: uploadError } =
 				await supabase.storage
-					.from("photos")
+					.from("user-images")
 					.upload(fileName, imageFile, {
 						contentType: imageFile.type,
 						upsert: false,
@@ -248,7 +248,7 @@ export async function POST(request: NextRequest) {
 			}
 
 			const { data: urlData } = supabase.storage
-				.from("photos")
+				.from("user-images")
 				.getPublicUrl(uploadData.path)
 
 			uploadedImageUrl = urlData.publicUrl
@@ -281,7 +281,7 @@ export async function POST(request: NextRequest) {
 				}/playground-result-${Date.now()}-${modelId}.webp`
 				const { data: resultUpload, error: resultError } =
 					await supabase.storage
-						.from("photos")
+						.from("user-images")
 						.upload(resultFileName, buffer, {
 							contentType: "image/webp",
 							upsert: false,
@@ -294,7 +294,7 @@ export async function POST(request: NextRequest) {
 				}
 
 				const { data: resultUrlData } = supabase.storage
-					.from("photos")
+					.from("user-images")
 					.getPublicUrl(resultUpload.path)
 
 				results.push({

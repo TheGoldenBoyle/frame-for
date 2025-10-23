@@ -1,64 +1,57 @@
-import { NextRequest, NextResponse } from "next/server"
+
 import { prisma } from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/superbase-server"
-import { TOKEN_CONFIG } from "@/lib/config/tokens"
-
 export async function POST(request: NextRequest) {
-	try {
-		const { email, password } = await request.json()
+    try {
+        const { email, password } = await request.json()
 
-		if (!email || !password) {
-			return NextResponse.json(
-				{ error: "Email and password required" },
-				{ status: 400 }
-			)
-		}
+        if (!email || !password) {
+            return NextResponse.json(
+                { error: "Email and password required" },
+                { status: 400 }
+            )
+        }
 
-		const supabase = await createClient()
+        const supabase = await createClient()
 
-		const { data, error } = await supabase.auth.signUp({
-			email,
-			password,
-			options: {
-				emailRedirectTo: `${process.env.NEXT_PUBLIC_URL}/dashboard`
-			}
-		})
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                emailRedirectTo: `${process.env.NEXT_PUBLIC_URL}/playground`
+            }
+        })
 
-		if (error) {
-			return NextResponse.json({ error: error.message }, { status: 400 })
-		}
+        if (error) {
+            console.error("Supabase signup error:", error)
+            return NextResponse.json({ error: error.message }, { status: 400 })
+        }
 
-		if (data.user) {
-			const existingUser = await prisma.user.findUnique({
-				where: { id: data.user.id }
-			})
+        if (data.user) {
+            // Upsert user in Prisma
+            await prisma.user.upsert({
+                where: { id: data.user.id },
+                update: {},
+                create: {
+                    id: data.user.id,
+                    email: data.user.email!,
+                    subscriptionStatus: "free",
+                    tokens: 3,
+                    tokenType: "free"
+                }
+            })
+        }
 
-			if (!existingUser) {
-				await prisma.user.create({
-					data: {
-						id: data.user.id,
-						email: data.user.email!,
-						subscriptionStatus: "free",
-						tokens: TOKEN_CONFIG.FREE_TOKENS,
-						tokenType: "free"
-					},
-				})
-			}
-		}
-
-		if (data.session) {
-			return NextResponse.json({ user: data.user })
-		} else {
-			return NextResponse.json({ 
-				user: data.user,
-				message: "Check your email to confirm your account"
-			})
-		}
-	} catch (error) {
-		console.error("Signup error", error)
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 }
-		)
-	}
+        return NextResponse.json({ 
+            user: data.user,
+            message: "Signup successful"
+        })
+    } catch (error) {
+        console.error("Signup error:", error)
+        return NextResponse.json(
+            { error: "Internal server error", details: String(error) },
+            { status: 500 }
+        )
+    }
 }

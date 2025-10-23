@@ -5,23 +5,14 @@ import { useAuth } from '@/hooks/useAuth'
 import { useI18n } from '@/lib/i18n/context'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Button } from '@/components/ui/Button'
-import { PricingCards } from '@/components/PricingCards'
 
 export default function LandingPage() {
     const router = useRouter()
-    const { user, loading } = useAuth()
+    const { user } = useAuth()
     const { t, locale, setLocale } = useI18n()
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <p className="text-muted">{t.common.loading}</p>
-            </div>
-        )
-    }
-
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen flex flex-col">
             <nav className="flex items-center justify-between px-8 py-6">
                 <h1 className="text-2xl font-bold">BildOro</h1>
                 <div className="flex items-center gap-4">
@@ -37,41 +28,38 @@ export default function LandingPage() {
                             {t.home.dashboard}
                         </Button>
                     ) : (
-                        <>
-                            <Button variant="ghost" onClick={() => router.push('/login')}>
-                                {t.auth.login}
-                            </Button>
-                            <Button onClick={() => router.push('/signup')}>
-                                {t.auth.signup}
-                            </Button>
-                        </>
+                        <Button onClick={() => router.push('/signup')}>
+                            {t.auth.signup}
+                        </Button>
                     )}
                 </div>
             </nav>
 
-            <div className="flex flex-col items-center justify-center px-8 py-32 text-center">
-                <h2 className="mb-6 text-5xl font-bold md:text-6xl">
-                    {t.landing.headline}
-                </h2>
-                <p className="max-w-2xl mb-12 text-xl text-muted">
-                    {t.landing.subheadline}
-                </p>
-                <Button
-                    onClick={() => router.push(user ? '/dashboard' : '/signup')}
-                >
-                    {t.landing.cta}
-                </Button>
-            </div>
-
-            <div className="px-8 py-24 bg-muted/30">
-                <div className="max-w-6xl mx-auto">
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold mb-4">Simple Pricing</h2>
-                        <p className="text-xl text-muted">Choose the plan that works for you</p>
+            <main className="flex-grow flex items-center justify-center px-8 text-center">
+                <div className="max-w-4xl">
+                    <h2 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                        {t.landing.headline}
+                    </h2>
+                    <p className="text-xl text-muted max-w-2xl mx-auto mb-12">
+                        {t.landing.subheadline}
+                    </p>
+                    <div className="flex justify-center gap-4">
+                        <Button 
+                            size="lg" 
+                            onClick={() => router.push(user ? '/dashboard' : '/signup')}
+                        >
+                            {t.landing.cta}
+                        </Button>
+                        <Button 
+                            variant="outline" 
+                            size="lg" 
+                            onClick={() => router.push('/playground')}
+                        >
+                            {t.playground.title}
+                        </Button>
                     </div>
-                    <PricingCards isLoggedIn={!!user} />
                 </div>
-            </div>
+            </main>
         </div>
     )
 }

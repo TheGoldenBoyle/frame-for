@@ -1,25 +1,30 @@
 import { prisma } from "./prisma"
-import { TOKEN_CONFIG } from "./config/tokens"
+import { createClient } from "@/lib/supabase"
 
 type TokenTransactionType = "deduct" | "add" | "reset" | "purchase"
 
 export async function getTokenBalance(userId: string) {
-	const user = await prisma.user.findUnique({
-		where: { id: userId },
-		select: { tokens: true, tokenType: true, subscriptionStatus: true },
-	})
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { tokens: true, tokenType: true, subscriptionStatus: true }
+        })
 
-	return user
+        return user
+    } catch (error) {
+        console.error("Token balance error:", error)
+        return null
+    }
 }
 
 export async function checkTokens(userId: string, amount: number) {
-	const user = await getTokenBalance(userId)
+    const user = await getTokenBalance(userId)
 
-	if (!user) {
-		throw new Error("User not found")
-	}
+    if (!user) {
+        throw new Error("User not found")
+    }
 
-	return user.tokens >= amount
+    return user.tokens >= amount
 }
 
 export async function deductTokens(

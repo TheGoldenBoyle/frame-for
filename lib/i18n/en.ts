@@ -1,4 +1,4 @@
-import { Translations } from "@/types/i18n";
+import { Translations } from "@/types/i18n"
 
 export const en: Translations = {
 	auth: {
@@ -12,20 +12,23 @@ export const en: Translations = {
 		welcome: "Welcome",
 		error: "Authentication error",
 	},
-	home: {
-		title: "BildOro",
-		hero: "Combine photos of loved ones into one beautiful image",
-		uploadSoon: "Upload feature coming next...",
-		dashboard: "Create",
-	},
-	landing: {
-		headline: "Beautiful Photo Memories",
-		subheadline: "Combine photos of loved ones into one beautiful image. Simple, elegant, and meaningful.",
-		cta: "Get Started",
-	},
+    landing: {
+        headline: "AI Image Generation. Made Simple.",
+        subheadline: "No more gatekeeping. No more restrictions. Your models. Your way. Sign in and try it out. First 3 generations are on us.",
+        cta: "Start Generating",
+    },
+
+    home: {
+        title: "BildOro - AI Image Generation Unleashed",
+        hero: "Break free from limitations. Generate without boundaries.",
+        uploadSoon: "Explore Unlimited Models",
+        studio: "Studio",
+    },
+
 	dashboard: {
 		createNew: "Create New Memory",
-		createDescription: "Combine photos of loved ones into one beautiful image",
+		createDescription:
+			"Combine photos of loved ones into one beautiful image",
 		viewGallery: "View Gallery",
 		galleryDescription: "See all your created memories",
 	},
@@ -33,10 +36,12 @@ export const en: Translations = {
 		title: "Playground",
 		description: "Experiment with the latest AI image generation models",
 		prompt: "Prompt",
-		promptPlaceholder: "A serene mountain landscape at sunset with vibrant colors...",
+		promptPlaceholder:
+			"A serene mountain landscape at sunset with vibrant colors...",
 		selectModels: "Select Models",
 		inputImage: "Input Image (Optional)",
-		inputImageHelp: "Add an image for image-to-image generation, or leave empty for text-to-image",
+		inputImageHelp:
+			"Add an image for image-to-image generation, or leave empty for text-to-image",
 		generate: "Generate Image",
 		compare: "Compare {count} Models",
 		results: "Results",
@@ -47,7 +52,8 @@ export const en: Translations = {
 		saved: "Saved to playground gallery!",
 		errorPrompt: "Please enter a prompt",
 		errorModels: "Please select at least one model",
-		errorSomeFailed: "Some models failed to generate. This can happen due to rate limits or model availability.",
+		errorSomeFailed:
+			"Some models failed to generate. This can happen due to rate limits or model availability.",
 		tipsTitle: "💡 Tips",
 		tip1: "Select multiple models to compare their outputs side-by-side",
 		tip2: "Nano Banana requires an input image for editing",
@@ -55,7 +61,8 @@ export const en: Translations = {
 		tip4: "Save your favorite results to the playground gallery",
 		galleryTitle: "Playground Gallery",
 		galleryEmpty: "No experiments yet",
-		galleryEmptyDescription: "Start creating in the playground to see your work here",
+		galleryEmptyDescription:
+			"Start creating in the playground to see your work here",
 		goToPlayground: "Go to Playground",
 	},
 	common: {

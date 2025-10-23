@@ -4,9 +4,10 @@ import { Upload, X } from 'lucide-react'
 type ImageUploadProps = {
     onImagesChange: (files: File[]) => void
     maxImages?: number
+    disabled?: boolean
 }
 
-export function ImageUpload({ onImagesChange, maxImages = 3 }: ImageUploadProps) {
+export function ImageUpload({ onImagesChange, maxImages = 3, disabled = false }: ImageUploadProps) {
     const [previews, setPreviews] = useState<string[]>([])
     const [files, setFiles] = useState<File[]>([])
 
@@ -45,10 +46,11 @@ export function ImageUpload({ onImagesChange, maxImages = 3 }: ImageUploadProps)
     }
 
     const canAddMore = files.length < maxImages
+    const gridColumns = files.length === 0 ? 1 : (files.length <= 3 ? 2 : 3)
 
     return (
         <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-4">
+            <div className={`grid grid-cols-${gridColumns} gap-4`}>
                 {previews.map((preview, index) => (
                     <div key={index} className="relative overflow-hidden rounded-lg aspect-square bg-surface">
                         <img
@@ -65,8 +67,26 @@ export function ImageUpload({ onImagesChange, maxImages = 3 }: ImageUploadProps)
                     </div>
                 ))}
 
-                {canAddMore && (
-                    <label className="relative flex flex-col items-center justify-center gap-2 transition-colors border-2 border-dashed rounded-lg cursor-pointer aspect-square border-border hover:border-primary bg-surface hover:bg-background">
+                {canAddMore && !disabled && (
+                    <label className={`
+                        relative 
+                        flex 
+                        flex-col 
+                        items-center 
+                        justify-center 
+                        gap-2 
+                        transition-colors 
+                        border-2 
+                        border-dashed 
+                        rounded-lg 
+                        cursor-pointer 
+                        py-6
+                        border-border 
+                        hover:border-primary 
+                        bg-surface 
+                        hover:bg-background
+                        ${files.length === 0 ? 'col-span-full' : ''}
+                    `}>
                         <Upload className="w-8 h-8 text-muted" />
                         <span className="text-sm text-muted">Add Photo</span>
                         <input
@@ -74,9 +94,16 @@ export function ImageUpload({ onImagesChange, maxImages = 3 }: ImageUploadProps)
                             accept="image/*"
                             multiple
                             onChange={handleFileSelect}
+                            disabled={disabled}
                             className="hidden"
                         />
                     </label>
+                )}
+
+                {disabled && (
+                    <p className="text-xs text-center text-muted col-span-full">
+                        Image upload is currently disabled
+                    </p>
                 )}
             </div>
 

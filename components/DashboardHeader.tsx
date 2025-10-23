@@ -25,7 +25,7 @@ export function DashboardHeader({
     const isVisible = useScrollDirection()
 
     const navItems = [
-        // { path: '/dashboard', label: t.home.dashboard },
+        { path: '/dashboard/studio', label: t.home.studio },
         { path: '/dashboard/playground', label: t.playground.title },
         { path: '/dashboard/gallery', label: t.dashboard.viewGallery },
     ]

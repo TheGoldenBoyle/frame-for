@@ -40,7 +40,7 @@ export const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(
                         placeholder={placeholder}
                         maxLength={maxLength}
                         disabled={disabled}
-                        className={`w-full px-4 py-3 rounded-lg border resize-none transition-all min-h-[120px] bg-surface text-text placeholder:text-muted ${isFocused
+                        className={`w-full px-4 py-3 rounded-lg border max-h-[190px] transition-all min-h-[120px] bg-surface text-text placeholder:text-muted ${isFocused
                                 ? 'border-primary ring-2 ring-primary/20'
                                 : 'border-border'
                             } ${disabled ? 'opacity-60 cursor-not-allowed' : ''} focus:outline-none`}

@@ -192,7 +192,7 @@ export async function POST(request: NextRequest) {
 			const fileName = `${user.id}/${Date.now()}-${i}-${file.name}`
 
 			const { data: uploadData, error: uploadError } =
-				await supabase.storage.from("photos").upload(fileName, file, {
+				await supabase.storage.from("user-images").upload(fileName, file, {
 					contentType: file.type,
 					upsert: false,
 				})
@@ -202,7 +202,7 @@ export async function POST(request: NextRequest) {
 			}
 
 			const { data: urlData } = supabase.storage
-				.from("photos")
+				.from("user-images")
 				.getPublicUrl(uploadData.path)
 
 			uploadedUrls.push(urlData.publicUrl)
@@ -253,7 +253,7 @@ export async function POST(request: NextRequest) {
 		const resultFileName = `${user.id}/generated-${Date.now()}.webp`
 		const { data: resultUpload, error: resultError } =
 			await supabase.storage
-				.from("photos")
+				.from("user-images")
 				.upload(resultFileName, buffer, {
 					contentType: "image/webp",
 					upsert: false,
@@ -264,7 +264,7 @@ export async function POST(request: NextRequest) {
 		}
 
 		const { data: resultUrlData } = supabase.storage
-			.from("photos")
+			.from("user-images")
 			.getPublicUrl(resultUpload.path)
 
 		await deductTokens(user.id, TOKEN_CONFIG.COSTS.GENERATE, `Generated image with preset: ${preset}`)

@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
 import Link from 'next/link'
-import { TOKEN_CONFIG } from '@/lib/config/tokens'
 
 export default function SignupPage() {
     const router = useRouter()
@@ -18,29 +17,10 @@ export default function SignupPage() {
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
-
-    useEffect(() => {
-        const plan = sessionStorage.getItem('selectedPlan')
-        if (plan) {
-            setSelectedPlan(plan)
-        }
-    }, [])
-
-    const handlePlanChange = (plan: string) => {
-        setSelectedPlan(plan)
-        sessionStorage.setItem('selectedPlan', plan)
-    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setError('')
-
-        if (!selectedPlan) {
-            setError('Please select a plan to continue')
-            return
-        }
-
         setIsSubmitting(true)
 
         try {
@@ -63,22 +43,8 @@ export default function SignupPage() {
                 return
             }
 
-            sessionStorage.removeItem('selectedPlan')
-            
-            const checkoutResponse = await fetch('/api/checkout', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type: selectedPlan })
-            })
-
-            const checkoutData = await checkoutResponse.json()
-
-            if (checkoutData.url) {
-                window.location.href = checkoutData.url
-                return
-            }
-
-            router.push('/dashboard')
+            // Redirect to playground
+            router.push('/playground')
         } catch (err) {
             setError(t.common.error)
         } finally {
@@ -88,64 +54,10 @@ export default function SignupPage() {
 
     return (
         <div className="flex items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-md">
+            <div className="w-full max-w-lg">
                 <Card>
-                    <div className="flex items-center justify-between mb-8">
+                    <div className="text-center mb-8">
                         <h1 className="text-3xl font-bold">{t.home.title}</h1>
-                        <button
-                            onClick={() => setLocale(locale === 'en' ? 'de' : 'en')}
-                            className="text-sm text-stone-500 hover:text-stone-700"
-                        >
-                            {locale === 'en' ? 'DE' : 'EN'}
-                        </button>
-                    </div>
-
-                    <div className="mb-6">
-                        <p className="text-sm font-medium mb-3">Select your plan:</p>
-                        
-                        <div className="space-y-3 mb-6">
-                            <button
-                                type="button"
-                                onClick={() => handlePlanChange('subscription')}
-                                className={`w-full p-4 border-2 rounded-lg text-left transition-all ${
-                                    selectedPlan === 'subscription'
-                                        ? 'border-green-500 bg-green-50 text-green-900'
-                                        : 'border-gray-200 hover:border-green-300'
-                                }`}
-                            >
-                                <div className="flex items-center justify-between mb-1">
-                                    <div className="font-bold text-lg">Monthly</div>
-                                    <div className="font-bold text-lg">€{TOKEN_CONFIG.SUBSCRIPTION_PRICE}/mo</div>
-                                </div>
-                                <div className="text-sm text-muted">
-                                    {TOKEN_CONFIG.SUBSCRIPTION_TOKENS} tokens per month • Best value • Cancel anytime
-                                </div>
-                                {selectedPlan === 'subscription' && (
-                                    <div className="mt-2 text-xs text-green-700 font-medium">✓ Selected</div>
-                                )}
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={() => handlePlanChange('onetime')}
-                                className={`w-full p-4 border-2 rounded-lg text-left transition-all ${
-                                    selectedPlan === 'onetime'
-                                        ? 'border-green-500 bg-green-50 text-green-900'
-                                        : 'border-gray-200 hover:border-green-300'
-                                }`}
-                            >
-                                <div className="flex items-center justify-between mb-1">
-                                    <div className="font-bold text-lg">One-Time</div>
-                                    <div className="font-bold text-lg">€{TOKEN_CONFIG.ONETIME_PRICE}</div>
-                                </div>
-                                <div className="text-sm text-muted">
-                                    {TOKEN_CONFIG.ONETIME_TOKENS} tokens • Never expire • No commitment
-                                </div>
-                                {selectedPlan === 'onetime' && (
-                                    <div className="mt-2 text-xs text-green-700 font-medium">✓ Selected</div>
-                                )}
-                            </button>
-                        </div>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
@@ -169,17 +81,13 @@ export default function SignupPage() {
                             <p className="text-sm text-center text-red-600">{error}</p>
                         )}
 
-                        <Button 
-                            type="submit" 
-                            disabled={isSubmitting || !selectedPlan} 
+                        <Button
+                            type="submit"
+                            disabled={isSubmitting}
                             className="w-full"
                         >
-                            {isSubmitting ? 'Processing...' : 'Continue to Payment'}
+                            {isSubmitting ? 'Processing...' : t.auth.signup}
                         </Button>
-
-                        <p className="text-xs text-center text-muted">
-                            You'll be redirected to Stripe to complete payment
-                        </p>
                     </form>
 
                     <div className="mt-6 text-center">

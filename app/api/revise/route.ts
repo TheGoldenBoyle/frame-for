@@ -190,7 +190,7 @@ export async function POST(request: NextRequest) {
 		const resultFileName = `${user.id}/revised-${Date.now()}.webp`
 		const { data: resultUpload, error: resultError } =
 			await supabase.storage
-				.from("photos")
+				.from("user-images")
 				.upload(resultFileName, buffer, {
 					contentType: "image/webp",
 					upsert: false,
@@ -201,7 +201,7 @@ export async function POST(request: NextRequest) {
 		}
 
 		const { data: resultUrlData } = supabase.storage
-			.from("photos")
+			.from("user-images")
 			.getPublicUrl(resultUpload.path)
 
 		await deductTokens(user.id, TOKEN_CONFIG.COSTS.REVISE, `Revised photo: ${photoId}`)

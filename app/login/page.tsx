@@ -39,16 +39,10 @@ export default function LoginPage() {
 
     return (
         <div className="flex items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-md">
+            <div className="w-full max-w-lg">
                 <Card>
-                    <div className="flex items-center justify-between mb-8">
-                        <h1 className="text-3xl font-bold">{t.home.title}</h1>
-                        <button
-                            onClick={() => setLocale(locale === 'en' ? 'de' : 'en')}
-                            className="text-sm text-stone-500 hover:text-stone-700"
-                        >
-                            {locale === 'en' ? 'DE' : 'EN'}
-                        </button>
+                    <div className="text-center mb-8">
+                        <h1 className="text-3xl font-bold">{t.home.title}</h1>      
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
