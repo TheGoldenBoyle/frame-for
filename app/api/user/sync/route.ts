@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/superbase-server"
-import { prisma } from "@/lib/prisma"
+import { prisma, safeDbOperation } from "@/lib/prisma"
 
 export async function POST(request: NextRequest) {
     try {
@@ -10,54 +10,70 @@ export async function POST(request: NextRequest) {
             error: authError,
         } = await supabase.auth.getUser()
 
-        if (authError || !user) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+        // Early return if no authenticated user
+        if (authError || !user || !user.id) {
+            return NextResponse.json({ 
+                error: "Unauthorized", 
+                details: "No valid user session" 
+            }, { status: 401 })
         }
 
-        // Add more robust error handling
-        if (!user.id || !user.email) {
-            return NextResponse.json({ error: "Invalid user data" }, { status: 400 })
+        // Validate user data before database operation
+        if (!user.email) {
+            return NextResponse.json({ 
+                error: "Invalid user data", 
+                details: "Missing email" 
+            }, { status: 400 })
         }
 
+        // Use safe database operation with explicit error handling
         try {
-            // Verify database connection first
-            await prisma.$connect()
-
-            const dbUser = await prisma.user.upsert({
-                where: { id: user.id },
-                update: {
-                    email: user.email, // Always update email in case it changes
-                },
-                create: {
-                    id: user.id,
-                    email: user.email!,
-                    subscriptionStatus: "free",
-                    tokens: 3,
-                    tokenType: "free"
-                },
+            const dbUser = await safeDbOperation(async () => {
+                return await prisma.user.upsert({
+                    where: { id: user.id },
+                    update: {
+                        email: user.email
+                    },
+                    create: {
+                        id: user.id,
+                        email: user.email!,
+                        subscriptionStatus: "free",
+                        tokens: 3,
+                        tokenType: "free"
+                    },
+                })
             })
 
             return NextResponse.json({
-                user: dbUser,
-                message: "User synchronized",
-            })
+                user: {
+                    id: dbUser.id,
+                    email: dbUser.email,
+                    subscriptionStatus: dbUser.subscriptionStatus
+                },
+                message: "User synchronized successfully",
+            }, { status: 200 })
+
         } catch (dbError) {
             console.error("Database sync error:", dbError)
             return NextResponse.json(
                 {
                     error: "Database synchronization failed",
-                    details: String(dbError)
+                    details: dbError instanceof Error 
+                        ? dbError.message 
+                        : "Unknown database error"
                 },
                 { status: 500 }
             )
-        } finally {
-            // Disconnect to prevent connection pooling issues
-            await prisma.$disconnect()
         }
     } catch (error) {
-        console.error("User sync error:", error)
+        console.error("User sync unexpected error:", error)
         return NextResponse.json(
-            { error: "Internal server error", details: String(error) },
+            { 
+                error: "Internal server error", 
+                details: error instanceof Error 
+                    ? error.message 
+                    : "Unexpected sync failure" 
+            },
             { status: 500 }
         )
     }

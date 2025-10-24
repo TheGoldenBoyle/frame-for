@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useScrollDirection } from '@/hooks/useScrollDirection'
-import { MobileMenu } from './MobileMenu'
+import { MobileMenu } from './partials/MobileMenu'
 
 type DashboardHeaderProps = {
     user: any

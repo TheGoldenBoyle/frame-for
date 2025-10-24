@@ -9,22 +9,27 @@ export function useAuth() {
 
     useEffect(() => {
         async function syncUserWithAPI(supabaseUser: User) {
-            try {
-                const response = await fetch('/api/user/sync', { 
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
+            // Only attempt sync if user is truly authenticated
+            if (supabaseUser?.id) {
+                try {
+                    const response = await fetch('/api/user/sync', { 
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json()
+                        console.error("User sync API error:", errorData)
                     }
-                })
-                if (!response.ok) {
-                    const errorData = await response.json()
-                    console.error("User sync API error:", errorData)
+                } catch (error) {
+                    console.error("User sync API error:", error)
                 }
-            } catch (error) {
-                console.error("User sync API error:", error)
             }
         }
 
+        // Initial session check
         supabase.auth.getSession().then(({ data: { session } }) => {
             setUser(session?.user ?? null)
             
@@ -35,6 +40,7 @@ export function useAuth() {
             setLoading(false)
         })
 
+        // Listen for auth state changes
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange(
@@ -56,8 +62,8 @@ export function useAuth() {
             password,
         })
         
+        // Only sync if login is successful and user exists
         if (data.user) {
-            // Trigger API sync
             await fetch('/api/user/sync', { 
                 method: 'POST',
                 headers: {

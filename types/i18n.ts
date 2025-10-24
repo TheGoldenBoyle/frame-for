@@ -68,6 +68,16 @@ export type Translations = {
 		backToDashboard: string
 		contact?: string
 	}
+	contact: {
+		title: string
+		name: string
+		email: string
+		subject: string
+		message: string
+		submit: string
+		successMessage: string
+		errorMessage: string
+	}
 	imprint: {
 		title: string
 		contact: string

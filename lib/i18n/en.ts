@@ -56,7 +56,7 @@ export const en: Translations = {
 		errorModels: "Please select at least one model",
 		errorSomeFailed:
 			"Some models failed to generate. This can happen due to rate limits or model availability.",
-		tipsTitle: "💡 Tips",
+		tipsTitle: "ðŸ'¡ Tips",
 		tip1: "Select multiple models to compare their outputs side-by-side",
 		tip2: "Nano Banana requires an input image for editing",
 		tip3: "Be specific in your prompts for better results",
@@ -75,12 +75,22 @@ export const en: Translations = {
 		backToDashboard: "Back to Dashboard",
 		contact: "Contact",
 	},
+	contact: {
+		title: "Contact Form",
+		name: "Name",
+		email: "Email",
+		subject: "Subject",
+		message: "Message", 
+		submit: "Send Message",
+		successMessage: "Thank you for your message! We'll get back to you soon.",
+		errorMessage: "There was an error sending your message. Please try again later."
+	},
 	imprint: {
 		title: "Imprint",
 		contact: "Contact Information",
 		companyName: "BildOro GmbH",
 		streetAddress: "Goldrain 5",
-		cityPostal: "36088 Hünfeld",
+		cityPostal: "36088 HÃ¼nfeld",
 		country: "Germany",
 		contact_details: "Contact Details",
 		phone: "Phone: +49 1551 022 0025",

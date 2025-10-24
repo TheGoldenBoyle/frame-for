@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useI18n } from '@/lib/i18n/context'
 import { ThemeToggle } from '@/components/ThemeToggle'
@@ -9,8 +9,11 @@ import Link from 'next/link'
 
 export const Navbar = () => {
     const router = useRouter()
+    const pathname = usePathname()
     const { user } = useAuth()
     const { t, locale, setLocale } = useI18n()
+
+    if (pathname === '/dashboard') return null
 
     return (
         <nav className="flex items-center justify-between px-8 py-6 absolute inset-x-0 max-w-6xl mx-auto z-[100]">

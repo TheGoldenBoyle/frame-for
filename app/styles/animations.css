@@ -1,0 +1,21 @@
+
+@keyframes subtle-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+@keyframes gentle-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+@keyframes color-shift {
+    0% { filter: hue-rotate(0deg); }
+    50% { filter: hue-rotate(20deg); }
+    100% { filter: hue-rotate(0deg); }
+}
+
+@keyframes background-wave {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}

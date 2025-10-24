@@ -1,0 +1,118 @@
+@import "tailwindcss";
+@import "./animations.css";
+
+@theme {
+    --color-primary: #d4af37;
+    --color-primary-dark: #b8941f;
+    
+    --color-background: #fafaf9;
+    --color-surface: #ffffff;
+    --color-text: #292524;
+    --color-muted: #78716c;
+    --color-border: #e7e5e4;
+
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+}
+
+* {
+    box-sizing: border-box;
+    transition: 
+        background-color 0.3s ease,
+        color 0.3s ease,
+        transform 0.2s ease,
+        filter 0.5s ease;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    animation: color-shift 30s ease-in-out infinite alternate;
+    background-image: 
+        linear-gradient(
+            45deg, 
+            rgba(212, 175, 55, 0.05), 
+            rgba(184, 148, 31, 0.05)
+        );
+}
+
+/* Subtle hover effects - DESKTOP ONLY */
+button, 
+[role="button"], 
+a,
+.interactive {
+    transition: 
+        transform 0.2s ease;
+}
+
+/* Only apply hover effects on devices that support hover (desktop) */
+@media (hover: hover) and (pointer: fine) {
+    button:hover, 
+    [role="button"]:hover, 
+    a:hover,
+    .interactive:hover {
+        transform: translateY(-2px);
+        animation: subtle-float 1.5s ease-in-out infinite;
+    }
+
+    .pulse-on-hover:hover {
+        animation: gentle-pulse 0.5s ease-in-out;
+    }
+}
+
+/* Dark mode styles - Professional charcoal */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #1a1a1a;
+        --color-surface: #252525;
+        --color-text: #f5f5f5;
+        --color-muted: #9ca3af;
+        --color-border: #3a3a3a;
+    }
+    
+    body {
+        background-image: 
+            linear-gradient(
+                135deg, 
+                rgba(26, 26, 26, 0.95), 
+                rgba(37, 37, 37, 0.95)
+            );
+    }
+}
+
+/* Manual overrides with classes */
+:root.light {
+    --color-background: #fafaf9;
+    --color-surface: #ffffff;
+    --color-text: #292524;
+    --color-muted: #78716c;
+    --color-border: #e7e5e4;
+}
+
+:root.light body {
+    background-image: 
+        linear-gradient(
+            45deg, 
+            rgba(212, 175, 55, 0.05), 
+            rgba(184, 148, 31, 0.05)
+        );
+}
+
+:root.dark {
+    --color-background: #1a1a1a;
+    --color-surface: #252525;
+    --color-text: #f5f5f5;
+    --color-muted: #9ca3af;
+    --color-border: #3a3a3a;
+}
+
+:root.dark body {
+    background-image: 
+        linear-gradient(
+            135deg, 
+            rgba(26, 26, 26, 0.95), 
+            rgba(37, 37, 37, 0.95)
+        );
+}
