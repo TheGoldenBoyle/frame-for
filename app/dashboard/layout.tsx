@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useI18n } from '@/lib/i18n/context'
 import { DashboardHeader } from '@/components/DashboardHeader'
+import { Loader } from '@/components/ui/Loader'
 
 export default function DashboardLayout({
     children,
@@ -24,7 +25,7 @@ export default function DashboardLayout({
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
-                <p className="text-muted">{t.common.loading}</p>
+                <Loader />
             </div>
         )
     }

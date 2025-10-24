@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { TOKEN_CONFIG } from '@/lib/config/tokens'
 import { TokenBalanceType } from '@/types/globals'
+import { Loader } from './ui/Loader'
 
 export function TokenBalance() {
 	const [balance, setBalance] = useState<TokenBalanceType | null>(null)
@@ -27,7 +28,7 @@ export function TokenBalance() {
 	}
 
 	if (loading) {
-		return <div className="text-sm text-muted">Loading...</div>
+		return <Loader />
 	}
 
 	if (!balance) {

@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { Photo } from '@/types/globals'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
+import { Loader } from '@/components/ui/Loader'
 
 export default function GalleryPage() {
     const router = useRouter()
@@ -35,7 +36,7 @@ export default function GalleryPage() {
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
-                <p className="text-muted">Loading...</p>
+                <Loader />
             </div>
         )
     }

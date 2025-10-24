@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
+import { Loader } from '@/components/ui/Loader'
 import { useAuth } from '@/hooks/useAuth'
 import { useI18n } from '@/lib/i18n/context'
 
@@ -60,13 +61,13 @@ export default function PlaygroundGalleryPage() {
     }
 
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <p className="text-stone-500">{t.common.loading}</p>
-            </div>
-        )
-    }
+     if (loading) {
+         return (
+             <div className="flex items-center justify-center min-h-screen">
+                 <Loader />
+             </div>
+         )
+     }
 
     return (
         <div className="min-h-screen p-4 md:p-8">

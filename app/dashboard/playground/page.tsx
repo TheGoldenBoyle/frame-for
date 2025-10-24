@@ -11,6 +11,7 @@ import { ComparisonGrid } from '@/components/ComparisonGrid'
 import { useAuth } from '@/hooks/useAuth'
 
 import { Button } from '@/components/ui/Button'
+import { Loader } from '@/components/ui/Loader'
 import { Card } from '@/components/ui/Card'
 
 type PlaygroundResult = {
@@ -45,16 +46,17 @@ export default function PlaygroundPage() {
     const [selectedModels, setSelectedModels] = useState<string[]>(['nano-banana'])
     const [image, setImage] = useState<File | null>(null)
     const [loading, setLoading] = useState(false)
+    const [generating, setGenerating] = useState(false)
     const [results, setResults] = useState<ComparisonResult[]>([])
     const [playgroundPhotoId, setPlaygroundPhotoId] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [savingStates, setSavingStates] = useState<Record<string, boolean>>({})
 
     useEffect(() => {
-        if (!loading && results.length === 0 && promptRef.current) {
+        if (!loading && !generating && results.length === 0 && promptRef.current) {
             promptRef.current.focus()
         }
-    }, [loading, results.length])
+    }, [loading, generating, results.length])
 
     const handleModelSelect = (modelId: string) => {
         setSelectedModels((prev) =>
@@ -79,7 +81,7 @@ export default function PlaygroundPage() {
             return
         }
 
-        setLoading(true)
+        setGenerating(true)
         setError(null)
         setResults([])
 
@@ -108,7 +110,7 @@ export default function PlaygroundPage() {
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Something went wrong')
         } finally {
-            setLoading(false)
+            setGenerating(false)
         }
     }
 
@@ -153,11 +155,25 @@ export default function PlaygroundPage() {
     }
 
     if (loading) {
-        return <GenerationLoader modelCount={selectedModels.length} />
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <Loader />
+            </div>
+        )
+    }
+
+    if (generating) {
+        return (
+            <GenerationLoader 
+                modelCount={selectedModels.length}
+                modelNames={selectedModels}
+                hasImage={!!image}
+                prompt={prompt}
+            />
+        )
     }
 
     if (results.length > 0) {
-        console.log(results)
         return (
             <div className="min-h-screen p-2 md:p-4">
                 <div className="mx-auto max-w-7xl">
@@ -216,7 +232,7 @@ export default function PlaygroundPage() {
                         selectedModels={selectedModels}
                         onSelect={handleModelSelect}
                         maxSelection={3}
-                        disabled={loading}
+                        disabled={generating}
                         hasImage={!!image}
                     />
                 </Card>
@@ -230,7 +246,7 @@ export default function PlaygroundPage() {
                             placeholder="A serene mountain landscape at sunset with vibrant colors..."
                             label="Prompt"
                             maxLength={1000}
-                            disabled={loading}
+                            disabled={generating}
                         />
                     </Card>
 
@@ -256,7 +272,7 @@ export default function PlaygroundPage() {
 
                 <Button
                     onClick={handleGenerate}
-                    disabled={loading || !prompt.trim() || selectedModels.length === 0}
+                    disabled={generating || !prompt.trim() || selectedModels.length === 0}
                     className="w-full flex-shrink-0"
                 >
                     {selectedModels.length > 1

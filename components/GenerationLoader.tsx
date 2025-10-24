@@ -2,62 +2,132 @@ import { useEffect, useState } from 'react'
 import { Card } from './ui/Card'
 
 type GenerationLoaderProps = {
-    message?: string
     modelCount?: number
+    modelNames?: string[]
+    hasImage?: boolean
+    prompt?: string
 }
 
-const LOADING_STEPS = [
-    { message: 'Uploading images...', duration: 2000 },
-    { message: 'Initializing AI model...', duration: 3000 },
-    { message: 'Analyzing composition...', duration: 4000 },
-    { message: 'Extracting features...', duration: 5000 },
-    { message: 'Enhancing quality...', duration: 6000 },
-    { message: 'Applying final touches...', duration: 8000 },
-    { message: 'Almost there...', duration: 10000 },
-]
+const MODEL_DISPLAY_NAMES: Record<string, string> = {
+    'nano-banana': 'Nano Banana',
+    'flux-dev': 'Flux Dev',
+    'flux-pro': 'Flux Pro',
+    'stable-diffusion': 'Stable Diffusion',
+    // Add more as needed
+}
 
-export function GenerationLoader({ message, modelCount = 1 }: GenerationLoaderProps) {
-    const [loadingStep, setLoadingStep] = useState(LOADING_STEPS[0].message)
+export function GenerationLoader({ 
+    modelCount = 1, 
+    modelNames = [],
+    hasImage = false,
+    prompt = ''
+}: GenerationLoaderProps) {
+    const [loadingStep, setLoadingStep] = useState(0)
+    const [progress, setProgress] = useState(0)
+
+    const loadingSteps = hasImage 
+        ? [
+            'Uploading your image...',
+            `Initializing ${modelCount > 1 ? modelNames.length + ' AI models' : 'AI model'}...`,
+            'Analyzing image composition...',
+            'Extracting visual features...',
+            'Processing prompt...',
+            'Generating variations...',
+            'Enhancing quality...',
+            'Applying final touches...',
+            'Almost there...'
+          ]
+        : [
+            'Processing your prompt...',
+            `Initializing ${modelCount > 1 ? modelNames.length + ' AI models' : 'AI model'}...`,
+            'Understanding context...',
+            'Building composition...',
+            'Rendering details...',
+            'Enhancing quality...',
+            'Applying final touches...',
+            'Almost there...'
+          ]
 
     useEffect(() => {
-        let currentStep = 0
-        const startTime = Date.now()
+        const stepDuration = 2000
+        const progressInterval = 50
 
-        const interval = setInterval(() => {
-            const elapsed = Date.now() - startTime
+        const stepTimer = setInterval(() => {
+            setLoadingStep((prev) => {
+                if (prev < loadingSteps.length - 1) {
+                    return prev + 1
+                }
+                return prev
+            })
+        }, stepDuration)
 
-            while (
-                currentStep < LOADING_STEPS.length - 1 &&
-                elapsed >= LOADING_STEPS[currentStep].duration
-            ) {
-                currentStep++
-            }
+        const progressTimer = setInterval(() => {
+            setProgress((prev) => {
+                const increment = Math.random() * 3
+                if (prev < 90) {
+                    return Math.min(prev + increment, 90)
+                }
+                return prev
+            })
+        }, progressInterval)
 
-            if (currentStep < LOADING_STEPS.length) {
-                setLoadingStep(LOADING_STEPS[currentStep].message)
-            }
-        }, 500)
+        return () => {
+            clearInterval(stepTimer)
+            clearInterval(progressTimer)
+        }
+    }, [loadingSteps.length])
 
-        return () => clearInterval(interval)
-    }, [])
+    const displayModelNames = modelNames
+        .map(id => MODEL_DISPLAY_NAMES[id] || id)
+        .join(', ')
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-            <Card className="max-w-md mx-4">
-                <div className="space-y-6 text-center">
-                    <div className="relative w-16 h-16 mx-auto">
-                        <div className="absolute inset-0 border-4 rounded-full border-border"></div>
-                        <div className="absolute inset-0 border-4 border-transparent rounded-full border-t-primary animate-spin"></div>
+            <Card className="max-w-lg mx-4 w-full">
+                <div className="space-y-6">
+                    {/* Spinner */}
+                    <div className="flex justify-center">
+                        <div className="relative w-16 h-16">
+                            <div className="absolute inset-0 border-3 border-primary/15 rounded-full"></div>
+                            <div 
+                                className="absolute inset-0 border-3 border-transparent border-t-primary border-r-primary/50 rounded-full animate-spin"
+                                style={{ animationDuration: '0.8s' }}
+                            ></div>
+                        </div>
                     </div>
-                    <div>
+
+                    {/* Title and Models */}
+                    <div className="text-center">
                         <h3 className="mb-2 text-xl font-bold text-text">
                             {modelCount > 1 ? `Generating ${modelCount} Images` : 'Creating Your Image'}
                         </h3>
-                        <p className="text-muted">{message || loadingStep}</p>
+                        {modelNames.length > 0 && (
+                            <p className="text-sm font-medium text-muted mb-1">
+                                Using: {displayModelNames}
+                            </p>
+                        )}
+                        <p className="text-sm text-muted">{loadingSteps[loadingStep]}</p>
                     </div>
+
+                    {/* Progress Bar */}
                     <div className="w-full h-2 overflow-hidden rounded-full bg-border">
-                        <div className="h-full rounded-full bg-gradient-to-r from-primary to-primary-dark animate-pulse"></div>
+                        <div 
+                            className="h-full rounded-full bg-gradient-to-r from-primary to-primary-dark transition-all duration-300 ease-out"
+                            style={{ width: `${progress}%` }}
+                        ></div>
                     </div>
+
+                    {/* Prompt Preview */}
+                    {prompt && (
+                        <div className="p-3 text-xs text-muted bg-surface rounded-lg border border-border">
+                            <span className="font-medium">Prompt:</span> {prompt.slice(0, 100)}{prompt.length > 100 ? '...' : ''}
+                        </div>
+                    )}
+
+                    {/* Info */}
+                    <p className="text-xs text-center text-muted">
+                        This may take 10-40 seconds depending on model complexity
+                    </p>
                 </div>
             </Card>
         </div>

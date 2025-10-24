@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/Card'
 import { useAuth } from '@/hooks/useAuth'
 import { useI18n } from '@/lib/i18n/context'
 import { TOKEN_CONFIG } from '@/lib/config/tokens'
+import { Loader } from '@/components/ui/Loader'
 
 export default function DashboardPage() {
     const router = useRouter()
@@ -21,7 +22,7 @@ export default function DashboardPage() {
             try {
                 const response = await fetch('/api/tokens')
                 const data = await response.json()
-                
+
                 setTokens(data.tokens)
                 setTokenType(data.tokenType)
             } catch (error) {
@@ -53,7 +54,9 @@ export default function DashboardPage() {
     }
 
     if (isLoading) {
-        return <div className="flex justify-center items-center min-h-screen">{t.common.loading}</div>
+        return (<div className="flex items-center justify-center min-h-screen">
+            <Loader />
+        </div>)
     }
 
     return (
@@ -79,7 +82,7 @@ export default function DashboardPage() {
                                 <span className="text-4xl font-bold">€4.99</span>
                                 <p className="text-muted">per month</p>
                             </div>
-                            <Button 
+                            <Button
                                 onClick={() => handlePurchaseTokens('subscription')}
                                 className="w-full"
                                 size="lg"
@@ -97,7 +100,7 @@ export default function DashboardPage() {
                                 <span className="text-4xl font-bold">€9.99</span>
                                 <p className="text-muted">per pack</p>
                             </div>
-                            <Button 
+                            <Button
                                 onClick={() => handlePurchaseTokens('onetime')}
                                 className="w-full"
                                 variant="outline"
