@@ -54,7 +54,7 @@ export default function RootLayout({
                     <AuthProvider>
                  
                         <I18nProvider>
-                            {/* <Navbar /> */}
+                            <Navbar />
                             {children}
                         </I18nProvider>
                     </AuthProvider>

@@ -19,7 +19,7 @@ export const en: Translations = {
     },
 
     home: {
-        title: "BildOro - AI Image Generation Unleashed",
+        title: "AI Image Generation Unleashed",
         hero: "Break free from limitations. Generate without boundaries.",
         uploadSoon: "Explore Unlimited Models",
 		dashboard: "Dashboard", 

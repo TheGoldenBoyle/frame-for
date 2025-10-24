@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useI18n } from '@/lib/i18n/context'
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
 import Link from 'next/link'
+import { Footer } from '@/components/partials/Footer'
 
 export default function SignupPage() {
     const router = useRouter()
@@ -53,50 +54,53 @@ export default function SignupPage() {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-lg">
-                <Card>
-                    <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold">{t.home.title}</h1>
-                    </div>
+        <>
+            <div className="flex items-center justify-center min-h-[95vh] p-4">
+                <div className="w-full max-w-lg">
+                    <Card>
+                        <div className="text-center mb-8">
+                            <h1 className="text-3xl font-bold">{t.home.title}</h1>
+                        </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <Input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder={t.auth.email}
-                            required
-                        />
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <Input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder={t.auth.email}
+                                required
+                            />
 
-                        <Input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder={t.auth.password}
-                            required
-                        />
+                            <Input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder={t.auth.password}
+                                required
+                            />
 
-                        {error && (
-                            <p className="text-sm text-center text-red-600">{error}</p>
-                        )}
+                            {error && (
+                                <p className="text-sm text-center text-red-600">{error}</p>
+                            )}
 
-                        <Button
-                            type="submit"
-                            disabled={isSubmitting}
-                            className="w-full"
-                        >
-                            {isSubmitting ? 'Processing...' : t.auth.signup}
-                        </Button>
-                    </form>
+                            <Button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="w-full"
+                            >
+                                {isSubmitting ? 'Processing...' : t.auth.signup}
+                            </Button>
+                        </form>
 
-                    <div className="mt-6 text-center">
-                        <Link href="/login" className="text-sm text-stone-500 hover:text-stone-700">
-                            {t.auth.hasAccount}
-                        </Link>
-                    </div>
-                </Card>
+                        <div className="mt-6 text-center">
+                            <Link href="/login" className="text-sm text-stone-500 hover:text-stone-700">
+                                {t.auth.hasAccount}
+                            </Link>
+                        </div>
+                    </Card>
+                </div>
             </div>
-        </div>
+            <Footer />
+        </>
     )
 }

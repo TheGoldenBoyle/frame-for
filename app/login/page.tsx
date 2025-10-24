@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
 import Link from 'next/link'
+import { Footer } from '@/components/partials/Footer'
 
 export default function LoginPage() {
     const router = useRouter()
@@ -38,10 +39,10 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen p-4">
+        <div className="flex items-center justify-center min-h-[95vh] p-4">
             <div className="w-full max-w-lg">
                 <Card>
-                    <div className="text-center mb-8">
+                     <div className="text-center mb-8">
                         <h1 className="text-3xl font-bold">{t.home.title}</h1>      
                     </div>
 
@@ -78,6 +79,7 @@ export default function LoginPage() {
                     </div>
                 </Card>
             </div>
+            <Footer />
         </div>
     )
 }

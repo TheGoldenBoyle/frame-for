@@ -19,7 +19,7 @@ export const de: Translations = {
     },
 
     home: {
-        title: "BildOro - KI-Bildgenerierung Ohne Grenzen",
+        title: "KI-Bildgenerierung Ohne Grenzen",
         hero: "Befreie dich von EinschrÃ¤nkungen. Generiere ohne Grenzen.",
         uploadSoon: "Unbegrenzte Modelle Erkunden",
         dashboard: "Erstellen",
