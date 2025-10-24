@@ -1,4 +1,8 @@
-// 'use client'
+'use client'
+export default function Studio() {
+
+    return (<div>studiod </div>)
+ }
 
 // import { useState, useRef } from 'react'
 // import { useRouter } from 'next/navigation'

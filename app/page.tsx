@@ -15,10 +15,9 @@ export default function LandingPage() {
     return (
         <>
             <div className="min-h-screen flex flex-col relative overflow-hidden">
-                {/* Animated background effect - bottom layer */}
+
                 <AnimatedBackground intensity="low" />
 
-                {/* Blur overlay layer - creates depth and softens the animation */}
                 <div
                     className="absolute inset-0 pointer-events-none z-[1]"
                     style={{
