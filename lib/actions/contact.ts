@@ -1,8 +1,6 @@
 'use server'
 
-import { Resend } from 'resend'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
+import nodemailer from 'nodemailer'
 
 interface ContactFormData {
     name: string
@@ -15,9 +13,19 @@ export async function sendContactEmail(data: ContactFormData) {
     try {
         const { name, email, subject, message } = data
         
-        const result = await resend.emails.send({
-            from: 'BildOro Contact <contact@bildoro.com>',
-            to: 'thegoldenboyle@gmail.com',
+        const transporter = nodemailer.createTransport({
+            host: 'smtp-pulse.com',
+            port: 465,
+            secure: true,
+            auth: {
+                user: process.env.SENDPULSE_SMTP_USER,
+                pass: process.env.SENDPULSE_SMTP_PASSWORD,
+            },
+        })
+
+        await transporter.sendMail({
+            from: `"BildOro Contact" <${process.env.CONTACT_FORM_FROM_EMAIL}>`,
+            to: process.env.CONTACT_FORM_TO_EMAIL,
             subject: `New Contact Form Submission: ${subject}`,
             html: `
                 <h1>New Contact Form Submission</h1>
@@ -25,14 +33,9 @@ export async function sendContactEmail(data: ContactFormData) {
                 <p><strong>Email:</strong> ${email}</p>
                 <p><strong>Subject:</strong> ${subject}</p>
                 <p><strong>Message:</strong></p>
-                <p>${message}</p>
-            `
+                <p>${message.replace(/\n/g, '<br>')}</p>
+            `,
         })
-
-        if (result.error) {
-            console.error('Resend Error:', result.error)
-            throw new Error('Failed to send email')
-        }
 
         return { success: true }
     } catch (error) {
