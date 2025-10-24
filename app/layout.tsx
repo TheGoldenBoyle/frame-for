@@ -4,6 +4,18 @@ import './styles/globals.css'
 import { Navbar } from '@/components/partials/Navbar'
 import { AuthProvider } from '@/lib/auth/provider'
 import { ThemeProvider } from '@/lib/theme/provider'
+import { Lexend, DM_Sans } from 'next/font/google'
+
+const lexend = Lexend({ 
+    subsets: ['latin'],
+    variable: '--font-heading'
+  })
+  
+  const dmSans = DM_Sans({ 
+    subsets: ['latin'],
+    variable: '--font-body',
+    weight: ['400', '500', '600', '700']
+  })
 
 export const metadata: Metadata = {
     metadataBase: new URL('https://bildoro.app'),
@@ -48,7 +60,7 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="en">
+        <html lang="en" className={`${lexend.variable} ${dmSans.variable}`}>
             <body>
                 <ThemeProvider>
                     <AuthProvider>

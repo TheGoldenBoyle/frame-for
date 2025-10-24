@@ -47,7 +47,7 @@ export const de: Translations = {
 		generate: "Bild generieren",
 		compare: "{count} Modelle vergleichen",
 		results: "Ergebnisse",
-		startOver: "Neu starten",
+		startOver: "Anfang",
 		viewGallery: "Galerie ansehen",
 		saveToGallery: "In Galerie speichern",
 		saving: "Speichern...",

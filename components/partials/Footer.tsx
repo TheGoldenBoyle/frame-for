@@ -5,7 +5,7 @@ export function Footer() {
     const { t } = useI18n()
 
     return (
-        <footer className="flex justify-center items-center p-4 space-x-4">
+        <footer className="flex justify-center items-center p-4 space-x-4 absolute bottom-0 inset-x-0 z-[20]">
             <Link href="/imprint" className="text-muted hover:text-text transition-colors">
                 {t.imprint.title}
             </Link>
