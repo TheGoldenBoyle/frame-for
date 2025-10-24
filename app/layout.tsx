@@ -36,6 +36,9 @@ export const metadata: Metadata = {
         'creative AI',
         'easy AI access'
     ],
+    verification: {
+        google: 'upvI-Brlhpw7hli76EeC9mKuU2wBcnU9n_zUSucdsd4'
+    },
     openGraph: {
         title: 'BildOro - Easy Access to Latest AI Models',
         description: 'Break free from restrictions. Instant, affordable access to the latest AI image generation models. No gatekeeping, no barriers.',
