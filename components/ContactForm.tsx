@@ -119,7 +119,10 @@ export function ContactForm() {
                 </div>
                 <div className="text-center">
                     <Button
-                        type="submit"
+                        // type="submit"
+                        onClick={() => {
+                            alert("Woah slow down! 🚀\n\nRelease date is NOV 30.\n\nContact @theGoldenBoyle on X.");
+                        }}
                         disabled={status === 'sending'}
                         className="w-full"
                     >

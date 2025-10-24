@@ -53,7 +53,9 @@ export default function LandingPage() {
                         <div className="flex justify-center gap-4">
                             <Button
                                 size="lg"
-                                onClick={() => router.push(user ? '/dashboard' : '/signup')}
+                                onClick={() => {
+                                    alert("Woah slow down! 🚀\n\nRelease date is NOV 30.\n\nContact @theGoldenBoyle on X for early access.");
+                                }}
                             >
                                 {t.landing.cta}
                             </Button>
