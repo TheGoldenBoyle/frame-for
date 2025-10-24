@@ -22,7 +22,7 @@ const sizeStyles = {
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ({ variant = 'primary', size = 'md', className = '', disabled, children, ...props }, ref) => {
-        const baseStyles = 'font-medium rounded-lg transition-colors disabled:cursor-not-allowed disabled:opacity-60'
+        const baseStyles = 'font-medium rounded-lg transition-colors disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer'
 
         return (
             <button

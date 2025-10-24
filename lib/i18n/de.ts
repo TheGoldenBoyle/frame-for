@@ -73,5 +73,23 @@ export const de: Translations = {
 		success: "Erfolg!",
 		back: "Zurück",
 		backToDashboard: "Zurück zum Dashboard",
+		contact: "Kontakt",
+	},
+	imprint: {
+		title: "Impressum",
+		contact: "Kontaktinformationen",
+		companyName: "BildOro GmbH",
+		streetAddress: "Goldrain 5",
+		cityPostal: "36088 Hünfeld",
+		country: "Deutschland",
+		contact_details: "Kontaktdetails",
+		phone: "Telefon: +49 1551 022 0025",
+		email: "E-Mail: thegoldenboyle@gmail.com",
+		legal_representation: "Vertretungsberechtigte",
+		ceo: "Geschäftsführer: James Boyle",
+		disclaimer: "Haftungsausschluss und Geschäftsbedingungen",
+		disclaimer_text: "Wir liefern ausschließlich hochwertige Ergebnisse. Verwendete Token können nicht erstattet werden. Die Qualität der Ergebnisse hängt von den Modellen und Prompts ab. Bei Fragen oder Anliegen kontaktieren Sie uns jederzeit. Unser Ziel ist es, jedem Kunden Wert und Wertschätzung zu bieten.",
+		social_media: "Social Media",
+		x_account: "X (Twitter): @theGoldenBoyle"
 	},
 }

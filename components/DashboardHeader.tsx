@@ -45,7 +45,7 @@ export function DashboardHeader({
                             onClick={() => router.push('/dashboard')}
                             className="text-2xl font-bold text-text"
                         >
-                            BildOro
+                            Bild<span className="font-black text-primary">Oro</span>
                         </button>
 
                         <div className="hidden gap-4 md:flex">

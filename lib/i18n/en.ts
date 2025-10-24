@@ -22,6 +22,7 @@ export const en: Translations = {
         title: "BildOro - AI Image Generation Unleashed",
         hero: "Break free from limitations. Generate without boundaries.",
         uploadSoon: "Explore Unlimited Models",
+		dashboard: "Dashboard", 
         studio: "Studio",
 		tokens: "Tokens"
     },
@@ -72,5 +73,23 @@ export const en: Translations = {
 		success: "Success!",
 		back: "Back",
 		backToDashboard: "Back to Dashboard",
+		contact: "Contact",
+	},
+	imprint: {
+		title: "Imprint",
+		contact: "Contact Information",
+		companyName: "BildOro GmbH",
+		streetAddress: "Goldrain 5",
+		cityPostal: "36088 Hünfeld",
+		country: "Germany",
+		contact_details: "Contact Details",
+		phone: "Phone: +49 1551 022 0025",
+		email: "Email: thegoldenboyle@gmail.com",
+		legal_representation: "Legal Representation",
+		ceo: "Managing Director: James Boyle",
+		disclaimer: "Disclaimer and Terms of Service",
+		disclaimer_text: "We exclusively deliver top-quality results. Used tokens cannot be refunded. The quality of results depends on the models and prompts. Feel free to contact us at any time with questions or concerns. Our goal is to provide value and make every customer feel valued.",
+		social_media: "Social Media",
+		x_account: "X (Twitter): @theGoldenBoyle"
 	},
 }

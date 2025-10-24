@@ -66,5 +66,23 @@ export type Translations = {
 		success: string
 		back: string
 		backToDashboard: string
+		contact?: string
+	}
+	imprint: {
+		title: string
+		contact: string
+		companyName: string
+		streetAddress: string
+		cityPostal: string
+		country: string
+		contact_details: string
+		phone: string
+		email: string
+		legal_representation: string
+		ceo: string
+		disclaimer: string
+		disclaimer_text: string
+		social_media: string
+		x_account: string
 	}
 }

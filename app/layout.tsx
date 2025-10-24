@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { I18nProvider } from '@/lib/i18n/context'
 import './globals.css'
-
+import { Navbar } from '@/components/partials/Navbar'
 import { AuthProvider } from '@/lib/auth/provider'
 import { ThemeProvider } from '@/lib/theme/provider'
 
@@ -52,7 +52,11 @@ export default function RootLayout({
             <body>
                 <ThemeProvider>
                     <AuthProvider>
-                        <I18nProvider>{children}</I18nProvider>
+                 
+                        <I18nProvider>
+                            <Navbar />
+                            {children}
+                        </I18nProvider>
                     </AuthProvider>
                 </ThemeProvider>
             </body>
