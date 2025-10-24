@@ -12,12 +12,14 @@ export const en: Translations = {
 		welcome: "Welcome",
 		error: "Authentication error",
 	},
-    landing: {
-        headline: "AI Image Generation. Made Simple.",
-        subheadline: "No more gatekeeping. No more restrictions. Your models. Your way. Sign in and try it out. First 3 generations are on us.",
-        cta: "Start Generating",
-    },
-
+	landing: {
+		headline1: "Unleash Your Creativity.",
+		headline2: "AI Image Generation Without Limits.",
+		subheadline1: "No gatekeeping. No restrictions. No barriers.",
+		subheadline2: "Your models. Your vision. Your way.",
+		subheadline3: "Join now and get your first 3 generations free.",
+		cta: "Start Creating",
+	},
     home: {
         title: "AI Image Generation Unleashed",
         hero: "Break free from limitations. Generate without boundaries.",

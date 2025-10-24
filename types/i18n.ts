@@ -21,8 +21,11 @@ export type Translations = {
 		tokens: string
 	}
 	landing: {
-		headline: string
-		subheadline: string
+		headline1: string
+		headline2: string
+		subheadline1: string
+		subheadline2: string
+		subheadline3: string
 		cta: string
 	}
 	dashboard: {

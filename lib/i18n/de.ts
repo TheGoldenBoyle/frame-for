@@ -12,12 +12,14 @@ export const de: Translations = {
 		welcome: "Willkommen",
 		error: "Authentifizierungsfehler",
 	},
-    landing: {
-        headline: "KI-Bildgenerierung. Ganz Einfach.",
-        subheadline: "Keine EinschrÃ¤nkungen mehr. Keine Barrieren. Deine Modelle. Deine Art. Melde dich an und probiere es aus. Die ersten 3 Generierungen gehen auf uns.",
-        cta: "Jetzt Generieren",
-    },
-
+	landing: {
+		headline1: "Entfessle Deine Kreativität.",
+		headline2: "KI-Bildgenerierung Ohne Grenzen.",
+		subheadline1: "Keine Barrieren. Keine Einschränkungen. Keine Limits.",
+		subheadline2: "Deine Modelle. Deine Vision. Deine Art.",
+		subheadline3: "Melde dich jetzt an und erhalte deine ersten 3 Generierungen kostenlos.",
+		cta: "Jetzt Loslegen",
+	},
     home: {
         title: "KI-Bildgenerierung Ohne Grenzen",
         hero: "Befreie dich von EinschrÃ¤nkungen. Generiere ohne Grenzen.",
