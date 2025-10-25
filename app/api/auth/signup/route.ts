@@ -1,7 +1,8 @@
-
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/superbase-server"
+import { notifyNewSignup } from "@/lib/email-service"
+
 export async function POST(request: NextRequest) {
     try {
         const { email, password } = await request.json()
@@ -19,7 +20,7 @@ export async function POST(request: NextRequest) {
             email,
             password,
             options: {
-                emailRedirectTo: `${process.env.NEXT_PUBLIC_URL}/playground`
+                emailRedirectTo: `${process.env.NEXT_PUBLIC_URL}/dashboard/playground`
             }
         })
 
@@ -41,6 +42,12 @@ export async function POST(request: NextRequest) {
                     tokenType: "free"
                 }
             })
+
+            notifyNewSignup({
+                email: data.user.email!,
+                userId: data.user.id,
+                signupDate: new Date()
+            }).catch(err => console.error('Failed to send signup notification:', err))
         }
 
         return NextResponse.json({ 

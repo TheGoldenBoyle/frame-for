@@ -28,7 +28,7 @@ export function DashboardHeader({
         { path: '/dashboard', label: t.home.tokens },
         // { path: '/dashboard/studio', label: t.home.studio },
         { path: '/dashboard/playground', label: t.playground.title },
-        { path: '/dashboard/gallery/playground', label: t.dashboard.viewGallery },
+        { path: '/dashboard/gallery', label: t.dashboard.viewGallery },
     ]
 
     const isActive = (path: string) => pathname === path

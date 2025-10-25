@@ -13,7 +13,7 @@ export const Navbar = () => {
     const { user } = useAuth()
     const { t, locale, setLocale } = useI18n()
 
-    if (pathname === '/dashboard') return null
+    if (pathname.startsWith('/dashboard')) return null
 
     return (
         <nav className="flex items-center justify-between px-8 py-6 absolute inset-x-0 max-w-6xl mx-auto z-[100]">

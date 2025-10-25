@@ -44,8 +44,7 @@ export default function SignupPage() {
                 return
             }
 
-            // Redirect to playground
-            router.push('/playground')
+            router.push('/dashboard/playground')
         } catch (err) {
             setError(t.common.error)
         } finally {

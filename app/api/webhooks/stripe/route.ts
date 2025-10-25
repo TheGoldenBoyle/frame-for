@@ -4,6 +4,7 @@ import Stripe from "stripe"
 import { prisma } from "@/lib/prisma"
 import { setTokens, addTokens } from "@/lib/tokens"
 import { TOKEN_CONFIG } from "@/lib/config/tokens"
+import { notifyNewPurchase } from "@/lib/email-service"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 	apiVersion: "2025-09-30.clover",
@@ -60,6 +61,16 @@ export async function POST(request: NextRequest) {
 							"subscription",
 							"Subscription activated"
 						)
+
+						notifyNewPurchase({
+							email: user.email,
+							userId: user.id,
+							purchaseType: "subscription",
+							amount: session.amount_total || 0,
+							currency: session.currency || "usd",
+							purchaseDate: new Date(),
+							stripeCustomerId: customerId,
+						}).catch(err => console.error('Failed to send purchase notification:', err))
 					}
 				}
 
@@ -84,6 +95,16 @@ export async function POST(request: NextRequest) {
 								tokenType: "onetime",
 							},
 						})
+
+						notifyNewPurchase({
+							email: user.email,
+							userId: user.id,
+							purchaseType: "onetime",
+							amount: session.amount_total || 0,
+							currency: session.currency || "usd",
+							purchaseDate: new Date(),
+							stripeCustomerId: customerId,
+						}).catch(err => console.error('Failed to send purchase notification:', err))
 					}
 				}
 

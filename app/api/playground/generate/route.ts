@@ -52,14 +52,16 @@ async function generateWithModel(
 			throw new Error("Nano Banana requires an input image")
 		}
 
-		const output = (await replicate.run(modelPath, {
+		const output = await replicate.run(modelPath, {
 			input: {
 				prompt,
-				image_input: [imageUrl],
+				image_input: [imageUrl],  // Array of image URLs
 			},
-		})) as { url: () => string }
+		})
 
-		return output.url()
+		// Output is a direct string URI
+		if (typeof output === "string") return output
+		throw new Error("Unexpected output format from nano-banana")
 	}
 
 	if (modelId === "flux-1.1-pro") {
