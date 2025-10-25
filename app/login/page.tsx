@@ -39,7 +39,7 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-[95vh] p-4">
+        <div className="flex items-center justify-center min-h-screen p-4">
             <div className="w-full max-w-lg">
                 <Card>
                      <div className="text-center mb-8">

@@ -9,7 +9,7 @@ export default function ContactPage() {
 
     return (
         <>
-            <div className="min-h-[95vh] grid place-items-center">
+            <div className="min-h-screen grid place-items-center">
                 <main className="flex-grow container mx-auto px-4 py-16">
                     <ContactForm />
                 </main>

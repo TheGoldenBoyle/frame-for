@@ -30,7 +30,6 @@ export function ContactForm() {
         try {
             await sendContactEmail(formState)
             setStatus('success')
-            // Reset form
             setFormState({
                 name: '',
                 email: '',
@@ -119,10 +118,7 @@ export function ContactForm() {
                 </div>
                 <div className="text-center">
                     <Button
-                        // type="submit"
-                        onClick={() => {
-                            alert("Woah slow down! 🚀\n\nRelease date is NOV 30.\n\nContact @theGoldenBoyle on X.");
-                        }}
+                        type="submit"
                         disabled={status === 'sending'}
                         className="w-full"
                     >

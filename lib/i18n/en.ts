@@ -78,7 +78,7 @@ export const en: Translations = {
 		contact: "Contact",
 	},
 	contact: {
-		title: "Contact Form",
+		title: "Contact",
 		name: "Name",
 		email: "Email",
 		subject: "Subject",
