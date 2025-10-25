@@ -54,7 +54,7 @@ export default function LandingPage() {
                             <Button
                                 size="lg"
                                 onClick={() => {
-                                    alert("Woah slow down! 🚀\n\nRelease date is NOV 30.\n\nContact @theGoldenBoyle on X for early access.");
+                                    alert("Woah slow down! 🚀\n\nRelease date is NOV 1.\n\nContact @theGoldenBoyle on X for early access.");
                                 }}
                             >
                                 {t.landing.cta}
@@ -63,7 +63,7 @@ export default function LandingPage() {
                                 variant="outline"
                                 size="lg"
                                 onClick={() => {
-                                    alert("Woah slow down! 🚀\n\nRelease date is NOV 30.\n\nContact @theGoldenBoyle on X for early access.");
+                                    alert("Woah slow down! 🚀\n\nRelease date is NOV 1.\n\nContact @theGoldenBoyle on X for early access.");
                                 }}
                             >
                                 {t.playground.title}
