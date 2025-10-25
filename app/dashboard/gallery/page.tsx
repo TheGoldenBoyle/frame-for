@@ -73,8 +73,6 @@ export default function GalleryPage() {
                     </Button>
                 </div>
 
-                <h1 className="mb-8 text-3xl font-bold">Your Gallery</h1>
-
                 {!hasPhotos ? (
                     <Card>
                         <div className="py-12 text-center">
