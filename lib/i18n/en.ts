@@ -90,7 +90,7 @@ export const en: Translations = {
 	imprint: {
 		title: "Imprint",
 		contact: "Contact Information",
-		companyName: "BildOro GmbH",
+		companyName: "BildOro.app",
 		streetAddress: "Goldrain 5",
 		cityPostal: "36088 HÃ¼nfeld",
 		country: "Germany",
