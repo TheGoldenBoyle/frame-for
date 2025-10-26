@@ -27,12 +27,12 @@ export default function OfflinePage() {
                     Please check your connection and try again.
                 </p>
 
-                <button
+                {/* <button
                     onClick={() => window.location.reload()}
                     className="px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity"
                 >
                     Try Again
-                </button>
+                </button> */}
 
                 <div className="mt-8 text-sm text-muted">
                     <p>Some features may be available offline</p>
