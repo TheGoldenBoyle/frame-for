@@ -7,22 +7,22 @@ import { Loader } from '@/components/ui/Loader'
 
 type RevisionModalProps = {
     isOpen: boolean
-    onCloseAction: () => void
+    onClose: () => void
     imageUrl: string
     batchId: string
     imageIndex: number
     originalPrompt: string
-    onRevisionCompleteAction: () => void
+    onRevisionComplete: () => void
 }
 
 export function RevisionModal({
     isOpen,
-    onCloseAction,
+    onClose,
     imageUrl,
     batchId,
     imageIndex,
     originalPrompt,
-    onRevisionCompleteAction
+    onRevisionComplete
 }: RevisionModalProps) {
     const router = useRouter()
     const [revisionPrompt, setRevisionPrompt] = useState('')
@@ -67,8 +67,7 @@ export function RevisionModal({
                 throw new Error(data.error || 'Revision failed')
             }
 
-            onRevisionCompleteAction()
-            onCloseAction()
+            onRevisionComplete()
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Something went wrong')
         } finally {
@@ -77,6 +76,7 @@ export function RevisionModal({
     }
 
     const handleGetTokens = () => {
+        onClose()
         router.push('/dashboard')
     }
 
@@ -87,11 +87,11 @@ export function RevisionModal({
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-2xl font-bold">Revise Image</h2>
                         <button
-                            onClick={onCloseAction}
+                            onClick={onClose}
                             disabled={revising}
-                            className="text-muted hover:text-text"
+                            className="text-muted hover:text-text text-2xl leading-none"
                         >
-                            ✕
+                            ×
                         </button>
                     </div>
 
@@ -151,7 +151,7 @@ export function RevisionModal({
                         <div className="flex gap-3">
                             <Button
                                 variant="outline"
-                                onClick={onCloseAction}
+                                onClick={onClose}
                                 disabled={revising}
                                 className="flex-1"
                             >
@@ -163,7 +163,7 @@ export function RevisionModal({
                                 className="flex-1"
                             >
                                 {revising ? (
-                                    <span className="flex items-center gap-2">
+                                    <span className="flex items-center justify-center gap-2">
                                         <Loader size="sm" />
                                         Revising...
                                     </span>

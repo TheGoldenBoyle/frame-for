@@ -44,6 +44,10 @@ export function ResultsGrid({ results, batchId, prompt, onRevisionComplete }: Re
         })
     }
 
+    const handleRevisionComplete = () => {
+        onRevisionComplete()
+    }
+
     return (
         <>
             <Card>
@@ -111,7 +115,7 @@ export function ResultsGrid({ results, batchId, prompt, onRevisionComplete }: Re
             {selectedImage && (
                 <RevisionModal
                     isOpen={revisionModalOpen}
-                    onCloseAction={() => {
+                    onClose={() => {
                         setRevisionModalOpen(false)
                         setSelectedImage(null)
                     }}
@@ -119,7 +123,7 @@ export function ResultsGrid({ results, batchId, prompt, onRevisionComplete }: Re
                     batchId={batchId}
                     imageIndex={selectedImage.index}
                     originalPrompt={prompt}
-                    onRevisionCompleteAction={onRevisionComplete}
+                    onRevisionComplete={handleRevisionComplete}
                 />
             )}
         </>

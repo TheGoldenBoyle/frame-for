@@ -5,20 +5,20 @@ import { Card } from '@/components/ui/Card'
 
 type GenerationControlsProps = {
     imageCount: number
-    onImageCountChangeAction: (count: number) => void
+    onImageCountChange: (count: number) => void
     prompt: string
-    onPromptChangeAction: (prompt: string) => void
-    onGenerateAction: () => void
+    onPromptChange: (prompt: string) => void
+    onGenerate: () => void
     generating: boolean
     tokensPerImage: number
 }
 
 export function GenerationControls({
     imageCount,
-    onImageCountChangeAction,
+    onImageCountChange,
     prompt,
-    onPromptChangeAction,
-    onGenerateAction,
+    onPromptChange,
+    onGenerate,
     generating,
     tokensPerImage
 }: GenerationControlsProps) {
@@ -33,7 +33,7 @@ export function GenerationControls({
                     </label>
                     <textarea
                         value={prompt}
-                        onChange={(e) => onPromptChangeAction(e.target.value)}
+                        onChange={(e) => onPromptChange(e.target.value)}
                         placeholder="Enter your prompt or use the AI assistant to generate one..."
                         disabled={generating}
                         className="w-full px-4 py-3 bg-background border border-border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary min-h-[120px]"
@@ -48,7 +48,7 @@ export function GenerationControls({
                         {[1, 2, 3, 4, 5, 6].map((count) => (
                             <button
                                 key={count}
-                                onClick={() => onImageCountChangeAction(count)}
+                                onClick={() => onImageCountChange(count)}
                                 disabled={generating}
                                 className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${imageCount === count
                                         ? 'border-primary bg-primary/10 text-primary'
@@ -75,7 +75,7 @@ export function GenerationControls({
                 </div>
 
                 <Button
-                    onClick={onGenerateAction}
+                    onClick={onGenerate}
                     disabled={!prompt.trim() || generating}
                     className="w-full"
                     size="lg"

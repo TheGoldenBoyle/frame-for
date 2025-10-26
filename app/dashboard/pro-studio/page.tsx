@@ -156,10 +156,10 @@ export default function ProStudioPage() {
                 <div className="h-fit">
                     <GenerationControls
                         imageCount={imageCount}
-                        onImageCountChangeAction={setImageCount}
+                        onImageCountChange={setImageCount}
                         prompt={prompt}
-                        onPromptChangeAction={setPrompt}
-                        onGenerateAction={handleGenerate}
+                        onPromptChange={setPrompt}
+                        onGenerate={handleGenerate}
                         generating={generating}
                         tokensPerImage={TOKENS_PER_IMAGE}
                     />
