@@ -26,8 +26,8 @@ export function DashboardHeader({
 
     const navItems = [
         { path: '/dashboard', label: t.home.tokens },
-        // { path: '/dashboard/studio', label: t.home.studio },
         { path: '/dashboard/playground', label: t.playground.title },
+        { path: '/dashboard/pro-studio', label: 'Pro Studio' },
         { path: '/dashboard/gallery', label: t.dashboard.viewGallery },
     ]
 

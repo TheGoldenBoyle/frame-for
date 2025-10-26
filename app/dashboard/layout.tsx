@@ -22,7 +22,7 @@ export default function DashboardLayout({
         }
     }, [loading, user, router])
 
-    if (loading) {
+        if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <Loader />

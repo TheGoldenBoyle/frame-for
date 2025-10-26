@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "darwin-arm64"]
 }
 
@@ -10,19 +10,19 @@ datasource db {
 }
 
 model User {
-  id                   String    @id
-  email                String    @unique
-  subscriptionStatus   String    @default("free")
-  tokens               Int       @default(5)
-  tokenType            String    @default("free")
-  stripeCustomerId     String?   @unique
-  stripeSubscriptionId String?   @unique
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
-
-  photos            Photo[]
-  playgroundPhotos  PlaygroundPhoto[]
-  tokenTransactions TokenTransaction[]
+  id                   String             @id
+  email                String             @unique
+  subscriptionStatus   String             @default("free")
+  tokens               Int                @default(5)
+  tokenType            String             @default("free")
+  stripeCustomerId     String?            @unique
+  stripeSubscriptionId String?            @unique
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  photos               Photo[]
+  playgroundPhotos     PlaygroundPhoto[]
+  proStudioBatches     ProStudioBatch[]
+  tokenTransactions    TokenTransaction[]
 
   @@map("users")
 }
@@ -34,8 +34,7 @@ model TokenTransaction {
   type      String
   reason    String?
   createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([createdAt])
@@ -43,18 +42,17 @@ model TokenTransaction {
 }
 
 model Photo {
-  id            String   @id @default(cuid())
+  id            String     @id @default(cuid())
   userId        String
   originalUrls  String[]
   generatedUrl  String
   preset        String
-  isWatermarked Boolean  @default(true)
-  tokensCost    Int      @default(1)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  revisions Revision[]
+  isWatermarked Boolean    @default(true)
+  tokensCost    Int        @default(1)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  revisions     Revision[]
 
   @@index([userId])
   @@map("photos")
@@ -69,8 +67,7 @@ model PlaygroundPhoto {
   tokensCost  Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([createdAt])
@@ -84,9 +81,42 @@ model Revision {
   resultUrl  String
   tokensCost Int      @default(1)
   createdAt  DateTime @default(now())
-
-  photo Photo @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  photo      Photo    @relation(fields: [photoId], references: [id], onDelete: Cascade)
 
   @@index([photoId])
   @@map("revisions")
+}
+
+model ProStudioBatch {
+  id              String                   @id @default(cuid())
+  userId          String
+  optimizedPrompt String
+  chatHistory     Json?
+  imageCount      Int
+  results         Json
+  tokensCost      Int
+  modelUsed       String                   @default("flux-1.1-pro")
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+  user            User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  imageRevisions  ProStudioImageRevision[]
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("pro_studio_batches")
+}
+
+model ProStudioImageRevision {
+  id             String         @id @default(cuid())
+  batchId        String
+  imageIndex     Int
+  originalUrl    String
+  revisedUrl     String
+  revisionPrompt String
+  tokensCost     Int
+  createdAt      DateTime       @default(now())
+  batch          ProStudioBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@index([batchId])
+  @@map("pro_studio_revisions")
 }

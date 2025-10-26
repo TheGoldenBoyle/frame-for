@@ -7,14 +7,16 @@ export const TOKEN_CONFIG = {
 	ONETIME_PRICE: 9.99,
 
 	STRIPE_PRICE_IDS: {
-		SUBSCRIPTION: "prod_TH9FEPbX9t28mm", // Updated monthly subscription ID
-		ONETIME: "prod_TH9Ga0Jiuww0GO", // Updated token pack ID
+		SUBSCRIPTION: "prod_TH9FEPbX9t28mm",
+		ONETIME: "prod_TH9Ga0Jiuww0GO",
 	},
 
 	COSTS: {
 		GENERATE: 1,
 		REVISE: 1,
 		PLAYGROUND_PER_MODEL: 1,
+		PRO_STUDIO_PER_IMAGE: 3,
+		PRO_STUDIO_REVISION: 2,
 	},
 
 	CONTACT: {

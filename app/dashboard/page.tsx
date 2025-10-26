@@ -54,70 +54,169 @@ export default function DashboardPage() {
     }
 
     if (isLoading) {
-        return (<div className="flex items-center justify-center min-h-screen">
-            <Loader />
-        </div>)
+        return <Loader fullScreen />
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-6 bg-background">
-            <div className="w-full max-w-4xl space-y-8">
+        <div className="min-h-screen p-4 md:p-8">
+            <div className="max-w-6xl mx-auto space-y-8">
                 <div className="text-center">
-                    <div className="bg-surface border-border border rounded-lg p-6 inline-block">
-                        <div className="flex items-center justify-center space-x-4">
-                            <span className="text-lg text-muted">Current Balance:</span>
-                            <span className="text-3xl font-bold">
-                                {tokens} {tokenType === 'free' ? 'Free Tokens' : 'Tokens'}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
-                    <Card className="p-8 hover:shadow-xl transition-all duration-300 ease-in-out">
-                        <div className="space-y-6 text-center">
-                            <h2 className="text-2xl font-bold mb-4">Monthly Subscription</h2>
-                            <p className="text-muted mb-4">Unlimited creativity with our monthly plan</p>
-                            <div className="mb-6">
-                                <span className="text-4xl font-bold">€4.99</span>
-                                <p className="text-muted">per month</p>
+                    <Card className="inline-block">
+                        <div className="px-8 py-6">
+                            <div className="flex items-center justify-center gap-4">
+                                <span className="text-lg text-muted">Current Balance:</span>
+                                <span className="text-4xl font-bold text-primary">
+                                    {tokens}
+                                </span>
+                                <span className="text-lg text-muted">tokens</span>
                             </div>
-                            <Button
-                                onClick={() => handlePurchaseTokens('subscription')}
-                                className="w-full"
-                                size="lg"
-                            >
-                                Subscribe Now
-                            </Button>
-                        </div>
-                    </Card>
-
-                    <Card className="p-8 hover:shadow-xl transition-all duration-300 ease-in-out">
-                        <div className="space-y-6 text-center">
-                            <h2 className="text-2xl font-bold mb-4">Token Pack</h2>
-                            <p className="text-muted mb-4">One-time purchase for flexible use</p>
-                            <div className="mb-6">
-                                <span className="text-4xl font-bold">€9.99</span>
-                                <p className="text-muted">per pack</p>
-                            </div>
-                            <Button
-                                onClick={() => handlePurchaseTokens('onetime')}
-                                className="w-full"
-                                variant="outline"
-                                size="lg"
-                            >
-                                Buy Token Pack
-                            </Button>
+                            {tokenType === 'subscription' && (
+                                <p className="text-sm text-muted mt-2">Active Subscription</p>
+                            )}
                         </div>
                     </Card>
                 </div>
 
-                {tokens === 0 && (
-                    <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg text-center">
-                        <p className="text-yellow-700">
-                            You've used all your free tokens. Purchase more to continue generating images.
-                        </p>
+                <div className="mb-8">
+                    <h2 className="text-2xl font-bold mb-2 text-center">Quick Actions</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
+                        <Button
+                            onClick={() => router.push('/dashboard/playground')}
+                            variant="outline"
+                            className="h-24"
+                        >
+                            <div className="text-center">
+                                <div className="text-lg font-semibold mb-1">Playground</div>
+                                <div className="text-xs text-muted">Compare Models</div>
+                            </div>
+                        </Button>
+                        <Button
+                            onClick={() => router.push('/dashboard/pro-studio')}
+                            variant="outline"
+                            className="h-24"
+                        >
+                            <div className="text-center">
+                                <div className="text-lg font-semibold mb-1">Pro Studio</div>
+                                <div className="text-xs text-muted">Hyper-Realistic AI</div>
+                            </div>
+                        </Button>
+                        <Button
+                            onClick={() => router.push('/dashboard/gallery')}
+                            variant="outline"
+                            className="h-24"
+                        >
+                            <div className="text-center">
+                                <div className="text-lg font-semibold mb-1">Gallery</div>
+                                <div className="text-xs text-muted">View Your Work</div>
+                            </div>
+                        </Button>
                     </div>
+                </div>
+
+                <div>
+                    <h2 className="text-2xl font-bold mb-6 text-center">Get More Tokens</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                        <Card className="relative overflow-hidden">
+                            <div className="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
+                                BEST VALUE
+                            </div>
+                            <div className="p-8 space-y-6 text-center">
+                                <div>
+                                    <h3 className="text-2xl font-bold mb-2">Monthly Subscription</h3>
+                                    <p className="text-sm text-muted">
+                                        Renews automatically every month
+                                    </p>
+                                </div>
+                                
+                                <div className="py-4">
+                                    <div className="text-5xl font-bold mb-2">
+                                        ${TOKEN_CONFIG.SUBSCRIPTION_PRICE}
+                                    </div>
+                                    <p className="text-muted">per month</p>
+                                </div>
+
+                                <div className="space-y-2 text-sm">
+                                    <div className="flex items-center justify-center gap-2">
+                                        <span className="text-2xl font-bold text-primary">
+                                            {TOKEN_CONFIG.SUBSCRIPTION_TOKENS}
+                                        </span>
+                                        <span className="text-muted">tokens/month</span>
+                                    </div>
+                                    <p className="text-muted">
+                                        ~33 Pro Studio images or 100 Playground generations
+                                    </p>
+                                </div>
+
+                                <Button
+                                    onClick={() => handlePurchaseTokens('subscription')}
+                                    className="w-full"
+                                    size="lg"
+                                >
+                                    Subscribe Now
+                                </Button>
+
+                                <p className="text-xs text-muted">
+                                    Cancel anytime, no questions asked
+                                </p>
+                            </div>
+                        </Card>
+
+                        <Card>
+                            <div className="p-8 space-y-6 text-center">
+                                <div>
+                                    <h3 className="text-2xl font-bold mb-2">Token Pack</h3>
+                                    <p className="text-sm text-muted">
+                                        One-time purchase, never expires
+                                    </p>
+                                </div>
+                                
+                                <div className="py-4">
+                                    <div className="text-5xl font-bold mb-2">
+                                        ${TOKEN_CONFIG.ONETIME_PRICE}
+                                    </div>
+                                    <p className="text-muted">one-time</p>
+                                </div>
+
+                                <div className="space-y-2 text-sm">
+                                    <div className="flex items-center justify-center gap-2">
+                                        <span className="text-2xl font-bold text-primary">
+                                            {TOKEN_CONFIG.ONETIME_TOKENS}
+                                        </span>
+                                        <span className="text-muted">tokens</span>
+                                    </div>
+                                    <p className="text-muted">
+                                        ~16 Pro Studio images or 50 Playground generations
+                                    </p>
+                                </div>
+
+                                <Button
+                                    onClick={() => handlePurchaseTokens('onetime')}
+                                    className="w-full"
+                                    variant="outline"
+                                    size="lg"
+                                >
+                                    Buy Token Pack
+                                </Button>
+
+                                <p className="text-xs text-muted">
+                                    Stack unlimited packs
+                                </p>
+                            </div>
+                        </Card>
+                    </div>
+                </div>
+
+                {tokens < 3 && (
+                    <Card className="max-w-2xl mx-auto">
+                        <div className="p-6 text-center border-yellow-200">
+                            <p className="text-yellow-800 font-medium mb-2">
+                                ⚠️ Low Token Balance
+                            </p>
+                            <p className="text-sm text-yellow-700">
+                                You need at least 3 tokens to use Pro Studio. Get more tokens to continue creating!
+                            </p>
+                        </div>
+                    </Card>
                 )}
             </div>
         </div>
