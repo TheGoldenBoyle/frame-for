@@ -9,7 +9,7 @@ export default function Imprint() {
 
     return (
         <>
-            <div className="min-h-[95vh] flex flex-col relative">
+            <div className="min-h-screen flex flex-col relative">
                 <Navbar />
                 <main className="flex-grow flex items-center justify-center px-8 relative z-10">
                     <div className="max-w-2xl bg-surface border border-border p-8 rounded-lg shadow-md">
