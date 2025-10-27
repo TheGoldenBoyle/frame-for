@@ -8,7 +8,7 @@ export const TOKEN_CONFIG = {
 
 	STRIPE_PRICE_IDS: {
 		SUBSCRIPTION: "prod_TH9FEPbX9t28mm",
-		ONETIME: "prod_TH9Ga0Jiuww0GO",
+		ONETIME: "prod_TH8FzGlMyfVfTL",
 	},
 
 	COSTS: {
