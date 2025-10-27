@@ -139,19 +139,13 @@ export async function POST(request: NextRequest) {
 					continue
 				}
 
-				const { data: signedUrlData } = await supabase.storage
+				const { data: urlData } = supabase.storage
 					.from("user-images")
-					.createSignedUrl(uploadData.path, 3600)
-
-				const imageUrl =
-					signedUrlData?.signedUrl ||
-					supabase.storage
-						.from("user-images")
-						.getPublicUrl(uploadData.path).data.publicUrl
+					.getPublicUrl(uploadData.path)
 
 				results.push({
 					index: i,
-					imageUrl,
+					imageUrl: urlData.publicUrl,
 				})
 			} catch (error) {
 				console.error(`Failed to generate image ${i}:`, error)

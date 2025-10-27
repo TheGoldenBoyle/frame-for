@@ -102,12 +102,9 @@ export async function POST(request: NextRequest) {
             throw new Error(`Upload failed: ${uploadError.message}`)
         }
 
-        const { data: signedUrlData } = await supabase.storage
+        const { data: urlData } = supabase.storage
             .from("user-images")
-            .createSignedUrl(uploadData.path, 3600)
-
-        const imageUrl = signedUrlData?.signedUrl ||
-            supabase.storage.from("user-images").getPublicUrl(uploadData.path).data.publicUrl
+            .getPublicUrl(uploadData.path)
 
         await deductTokens(
             user.id,
@@ -120,13 +117,13 @@ export async function POST(request: NextRequest) {
                 batchId,
                 imageIndex,
                 originalUrl: targetImage.imageUrl,
-                revisedUrl: imageUrl,
+                revisedUrl: urlData.publicUrl,
                 revisionPrompt,
                 tokensCost: TOKEN_CONFIG.COSTS.PRO_STUDIO_REVISION,
             },
         })
 
-        targetImage.imageUrl = imageUrl
+        targetImage.imageUrl = urlData.publicUrl
 
         await prisma.proStudioBatch.update({
             where: { id: batchId },
@@ -135,7 +132,7 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({
             success: true,
-            revisedUrl: imageUrl,
+            revisedUrl: urlData.publicUrl,
         })
     } catch (error) {
         console.error("Revision error:", error)

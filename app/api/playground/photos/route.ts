@@ -25,9 +25,8 @@ export async function GET(request: NextRequest) {
             },
         })
 
-        // Process photos with robust error handling
-        const processedPhotos = await Promise.all(photos.map(async (photo) => {
-            // Safely parse results, handling potential null or invalid JSON
+        // Parse results if needed, but no URL transformation required
+        const processedPhotos = photos.map((photo) => {
             let parsedResults: PlaygroundResult[] = []
             try {
                 parsedResults = Array.isArray(photo.results) 
@@ -40,44 +39,11 @@ export async function GET(request: NextRequest) {
                 parsedResults = []
             }
 
-            // Transform image URLs with signed URLs
-            const signedResults = await Promise.all(parsedResults.map(async (result) => {
-                // Only process if imageUrl exists and is a string
-                if (result?.imageUrl && typeof result.imageUrl === 'string') {
-                    try {
-                        // Extract the path from the full URL
-                        const urlPath = result.imageUrl.replace(
-                            'https://tsqzcdghrulixqevihiz.supabase.co/storage/v1/object/public/user-images/', 
-                            ''
-                        )
-
-                        // Generate signed URL with explicit type handling
-                        const signedUrlResult = await supabase
-                            .storage
-                            .from('user-images')
-                            .createSignedUrl(urlPath, 3600)
-
-                        // Safely extract signed URL
-                        const signedUrl = signedUrlResult.data?.signedUrl 
-                            ?? result.imageUrl
-
-                        return {
-                            ...result,
-                            imageUrl: signedUrl
-                        }
-                    } catch (urlError) {
-                        console.error('Failed to generate signed URL:', urlError)
-                        return result
-                    }
-                }
-                return result
-            }))
-
             return {
                 ...photo,
-                results: signedResults
+                results: parsedResults
             }
-        }))
+        })
 
         return NextResponse.json({
             photos: processedPhotos,

@@ -55,11 +55,10 @@ async function generateWithModel(
 		const output = await replicate.run(modelPath, {
 			input: {
 				prompt,
-				image_input: [imageUrl],  // Array of image URLs
+				image_input: [imageUrl],
 			},
 		})
 
-		// Output is a direct string URI
 		if (typeof output === "string") return output
 		throw new Error("Unexpected output format from nano-banana")
 	}
@@ -302,32 +301,20 @@ export async function POST(request: NextRequest) {
 					continue
 				}
 
-				// Generate signed URL with 1-hour expiration
-				const { data: signedUrlData } = await supabase.storage
+				const { data: urlData } = supabase.storage
 					.from("user-images")
-					.createSignedUrl(resultUpload.path, 3600) // 1 hour expiration
-
-				// Fallback to public URL if signed URL generation fails
-				const imageUrl = signedUrlData?.signedUrl || 
-					supabase.storage.from("user-images").getPublicUrl(resultUpload.path).data.publicUrl
+					.getPublicUrl(resultUpload.path)
 
 				results.push({
 					modelId,
 					modelName: config.name,
-					imageUrl,
-				})
-
-				// Log the generated URLs for debugging
-				console.log(`Model ${modelId} URLs:`, {
-					signedUrl: signedUrlData?.signedUrl,
-					publicUrl: supabase.storage.from("user-images").getPublicUrl(resultUpload.path).data.publicUrl
+					imageUrl: urlData.publicUrl,
 				})
 			} catch (error) {
 				console.error(`Failed to generate with ${modelId}:`, error)
 			}
 		}
 
-		// Only proceed if at least one model succeeded
 		if (results.length === 0) {
 			return NextResponse.json(
 				{ error: "Failed to generate images for any model" },
