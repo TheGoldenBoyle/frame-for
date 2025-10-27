@@ -4,13 +4,55 @@ import { createClient } from "@/lib/superbase-server"
 import { notifyNewSignup } from "@/lib/email-service"
 import { canAcceptNewSignups } from "@/lib/revenue-tracker"
 
+function validateUsername(username: string): string | null {
+    // Username validation rules
+    if (!username || username.length < 3) {
+        return "Username must be at least 3 characters long"
+    }
+    if (username.length > 30) {
+        return "Username must be less than 30 characters"
+    }
+    if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+        return "Username can only contain letters, numbers, underscores, and hyphens"
+    }
+    return null
+}
+
 export async function POST(request: NextRequest) {
     try {
-        const { email, password } = await request.json()
+        const { email, username, password } = await request.json()
 
         if (!email || !password) {
             return NextResponse.json(
                 { error: "Email and password required" },
+                { status: 400 }
+            )
+        }
+
+        if (!username) {
+            return NextResponse.json(
+                { error: "Username required" },
+                { status: 400 }
+            )
+        }
+
+        // Validate username format
+        const usernameError = validateUsername(username)
+        if (usernameError) {
+            return NextResponse.json(
+                { error: usernameError },
+                { status: 400 }
+            )
+        }
+
+        // Check if username is already taken
+        const existingUsername = await prisma.user.findUnique({
+            where: { username }
+        })
+
+        if (existingUsername) {
+            return NextResponse.json(
+                { error: "Username is already taken" },
                 { status: 400 }
             )
         }
@@ -30,7 +72,10 @@ export async function POST(request: NextRequest) {
             email,
             password,
             options: {
-                emailRedirectTo: `${process.env.NEXT_PUBLIC_URL}/dashboard/playground`
+                emailRedirectTo: `${process.env.NEXT_PUBLIC_URL}/dashboard/playground`,
+                data: {
+                    username: username
+                }
             }
         })
 
@@ -46,6 +91,7 @@ export async function POST(request: NextRequest) {
                 create: {
                     id: data.user.id,
                     email: data.user.email!,
+                    username: username,
                     subscriptionStatus: "free",
                     tokens: 3,
                     tokenType: "free"

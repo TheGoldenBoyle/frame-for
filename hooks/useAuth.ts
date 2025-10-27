@@ -33,10 +33,36 @@ export function useAuth() {
         return { data, error }
     }
 
+    const signInWithGoogle = async () => {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: `${window.location.origin}/api/auth/callback`,
+                queryParams: {
+                    access_type: 'offline',
+                    prompt: 'consent',
+                },
+            },
+        })
+        
+        return { data, error }
+    }
+
+    // const signInWithTwitter = async () => {
+    //     const { data, error } = await supabase.auth.signInWithOAuth({
+    //         provider: 'twitter',
+    //         options: {
+    //             redirectTo: `${window.location.origin}/api/auth/callback`,
+    //         },
+    //     })
+        
+    //     return { data, error }
+    // }
+
     const signOut = async () => {
         const { error } = await supabase.auth.signOut()
         return { error }
     }
 
-    return { user, loading, signIn, signOut }
+    return { user, loading, signIn, signInWithGoogle, signOut }
 }

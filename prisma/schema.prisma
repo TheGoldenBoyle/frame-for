@@ -11,6 +11,7 @@ datasource db {
 
 model User {
   id                   String             @id
+  username             String             @unique
   email                String             @unique
   subscriptionStatus   String             @default("free")
   tokens               Int                @default(5)

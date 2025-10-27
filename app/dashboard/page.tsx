@@ -66,7 +66,7 @@ export default function DashboardPage() {
                             <div className="flex items-center justify-center gap-4">
                                 <span className="text-lg text-muted">Current Balance:</span>
                                 <span className="text-4xl font-bold text-primary">
-                                    {tokens}
+                                    {tokens ?? 0}
                                 </span>
                                 <span className="text-lg text-muted">tokens</span>
                             </div>

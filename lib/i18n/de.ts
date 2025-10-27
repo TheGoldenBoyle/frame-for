@@ -17,7 +17,7 @@ export const de: Translations = {
 		headline2: "KI-Bildgenerierung Ohne Grenzen.",
 		subheadline1: "Keine Barrieren. Keine Einschränkungen. Keine Limits.",
 		subheadline2: "Deine Modelle. Deine Vision. Deine Art.",
-		subheadline3: "Melde dich jetzt an und erhalte deine ersten 3 Generierungen kostenlos.",
+		subheadline3: "Melde dich jetzt an und erhalte deine ersten 5 tokens kostenlos.",
 		cta: "Jetzt Loslegen",
 	},
     home: {

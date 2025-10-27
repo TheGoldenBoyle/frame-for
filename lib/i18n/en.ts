@@ -17,7 +17,7 @@ export const en: Translations = {
 		headline2: "AI Image Generation Without Limits.",
 		subheadline1: "No gatekeeping. No restrictions. No barriers.",
 		subheadline2: "Your models. Your vision. Your way.",
-		subheadline3: "Join now and get your first 3 generations free.",
+		subheadline3: "Join now and get your first 5 tokens free.",
 		cta: "Start Creating",
 	},
     home: {
