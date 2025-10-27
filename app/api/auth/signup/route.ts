@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/superbase-server"
 import { notifyNewSignup } from "@/lib/email-service"
+import { canAcceptNewSignups } from "@/lib/revenue-tracker"
 
 export async function POST(request: NextRequest) {
     try {
@@ -11,6 +12,15 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(
                 { error: "Email and password required" },
                 { status: 400 }
+            )
+        }
+
+        const canSignup = await canAcceptNewSignups()
+        
+        if (!canSignup) {
+            return NextResponse.json(
+                { error: "WAITLIST_ONLY", message: "We've reached capacity. Join the waitlist!" },
+                { status: 403 }
             )
         }
 
@@ -30,7 +40,6 @@ export async function POST(request: NextRequest) {
         }
 
         if (data.user) {
-            // Upsert user in Prisma
             await prisma.user.upsert({
                 where: { id: data.user.id },
                 update: {},

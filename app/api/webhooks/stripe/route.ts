@@ -62,6 +62,16 @@ export async function POST(request: NextRequest) {
 							"Subscription activated"
 						)
 
+						// Create purchase transaction for revenue tracking
+						await prisma.tokenTransaction.create({
+							data: {
+								userId: user.id,
+								amount: TOKEN_CONFIG.SUBSCRIPTION_TOKENS,
+								type: 'purchase',
+								reason: 'subscription-renewal'
+							}
+						})
+
 						notifyNewPurchase({
 							email: user.email,
 							userId: user.id,
@@ -94,6 +104,16 @@ export async function POST(request: NextRequest) {
 							data: {
 								tokenType: "onetime",
 							},
+						})
+
+						// Create purchase transaction for revenue tracking
+						await prisma.tokenTransaction.create({
+							data: {
+								userId: user.id,
+								amount: TOKEN_CONFIG.ONETIME_TOKENS,
+								type: 'purchase',
+								reason: 'one-time-purchase'
+							}
 						})
 
 						notifyNewPurchase({
@@ -172,6 +192,16 @@ export async function POST(request: NextRequest) {
 							"subscription",
 							"Monthly token renewal"
 						)
+
+						// Create purchase transaction for revenue tracking
+						await prisma.tokenTransaction.create({
+							data: {
+								userId: user.id,
+								amount: TOKEN_CONFIG.SUBSCRIPTION_TOKENS,
+								type: 'purchase',
+								reason: 'subscription-renewal'
+							}
+						})
 					}
 				}
 

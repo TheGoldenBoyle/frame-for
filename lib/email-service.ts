@@ -83,7 +83,6 @@ This is an automated notification from BildOro
     })
 }
 
-// Notification: New Purchase
 export async function notifyNewPurchase(purchaseData: {
     email: string
     userId: string
@@ -168,6 +167,54 @@ Purchase Date: ${purchaseDate.toLocaleString()}
 ${stripeCustomerId ? `Stripe Customer ID: ${stripeCustomerId}` : ''}
 
 💡 Action Required: Check Stripe dashboard for payment details
+
+---
+This is an automated notification from BildOro
+        `.trim(),
+    })
+}
+
+export async function notifyWaitlistSignup({
+    email,
+    createdAt
+}: {
+    email: string
+    createdAt: Date
+}) {
+    await sendEmail({
+        subject: '🎯 New Waitlist Signup - BildOro',
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #333; border-bottom: 2px solid #D4AF37; padding-bottom: 10px;">
+                    🎯 New Waitlist Signup
+                </h2>
+                <div style="background-color: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                    <p style="margin: 10px 0;">
+                        <strong style="color: #555;">Email:</strong> 
+                        <span style="color: #333;">${email}</span>
+                    </p>
+                    <p style="margin: 10px 0;">
+                        <strong style="color: #555;">Joined:</strong> 
+                        <span style="color: #333;">${createdAt.toLocaleString('de-DE')}</span>
+                    </p>
+                </div>
+                <div style="background-color: #fff3cd; padding: 15px; border-left: 4px solid #D4AF37; margin: 20px 0;">
+                    <p style="margin: 0; color: #856404;">
+                        <strong>💡 Action:</strong> Check your admin dashboard to review and approve when capacity opens up.
+                    </p>
+                </div>
+                <p style="color: #999; font-size: 12px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px;">
+                    This is an automated notification from BildOro
+                </p>
+            </div>
+        `,
+        text: `
+🎯 New Waitlist Signup
+
+Email: ${email}
+Joined: ${createdAt.toLocaleString('de-DE')}
+
+💡 Action: Check your admin dashboard to review and approve when capacity opens up.
 
 ---
 This is an automated notification from BildOro
