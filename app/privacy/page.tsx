@@ -9,8 +9,7 @@ export default function Privacy() {
 
     return (
         <>
-            <div className="min-h-screen flex flex-col relative">
-                <Navbar />
+            <div className="min-h-screen flex flex-col relative py-16">
                 <main className="flex-grow flex items-center justify-center px-8 py-16 relative z-10">
                     <div className="max-w-2xl bg-surface border border-border p-8 rounded-lg shadow-md">
                         <h1 className="text-4xl font-bold mb-6">Datenschutzerklärung / Privacy Policy</h1>

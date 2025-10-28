@@ -92,7 +92,7 @@ export const de: Translations = {
 		contact: "Kontaktinformationen",
 		companyName: "BildOro.app",
 		streetAddress: "Goldrain 5",
-		cityPostal: "36088 HÃ¼nfeld",
+		cityPostal: "36088 Hunfeld",
 		country: "Deutschland",
 		contact_details: "Kontaktdetails",
 		phone: "Telefon: +49 1551 022 0025",

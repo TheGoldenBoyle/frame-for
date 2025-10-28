@@ -8,7 +8,7 @@ import { AuthProvider } from '@/lib/auth/provider'
 import { ThemeProvider } from '@/lib/theme/provider'
 import { Lexend, DM_Sans } from 'next/font/google'
 import { Analytics } from "@vercel/analytics/next"
-
+import { CookieConsent } from '@/components/CookieConsent'
 
 const lexend = Lexend({ 
     subsets: ['latin'],
@@ -128,6 +128,7 @@ export default function RootLayout({
                         </I18nProvider>
                     </AuthProvider>
                 </ThemeProvider>
+                <CookieConsent />
                 <Analytics />
             </body>
         </html>
