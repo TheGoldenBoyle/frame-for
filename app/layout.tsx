@@ -7,6 +7,7 @@ import PWAInstallPrompt from '@/components/pwa/PWAInstallPrompt'
 import { AuthProvider } from '@/lib/auth/provider'
 import { ThemeProvider } from '@/lib/theme/provider'
 import { Lexend, DM_Sans } from 'next/font/google'
+import { Analytics } from "@vercel/analytics/next"
 
 
 const lexend = Lexend({ 
@@ -127,6 +128,7 @@ export default function RootLayout({
                         </I18nProvider>
                     </AuthProvider>
                 </ThemeProvider>
+                <Analytics />
             </body>
         </html>
     )
