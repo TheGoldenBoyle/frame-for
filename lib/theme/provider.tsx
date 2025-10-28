@@ -21,13 +21,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
         const initialTheme = stored || (prefersDark ? 'dark' : 'light')
         setThemeState(initialTheme)
-        document.body.setAttribute('data-theme', initialTheme)
+        document.documentElement.classList.remove('light', 'dark')
+        document.documentElement.classList.add(initialTheme)
     }, [])
 
     const setTheme = (newTheme: Theme) => {
         setThemeState(newTheme)
         localStorage.setItem('theme', newTheme)
-        document.body.setAttribute('data-theme', newTheme)
+        document.documentElement.classList.remove('light', 'dark')
+        document.documentElement.classList.add(newTheme)
     }
 
     const toggleTheme = () => {

@@ -127,9 +127,9 @@ export default function RootLayout({
                             <PWAInstallPrompt />
                         </I18nProvider>
                     </AuthProvider>
+                    <CookieConsent />
+                    <Analytics />
                 </ThemeProvider>
-                <CookieConsent />
-                <Analytics />
             </body>
         </html>
     )
