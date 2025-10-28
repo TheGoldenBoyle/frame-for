@@ -15,36 +15,35 @@ import { Loader } from '@/components/ui/Loader'
 import { Card } from '@/components/ui/Card'
 
 type PlaygroundResult = {
-  modelId: string
-  modelName: string
-  imageUrl: string | null
-  error?: string
+    modelId: string
+    modelName: string
+    imageUrl: string | null
+    error?: string
 }
 
 type ComparisonResult = {
-  modelId: string
-  modelName: string
-  imageUrl: string
+    modelId: string
+    modelName: string
+    imageUrl: string
 }
 
 function toComparisonResult(result: PlaygroundResult): ComparisonResult | null {
-  if (result.imageUrl) {
-    return {
-      modelId: result.modelId,
-      modelName: result.modelName,
-      imageUrl: result.imageUrl
+    if (result.imageUrl) {
+        return {
+            modelId: result.modelId,
+            modelName: result.modelName,
+            imageUrl: result.imageUrl
+        }
     }
-  }
-  return null
+    return null
 }
-  
+
 export default function PlaygroundPage() {
     const router = useRouter()
     const { user } = useAuth()
     const promptRef = useRef<HTMLTextAreaElement>(null)
     const [prompt, setPrompt] = useState('')
-    const [selectedModels, setSelectedModels] = useState<string[]>(['nano-banana'])
-    const [image, setImage] = useState<File | null>(null)
+    const [selectedModels, setSelectedModels] = useState<string[]>(['flux-1.1-pro'])
     const [loading, setLoading] = useState(false)
     const [generating, setGenerating] = useState(false)
     const [results, setResults] = useState<ComparisonResult[]>([])
@@ -66,10 +65,6 @@ export default function PlaygroundPage() {
         )
     }
 
-    const handleImageChange = (files: File[]) => {
-        setImage(files[0] || null)
-    }
-
     const handleGenerate = async () => {
         if (!prompt.trim()) {
             setError('Please enter a prompt')
@@ -89,10 +84,6 @@ export default function PlaygroundPage() {
             const formData = new FormData()
             formData.append('prompt', prompt.trim())
             formData.append('modelIds', JSON.stringify(selectedModels))
-
-            if (image) {
-                formData.append('image', image)
-            }
 
             const response = await fetch('/api/playground/generate', {
                 method: 'POST',
@@ -147,8 +138,7 @@ export default function PlaygroundPage() {
 
     const handleStartOver = () => {
         setPrompt('')
-        setSelectedModels(['nano-banana'])
-        setImage(null)
+        setSelectedModels(['flux-1.1-pro'])
         setResults([])
         setPlaygroundPhotoId(null)
         setError(null)
@@ -164,10 +154,10 @@ export default function PlaygroundPage() {
 
     if (generating) {
         return (
-            <GenerationLoader 
+            <GenerationLoader
                 modelCount={selectedModels.length}
                 modelNames={selectedModels}
-                hasImage={!!image}
+                hasImage={false}
                 prompt={prompt}
             />
         )
@@ -199,7 +189,6 @@ export default function PlaygroundPage() {
                                 .map(toComparisonResult)
                                 .filter((result): result is ComparisonResult => result !== null)
                             }
-                            originalImageUrl={image ? URL.createObjectURL(image) : undefined}
                             onSaveResult={handleSaveResult}
                             savingStates={savingStates}
                         />
@@ -233,36 +222,21 @@ export default function PlaygroundPage() {
                         onSelect={handleModelSelect}
                         maxSelection={3}
                         disabled={generating}
-                        hasImage={!!image}
+                        hasImage={false}
                     />
                 </Card>
 
-                <div className="flex-1 grid grid-cols-1 gap-4 md:gap-6 md:grid-cols-2 overflow-auto">
-                    <Card className="h-full">
-                        <PromptInput
-                            ref={promptRef}
-                            value={prompt}
-                            onChange={setPrompt}
-                            placeholder="A serene mountain landscape at sunset with vibrant colors..."
-                            label="Prompt"
-                            maxLength={1000}
-                            disabled={generating}
-                        />
-                    </Card>
-
-                    <Card className="h-fit">
-                        <label className="block mb-3 text-sm font-medium text-text">
-                            Input Image (Optional)
-                        </label>
-                        <ImageUpload
-                            onImagesChange={handleImageChange}
-                            maxImages={1}
-                        />
-                        <p className="mt-2 text-sm text-muted">
-                            Add an image for image-to-image generation, or leave empty for text-to-image
-                        </p>
-                    </Card>
-                </div>
+                <Card className="flex-1 overflow-auto">
+                    <PromptInput
+                        ref={promptRef}
+                        value={prompt}
+                        onChange={setPrompt}
+                        placeholder="A serene mountain landscape at sunset with vibrant colors..."
+                        label="Prompt"
+                        maxLength={1000}
+                        disabled={generating}
+                    />
+                </Card>
 
                 {error && (
                     <div className="p-4 text-sm text-red-600 border border-red-200 rounded-lg bg-red-50 flex-shrink-0">

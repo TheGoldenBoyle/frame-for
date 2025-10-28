@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useScrollDirection } from '@/hooks/useScrollDirection'
-import { MobileMenu } from './partials/MobileMenu'
+import { DashboardMobileMenu } from './DashboardMobileMenu'
 
 type DashboardHeaderProps = {
     user: any
@@ -27,6 +27,7 @@ export function DashboardHeader({
     const navItems = [
         { path: '/dashboard', label: t.home.tokens },
         { path: '/dashboard/playground', label: t.playground.title },
+        { path: '/dashboard/image-playground', label: 'Image Playground' },
         { path: '/dashboard/pro-studio', label: 'Pro Studio' },
         { path: '/dashboard/gallery', label: t.dashboard.viewGallery },
     ]
@@ -91,7 +92,7 @@ export function DashboardHeader({
                 </div>
             </nav>
 
-            <MobileMenu
+            <DashboardMobileMenu
                 isOpen={mobileMenuOpen}
                 onCloseAction={() => setMobileMenuOpen(false)}
                 pathname={pathname}
@@ -100,6 +101,7 @@ export function DashboardHeader({
                 locale={locale}
                 onLocaleChangeAction={onLocaleChangeAction}
                 onSignOutAction={onSignOutAction}
+                navItems={navItems}
             />
 
             <div className="h-16" />

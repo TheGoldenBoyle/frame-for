@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { createClient } from "@/lib/superbase-server"
 import { PlaygroundResult } from "@/types/globals"
 
-import { FormDataError, getOptionalFile, getString } from "@/lib/form-utils"
+import { FormDataError, getString } from "@/lib/form-utils"
 import { checkTokens, deductTokens } from "@/lib/tokens"
 import { TOKEN_CONFIG } from "@/lib/config/tokens"
 
@@ -15,10 +15,6 @@ const replicate = new Replicate({
 type ReplicateModel = `${string}/${string}` | `${string}/${string}:${string}`
 
 const MODEL_CONFIG: Record<string, { path: ReplicateModel; name: string }> = {
-	"nano-banana": {
-		path: "google/nano-banana",
-		name: "Nano Banana",
-	},
 	"flux-1.1-pro": {
 		path: "black-forest-labs/flux-1.1-pro",
 		name: "FLUX 1.1 Pro",
@@ -44,43 +40,15 @@ const MODEL_CONFIG: Record<string, { path: ReplicateModel; name: string }> = {
 async function generateWithModel(
 	modelId: string,
 	modelPath: ReplicateModel,
-	prompt: string,
-	imageUrl?: string
+	prompt: string
 ): Promise<string> {
-	if (modelId === "nano-banana") {
-		if (!imageUrl) {
-			throw new Error("Nano Banana requires an input image")
-		}
-
+	if (modelId === "flux-1.1-pro") {
 		const output = await replicate.run(modelPath, {
 			input: {
 				prompt,
-				image_input: [imageUrl],
+				prompt_upsampling: true,
 			},
 		})
-
-		if (typeof output === "string") return output
-		throw new Error("Unexpected output format from nano-banana")
-	}
-
-	if (modelId === "flux-1.1-pro") {
-		const input: Record<string, any> = {
-			prompt,
-			prompt_upsampling: true,
-		}
-
-		if (imageUrl) {
-			const imageResponse = await fetch(imageUrl)
-			if (!imageResponse.ok) {
-				throw new Error(
-					`Failed to fetch image: ${imageResponse.statusText}`
-				)
-			}
-			const imageBlob = await imageResponse.blob()
-			input.image = imageBlob
-		}
-
-		const output = await replicate.run(modelPath, { input })
 
 		if (typeof output === "string") return output
 		if (
@@ -198,7 +166,6 @@ export async function POST(request: NextRequest) {
 
 		const prompt = getString(formData, "prompt")
 		const modelIdsString = getString(formData, "modelIds")
-		const imageFile = getOptionalFile(formData, "image")
 
 		const modelIds = JSON.parse(modelIdsString) as string[]
 
@@ -230,32 +197,6 @@ export async function POST(request: NextRequest) {
 			)
 		}
 
-		let uploadedImageUrl: string | undefined
-
-		if (imageFile) {
-			const fileName = `${user.id}/playground-${Date.now()}-${
-				imageFile.name
-			}`
-
-			const { data: uploadData, error: uploadError } =
-				await supabase.storage
-					.from("user-images")
-					.upload(fileName, imageFile, {
-						contentType: imageFile.type,
-						upsert: false,
-					})
-
-			if (uploadError) {
-				throw new Error(`Upload failed: ${uploadError.message}`)
-			}
-
-			const { data: urlData } = supabase.storage
-				.from("user-images")
-				.getPublicUrl(uploadData.path)
-
-			uploadedImageUrl = urlData.publicUrl
-		}
-
 		const results: PlaygroundResult[] = []
 
 		for (const modelId of modelIds) {
@@ -269,8 +210,7 @@ export async function POST(request: NextRequest) {
 				const generatedUrl = await generateWithModel(
 					modelId,
 					config.path,
-					prompt,
-					uploadedImageUrl
+					prompt
 				)
 
 				const response = await fetch(generatedUrl)
@@ -332,7 +272,7 @@ export async function POST(request: NextRequest) {
 			data: {
 				userId: user.id,
 				prompt,
-				originalUrl: uploadedImageUrl || null,
+				originalUrl: null,
 				results: results as any,
 				tokensCost: tokensNeeded,
 			},

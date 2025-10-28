@@ -11,7 +11,7 @@ datasource db {
 
 model User {
   id                   String             @id
-  username             String             @unique
+  username             String?             @unique
   email                String             @unique
   subscriptionStatus   String             @default("free")
   tokens               Int                @default(5)
@@ -24,6 +24,7 @@ model User {
   playgroundPhotos     PlaygroundPhoto[]
   proStudioBatches     ProStudioBatch[]
   tokenTransactions    TokenTransaction[]
+  imageTransformations ImageTransformation[]
 
   @@map("users")
 }
@@ -121,6 +122,24 @@ model ProStudioImageRevision {
   @@index([batchId])
   @@map("pro_studio_revisions")
 }
+
+model ImageTransformation {
+  id             String   @id @default(cuid())
+  userId         String
+  originalUrl    String
+  transformedUrl String
+  prompt         String   @db.Text
+  modelUsed      String   @default("nano-banana")
+  tokensCost     Int      @default(1)
+  createdAt      DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([createdAt])
+  @@map("image_transformations")
+}
+
 
 model Waitlist {
   id         String    @id @default(cuid())
