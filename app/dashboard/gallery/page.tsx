@@ -36,12 +36,22 @@ type ProStudioBatch = {
     imageCount: number
 }
 
+type ImageTransformation = {
+    id: string
+    originalUrl: string
+    transformedUrl: string
+    prompt: string
+    modelUsed: string
+    createdAt: string
+}
+
 export default function GalleryPage() {
     const router = useRouter()
     const { user } = useAuth()
     const [photos, setPhotos] = useState<Photo[]>([])
     const [playgroundPhotos, setPlaygroundPhotos] = useState<PlaygroundPhoto[]>([])
     const [proStudioBatches, setProStudioBatches] = useState<ProStudioBatch[]>([])
+    const [transformations, setTransformations] = useState<ImageTransformation[]>([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -49,19 +59,22 @@ export default function GalleryPage() {
 
         const fetchAllPhotos = async () => {
             try {
-                const [regularResponse, playgroundResponse, proStudioResponse] = await Promise.all([
+                const [regularResponse, playgroundResponse, proStudioResponse, transformationsResponse] = await Promise.all([
                     fetch('/api/photos'),
                     fetch('/api/playground/photos'),
-                    fetch('/api/pro-studio/batches')
+                    fetch('/api/pro-studio/batches'),
+                    fetch('/api/image-playground/transformations')
                 ])
 
                 const regularData = await regularResponse.json()
                 const playgroundData = await playgroundResponse.json()
                 const proStudioData = await proStudioResponse.json()
+                const transformationsData = await transformationsResponse.json()
 
                 setPhotos(regularData.photos || [])
                 setPlaygroundPhotos(playgroundData.photos || [])
                 setProStudioBatches(proStudioData.batches || [])
+                setTransformations(transformationsData.transformations || [])
             } catch (error) {
                 console.error('Failed to fetch photos:', error)
             } finally {
@@ -76,7 +89,7 @@ export default function GalleryPage() {
         return <Loader fullScreen />
     }
 
-    const hasPhotos = photos.length > 0 || playgroundPhotos.length > 0 || proStudioBatches.length > 0
+    const hasPhotos = photos.length > 0 || playgroundPhotos.length > 0 || proStudioBatches.length > 0 || transformations.length > 0
 
     return (
         <div className="min-h-screen p-4 md:p-8">
@@ -135,6 +148,59 @@ export default function GalleryPage() {
                                                             </div>
                                                         </div>
                                                     ))}
+                                            </div>
+                                        </Card>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {transformations.length > 0 && (
+                            <div>
+                                <h2 className="mb-4 text-xl font-semibold">Image Transformations</h2>
+                                <div className="space-y-6">
+                                    {transformations.map((transformation) => (
+                                        <Card key={transformation.id}>
+                                            <div className="mb-4">
+                                                <p className="text-sm text-muted">
+                                                    {new Date(transformation.createdAt).toLocaleDateString()}
+                                                </p>
+                                                <p className="mt-2 font-medium">{transformation.prompt}</p>
+                                                <p className="text-xs text-muted mt-1">Model: {transformation.modelUsed}</p>
+                                            </div>
+                                            <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+                                                <div className="space-y-2">
+                                                    <div
+                                                        className="relative overflow-hidden rounded-lg bg-surface cursor-pointer hover:opacity-90 border border-border"
+                                                        style={{ aspectRatio: '1/1' }}
+                                                        onClick={() => window.open(transformation.originalUrl, '_blank')}
+                                                    >
+                                                        <img
+                                                            src={transformation.originalUrl}
+                                                            alt="Original"
+                                                            className="object-cover w-full h-full"
+                                                        />
+                                                    </div>
+                                                    <p className="text-sm font-medium text-center text-muted">
+                                                        Original
+                                                    </p>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <div
+                                                        className="relative overflow-hidden rounded-lg bg-surface cursor-pointer hover:opacity-90 border border-border"
+                                                        style={{ aspectRatio: '1/1' }}
+                                                        onClick={() => window.open(transformation.transformedUrl, '_blank')}
+                                                    >
+                                                        <img
+                                                            src={transformation.transformedUrl}
+                                                            alt="Transformed"
+                                                            className="object-cover w-full h-full"
+                                                        />
+                                                    </div>
+                                                    <p className="text-sm font-medium text-center text-muted">
+                                                        Transformed
+                                                    </p>
+                                                </div>
                                             </div>
                                         </Card>
                                     ))}

@@ -5,10 +5,34 @@ type TokenTransactionType = "deduct" | "add" | "reset" | "purchase"
 
 export async function getTokenBalance(userId: string) {
     try {
-        const user = await prisma.user.findUnique({
+        let user = await prisma.user.findUnique({
             where: { id: userId },
-            select: { tokens: true, tokenType: true, subscriptionStatus: true }
+            select: { tokens: true, tokenType: true, subscriptionStatus: true, email: true }
         })
+
+        // If user doesn't exist in database, try to create them
+        if (!user) {
+            console.log('User not found in database, attempting to create from Supabase session')
+            
+            const supabase = createClient()
+            const { data: { user: supabaseUser }, error } = await supabase.auth.getUser()
+            
+            if (!error && supabaseUser && supabaseUser.id === userId) {
+                user = await prisma.user.create({
+                    data: {
+                        id: supabaseUser.id,
+                        email: supabaseUser.email!,
+                        username: null, // OAuth users don't have username yet
+                        subscriptionStatus: "free",
+                        tokens: 3,
+                        tokenType: "free"
+                    },
+                    select: { tokens: true, tokenType: true, subscriptionStatus: true, email: true }
+                })
+                
+                console.log('User created successfully in tokens check')
+            }
+        }
 
         return user
     } catch (error) {
