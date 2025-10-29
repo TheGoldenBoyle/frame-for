@@ -15,6 +15,7 @@ export default function DashboardPage() {
     const { t } = useI18n()
     const [tokens, setTokens] = useState(0)
     const [tokenType, setTokenType] = useState('free')
+    const [subscriptionStatus, setSubscriptionStatus] = useState('free')
     const [isLoading, setIsLoading] = useState(true)
     const [purchaseLoading, setPurchaseLoading] = useState(false)
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
@@ -28,6 +29,7 @@ export default function DashboardPage() {
 
                 setTokens(data.tokens)
                 setTokenType(data.tokenType)
+                setSubscriptionStatus(data.subscriptionStatus)
             } catch (error) {
                 console.error('Failed to fetch token balance')
             } finally {
@@ -97,9 +99,32 @@ export default function DashboardPage() {
         }
     }
 
+    const getPlanBadge = () => {
+        if (subscriptionStatus === 'active') {
+            return (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary text-primary-foreground">
+                    ✓ Active Subscription
+                </span>
+            )
+        } else if (tokenType === 'onetime') {
+            return (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                    One-Time Pack
+                </span>
+            )
+        }
+        return (
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                Free Plan
+            </span>
+        )
+    }
+
     if (isLoading) {
         return <Loader fullScreen />
     }
+
+    const isSubscribed = subscriptionStatus === 'active'
 
     return (
         <div className="min-h-screen p-4 md:p-8">
@@ -115,9 +140,9 @@ export default function DashboardPage() {
                                 </span>
                                 <span className="text-lg text-muted">tokens</span>
                             </div>
-                            {tokenType === 'subscription' && (
-                                <p className="text-sm text-muted mt-2">Active Subscription</p>
-                            )}
+                            <div className="mt-3">
+                                {getPlanBadge()}
+                            </div>
                         </div>
                     </Card>
                 </div>
@@ -161,8 +186,91 @@ export default function DashboardPage() {
 
                 {/* Pricing Section */}
                 <div>
-                    <h2 className="text-2xl font-bold mb-6 text-center">Get More Tokens</h2>
-                    <PricingCards onPurchase={handlePurchaseTokens} loading={purchaseLoading} />
+                    <h2 className="text-2xl font-bold mb-6 text-center">
+                        {isSubscribed ? 'Your Plan' : 'Get More Tokens'}
+                    </h2>
+                    
+                    {/* Custom Pricing Cards with Active Indicator */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                        {/* Subscription Card */}
+                        <Card className={`relative ${isSubscribed ? 'ring-2 ring-primary shadow-lg' : ''}`}>
+                            <div className={`p-6 ${isSubscribed ? 'bg-primary/5' : ''}`}>
+                                {isSubscribed && (
+                                    <div className="absolute top-4 right-4">
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary text-primary-foreground">
+                                            Current Plan
+                                        </span>
+                                    </div>
+                                )}
+                                <h3 className="text-2xl font-bold mb-2">Monthly Tokens</h3>
+                                <div className="mb-4">
+                                    <span className="text-4xl font-bold">€4.99</span>
+                                    <span className="text-muted"> / month</span>
+                                </div>
+                                <ul className="space-y-2 mb-6 text-sm">
+                                    <li className="flex items-center gap-2">
+                                        <span className="text-green-600">✓</span>
+                                        <span>50 tokens per month</span>
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <span className="text-green-600">✓</span>
+                                        <span>Auto-renewal</span>
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <span className="text-green-600">✓</span>
+                                        <span>Cancel anytime</span>
+                                    </li>
+                                </ul>
+                                {!isSubscribed && (
+                                    <Button
+                                        onClick={() => handlePurchaseTokens('subscription')}
+                                        disabled={purchaseLoading}
+                                        className="w-full"
+                                    >
+                                        {purchaseLoading ? 'Processing...' : 'Subscribe'}
+                                    </Button>
+                                )}
+                                {isSubscribed && (
+                                    <div className="text-center text-sm text-muted">
+                                        Renews automatically each month
+                                    </div>
+                                )}
+                            </div>
+                        </Card>
+
+                        {/* One-Time Card */}
+                        <Card className="relative">
+                            <div className="p-6">
+                                <h3 className="text-2xl font-bold mb-2">Token Pack</h3>
+                                <div className="mb-4">
+                                    <span className="text-4xl font-bold">€9.99</span>
+                                    <span className="text-muted"> one-time</span>
+                                </div>
+                                <ul className="space-y-2 mb-6 text-sm">
+                                    <li className="flex items-center gap-2">
+                                        <span className="text-green-600">✓</span>
+                                        <span>100 tokens</span>
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <span className="text-green-600">✓</span>
+                                        <span>Never expire</span>
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <span className="text-green-600">✓</span>
+                                        <span>One-time payment</span>
+                                    </li>
+                                </ul>
+                                <Button
+                                    onClick={() => handlePurchaseTokens('onetime')}
+                                    disabled={purchaseLoading}
+                                    variant="outline"
+                                    className="w-full"
+                                >
+                                    {purchaseLoading ? 'Processing...' : 'Buy Tokens'}
+                                </Button>
+                            </div>
+                        </Card>
+                    </div>
                 </div>
 
                 {/* Low Balance Warning */}
