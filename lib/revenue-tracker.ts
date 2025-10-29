@@ -19,17 +19,17 @@ export async function getCurrentRevenue(): Promise<RevenueStats> {
 		const subscribers = await prisma.user.count({
 			where: {
 				subscriptionStatus: "active",
-				tokenType: "subscription",
-			},
+				tokenType: "subscription"
+			}
 		})
 
 		const onetimePurchases = await prisma.tokenTransaction.count({
 			where: {
 				type: "purchase",
 				reason: {
-					contains: "one-time",
-				},
-			},
+					contains: "one-time"
+				}
+			}
 		})
 
 		const subscriptionRevenue = subscribers * 4.99

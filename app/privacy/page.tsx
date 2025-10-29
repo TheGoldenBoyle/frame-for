@@ -9,7 +9,7 @@ export default function Privacy() {
 
     return (
         <>
-            <div className="min-h-screen flex flex-col relative py-16">
+            <div className="flex items-center justify-center min-h-screen md:p-4 py-10 lg:py-32 break-all">
                 <main className="flex-grow flex items-center justify-center px-8 py-16 relative z-10">
                     <div className="max-w-2xl bg-surface border border-border p-8 rounded-lg shadow-md">
                         <h1 className="text-4xl font-bold mb-6">Datenschutzerklärung / Privacy Policy</h1>
@@ -18,7 +18,7 @@ export default function Privacy() {
                             <h2 className="text-2xl font-semibold mb-4">1. Verantwortlicher / Data Controller</h2>
                             <p>James Patrick Boyle</p>
                             <p>Goldrain 5</p>
-                            <p>36088 Hünfeld</p>
+                            <p>36088 Huenfeld</p>
                             <p>Deutschland</p>
                             <p className="mt-2">Email: thegoldenboyle@gmail.com</p>
                         </section>
@@ -30,14 +30,14 @@ export default function Privacy() {
                                 <li>Email-Adresse bei Registrierung / Email address during registration</li>
                                 <li>Benutzername / Username</li>
                                 <li>Nutzungsdaten (generierte Bilder) / Usage data (generated images)</li>
-                                <li>Zahlungsinformationen (über Stripe) / Payment information (via Stripe)</li>
+                                <li>Zahlungsinformationen (ueber Stripe) / Payment information (via Stripe)</li>
                             </ul>
                         </section>
 
                         <section className="mb-6">
                             <h2 className="text-2xl font-semibold mb-4">3. Zweck der Datenverarbeitung / Purpose</h2>
                             <p className="text-muted">
-                                Ihre Daten werden verwendet für: Bereitstellung des Dienstes, Abrechnung, Kundensupport.
+                                Ihre Daten werden verwendet fuer: Bereitstellung des Dienstes, Abrechnung, Kundensupport.
                             </p>
                             <p className="text-muted mt-2">
                                 Your data is used for: Service provision, billing, customer support.
@@ -47,7 +47,7 @@ export default function Privacy() {
                         <section className="mb-6">
                             <h2 className="text-2xl font-semibold mb-4">4. Rechtsgrundlage / Legal Basis</h2>
                             <p className="text-muted">
-                                DSGVO Art. 6 Abs. 1 lit. b (Vertragserfüllung) / GDPR Art. 6(1)(b) (contract performance)
+                                DSGVO Art. 6 Abs. 1 lit. b (Vertragserfuellung) / GDPR Art. 6(1)(b) (contract performance)
                             </p>
                         </section>
 
@@ -67,7 +67,7 @@ export default function Privacy() {
                         <section className="mb-6">
                             <h2 className="text-2xl font-semibold mb-4">6. Cookies</h2>
                             <p className="text-muted">
-                                Wir verwenden essenzielle Cookies für Authentifizierung und Funktionalität.
+                                Wir verwenden essenzielle Cookies fuer Authentifizierung und Funktionalität.
                             </p>
                             <p className="text-muted mt-2">
                                 We use essential cookies for authentication and functionality.
@@ -81,7 +81,7 @@ export default function Privacy() {
                                 <li>Auskunft / Access to your data</li>
                                 <li>Berichtigung / Correction of your data</li>
                                 <li>Löschung / Deletion of your data</li>
-                                <li>Datenübertragbarkeit / Data portability</li>
+                                <li>Datenuebertragbarkeit / Data portability</li>
                                 <li>Widerspruch / Object to processing</li>
                             </ul>
                             <p className="text-muted mt-2">

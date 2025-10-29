@@ -9,8 +9,8 @@ export default function Imprint() {
 
     return (
         <>
-            <div className="min-h-screen flex flex-col relative py-16">
-                <main className="flex-grow flex items-center justify-center px-8 relative z-10">
+            <div className="flex items-center justify-center min-h-screen md:p-4 py-10 lg:py-32 break-all">
+                <main className="flex-grow flex items-center justify-center px-8 py-16 relative z-10">
                     <div className="max-w-2xl bg-surface border border-border p-8 rounded-lg shadow-md">
                         <h1 className="text-4xl font-bold mb-6">{t.imprint.title}</h1>
 

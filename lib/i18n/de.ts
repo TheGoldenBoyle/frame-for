@@ -13,6 +13,56 @@ export const de: Translations = {
 		error: "Authentifizierungsfehler",
 	},
 	landing: {
+		// Hero Section
+		heroTitle1: "Die besten KI-Modelle.",
+		heroTitle2: "Ohne Einschränkungen.",
+		heroSubtitle1: "Top-Qualität. Neueste Modelle. Tokens, die nie verfallen.",
+		heroSubtitle2: "Perfekt für Gelegenheits-Creator, die testen, vergessen und zurückkommen wollen, wenn das nächste Trend-Modell rauskommt.",
+		startFree: "Kostenlos starten",
+		tryPlayground: "Playground ausprobieren",
+		videoPlaceholder: "Produkt-Video kommt bald",
+		
+		// Why Section
+		whyTitle: "Warum BildOro?",
+		freeTokensTitle: "Gratis Test-Tokens",
+		freeTokensDesc: "Einzige Plattform mit kostenlosen Tokens zum Start",
+		neverExpireTitle: "Verfallen nie",
+		neverExpireDesc: "Einmal kaufen, jederzeit nutzen",
+		topQualityTitle: "Top-Qualität",
+		topQualityDesc: "Beste Einstellungen, fest programmiert",
+		aiPromptTitle: "KI-Prompt-Builder",
+		aiPromptDesc: "Kostenloser Optimierer eingebaut",
+		oneStopTitle: "Alles an einem Ort",
+		oneStopDesc: "Alle neuesten Modelle an einem Platz",
+		yourChoiceTitle: "Deine Wahl",
+		yourChoiceDesc: "Freiheit, auf deine Art zu kreieren",
+		
+		// Models Section
+		modelsTitle: "Neueste verfügbare Modelle",
+		modelsSubtitle: "Modernste KI auf Knopfdruck",
+		
+		// Pricing Section
+		pricingTitle: "Einfache Preise",
+		pricingSubtitle: "Besser, günstiger, ohne Einschränkungen",
+		
+		// Final CTA
+		ctaTitle: "Bereit loszulegen?",
+		ctaSubtitle: "Starte mit kostenlosen Tokens. Keine Kreditkarte nötig.",
+		getStartedFree: "Kostenlos loslegen",
+		
+		// Waitlist Mode
+		waitlistTitle: "Wir haben unsere Kapazität erreicht",
+		waitlistSubtitle1: "🎯 Testen erst mit einer kleinen Gruppe",
+		waitlistSubtitle2: "Komm auf die Warteliste für frühen Zugang, wenn Plätze frei werden.",
+		emailPlaceholder: "Gib deine E-Mail ein",
+		joinWaitlist: "Zur Warteliste",
+		joining: "Wird hinzugefügt...",
+		waitlistSuccess: "✓ Du bist dabei! Position #{position}",
+		waitlistError: "Etwas ist schiefgelaufen",
+		waitlistFailed: "Konnte nicht zur Warteliste hinzufügen",
+		questionsContact: "Fragen? Kontaktiere",
+		
+		// Legacy (keeping for backwards compatibility)
 		headline1: "Entfessle Deine Kreativität.",
 		headline2: "KI-Bildgenerierung Ohne Grenzen.",
 		subheadline1: "Keine Barrieren. Keine Einschränkungen. Keine Limits.",
@@ -20,32 +70,28 @@ export const de: Translations = {
 		subheadline3: "Melde dich jetzt an und erhalte deine ersten 5 tokens kostenlos.",
 		cta: "Jetzt Loslegen",
 	},
-    home: {
-        title: "KI-Bildgenerierung Ohne Grenzen",
-        hero: "Befreie dich von EinschrÃ¤nkungen. Generiere ohne Grenzen.",
-        uploadSoon: "Unbegrenzte Modelle Erkunden",
-        dashboard: "Erstellen",
+	home: {
+		title: "KI-Bildgenerierung Ohne Grenzen",
+		hero: "Befreie dich von Einschränkungen. Generiere ohne Grenzen.",
+		uploadSoon: "Unbegrenzte Modelle Erkunden",
+		dashboard: "Erstellen",
 		studio: "Studio",
 		tokens: "Tokens"
-    },
+	},
 	dashboard: {
 		createNew: "Neue Erinnerung erstellen",
-		createDescription:
-			"Kombiniere Fotos von geliebten Menschen zu einem schÃ¶nen Bild",
+		createDescription: "Kombiniere Fotos von geliebten Menschen zu einem schönen Bild",
 		viewGallery: "Galerie",
 		galleryDescription: "Alle deine erstellten Erinnerungen ansehen",
 	},
 	playground: {
 		title: "Spielplatz",
-		description:
-			"Experimentiere mit den neuesten KI-Bildgenerierungsmodellen",
+		description: "Experimentiere mit den neuesten KI-Bildgenerierungsmodellen",
 		prompt: "Prompt",
-		promptPlaceholder:
-			"Eine ruhige Berglandschaft bei Sonnenuntergang mit lebendigen Farben...",
-		selectModels: "Modelle auswÃ¤hlen",
+		promptPlaceholder: "Eine ruhige Berglandschaft bei Sonnenuntergang mit lebendigen Farben...",
+		selectModels: "Modelle auswählen",
 		inputImage: "Eingabebild (Optional)",
-		inputImageHelp:
-			"FÃ¼ge ein Bild fÃ¼r Bild-zu-Bild-Generierung hinzu oder lasse es leer fÃ¼r Text-zu-Bild",
+		inputImageHelp: "Füge ein Bild für Bild-zu-Bild-Generierung hinzu oder lasse es leer für Text-zu-Bild",
 		generate: "Bild generieren",
 		compare: "{count} Modelle vergleichen",
 		results: "Ergebnisse",
@@ -55,26 +101,24 @@ export const de: Translations = {
 		saving: "Speichern...",
 		saved: "In Playground-Galerie gespeichert!",
 		errorPrompt: "Bitte gib einen Prompt ein",
-		errorModels: "Bitte wÃ¤hle mindestens ein Modell aus",
-		errorSomeFailed:
-			"Einige Modelle konnten nicht generieren. Dies kann aufgrund von Ratenbegrenzungen oder ModellverfÃ¼gbarkeit auftreten.",
-		tipsTitle: "ðŸ'¡ Tipps",
-		tip1: "WÃ¤hle mehrere Modelle aus, um ihre Ausgaben nebeneinander zu vergleichen",
-		tip2: "Nano Banana benÃ¶tigt ein Eingabebild zur Bearbeitung",
-		tip3: "Sei spezifisch in deinen Prompts fÃ¼r bessere Ergebnisse",
+		errorModels: "Bitte wähle mindestens ein Modell aus",
+		errorSomeFailed: "Einige Modelle konnten nicht generieren. Dies kann aufgrund von Ratenbegrenzungen oder Modellverfügbarkeit auftreten.",
+		tipsTitle: "💡 Tipps",
+		tip1: "Wähle mehrere Modelle aus, um ihre Ausgaben nebeneinander zu vergleichen",
+		tip2: "Nano Banana benötigt ein Eingabebild zur Bearbeitung",
+		tip3: "Sei spezifisch in deinen Prompts für bessere Ergebnisse",
 		tip4: "Speichere deine Lieblingsergebnisse in der Playground-Galerie",
 		galleryTitle: "Playground-Galerie",
 		galleryEmpty: "Noch keine Experimente",
-		galleryEmptyDescription:
-			"Beginne im Playground zu erstellen, um deine Arbeit hier zu sehen",
+		galleryEmptyDescription: "Beginne im Playground zu erstellen, um deine Arbeit hier zu sehen",
 		goToPlayground: "Zum Playground",
 	},
 	common: {
-		loading: "LÃ¤dt...",
+		loading: "Lädt...",
 		error: "Etwas ist schief gelaufen",
 		success: "Erfolg!",
-		back: "ZurÃ¼ck",
-		backToDashboard: "ZurÃ¼ck zum Dashboard",
+		back: "Zurück",
+		backToDashboard: "Zurück zum Dashboard",
 		contact: "Kontakt",
 	},
 	contact: {
@@ -84,8 +128,8 @@ export const de: Translations = {
 		subject: "Betreff",
 		message: "Nachricht",
 		submit: "Absenden",
-		successMessage: "Vielen Dank für Ihre Nachricht! Wir werden uns bald bei Ihnen melden.",
-		errorMessage: "Es gab einen Fehler beim Senden der Nachricht. Bitte versuchen Sie es später erneut."
+		successMessage: "Vielen Dank für deine Nachricht! Wir werden uns bald bei dir melden.",
+		errorMessage: "Es gab einen Fehler beim Senden der Nachricht. Bitte versuche es später erneut."
 	},
 	imprint: {
 		title: "Impressum",
@@ -98,9 +142,9 @@ export const de: Translations = {
 		phone: "Telefon: +49 1551 022 0025",
 		email: "E-Mail: thegoldenboyle@gmail.com",
 		legal_representation: "Vertretungsberechtigte",
-		ceo: "GeschÃ¤ftsfÃ¼hrer: James Boyle",
-		disclaimer: "Haftungsausschluss und GeschÃ¤ftsbedingungen",
-		disclaimer_text: "Wir liefern ausschlieÃŸlich hochwertige Ergebnisse. Verwendete Token kÃ¶nnen nicht erstattet werden. Die QualitÃ¤t der Ergebnisse hÃ¤ngt von den Modellen und Prompts ab. Bei Fragen oder Anliegen kontaktieren Sie uns jederzeit. Unser Ziel ist es, jedem Kunden Wert und WertschÃ¤tzung zu bieten.",
+		ceo: "Geschäftsführer: James Boyle",
+		disclaimer: "Haftungsausschluss und Geschäftsbedingungen",
+		disclaimer_text: "Wir liefern ausschließlich hochwertige Ergebnisse. Verwendete Token können nicht erstattet werden. Die Qualität der Ergebnisse hängt von den Modellen und Prompts ab. Bei Fragen oder Anliegen kontaktiere uns jederzeit. Unser Ziel ist es, jedem Kunden Wert und Wertschätzung zu bieten.",
 		social_media: "Social Media",
 		x_account: "X (Twitter): @theGoldenBoyle"
 	},

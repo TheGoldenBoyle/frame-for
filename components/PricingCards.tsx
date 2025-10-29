@@ -1,125 +1,108 @@
 'use client'
 
-import { useState } from 'react'
-import { TOKEN_CONFIG } from '@/lib/config/tokens'
+import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { useRouter } from 'next/navigation'
+import { TOKEN_CONFIG } from '@/lib/config/tokens'
 
-type PricingCardsProps = {
-    isLoggedIn?: boolean
+interface PricingCardsProps {
+    onPurchase: (type: 'onetime' | 'subscription') => void
+    loading?: boolean
 }
 
-export function PricingCards({ isLoggedIn = false }: PricingCardsProps) {
-    const [loading, setLoading] = useState(false)
-    const router = useRouter()
-
-    const handleSelect = async (type: 'subscription' | 'onetime') => {
-        if (!isLoggedIn) {
-            sessionStorage.setItem('selectedPlan', type)
-            router.push('/signup')
-            return
-        }
-
-        setLoading(true)
-        try {
-            const response = await fetch('/api/checkout', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type })
-            })
-
-            if (!response.ok) {
-                throw new Error('Checkout failed')
-            }
-
-            const data = await response.json()
-
-            if (data.url) {
-                window.location.href = data.url
-            }
-        } catch (error) {
-            console.error('Checkout error:', error)
-            alert('Failed to start checkout. Please try again.')
-        } finally {
-            setLoading(false)
-        }
-    }
-
+export function PricingCards({ onPurchase, loading = false }: PricingCardsProps) {
     return (
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="border rounded-lg p-8 flex flex-col">
-                <div className="mb-6">
-                    <h3 className="text-2xl font-bold mb-2">Monthly</h3>
-                    <div className="flex items-baseline gap-2">
-                        <span className="text-4xl font-bold">€{TOKEN_CONFIG.SUBSCRIPTION_PRICE}</span>
-                        <span className="text-muted">/month</span>
-                    </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {/* Subscription Card */}
+            <Card className="relative overflow-hidden">
+                <div className="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
+                    BEST VALUE
                 </div>
-
-                <ul className="space-y-3 mb-8 flex-grow">
-                    <li className="flex items-start gap-2">
-                        <span className="text-green-600">✓</span>
-                        <span>{TOKEN_CONFIG.SUBSCRIPTION_TOKENS} tokens per month</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <span className="text-green-600">✓</span>
-                        <span>Resets monthly</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <span className="text-green-600">✓</span>
-                        <span>Best value for regular use</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <span className="text-green-600">✓</span>
-                        <span>Cancel anytime</span>
-                    </li>
-                </ul>
-
-                <Button
-                    onClick={() => handleSelect('subscription')}
-                    disabled={loading}
-                    className="w-full"
-                >
-                    {isLoggedIn ? 'Subscribe' : 'Get Started'}
-                </Button>
-            </div>
-
-            <div className="border rounded-lg p-8 flex flex-col">
-                <div className="mb-6">
-                    <h3 className="text-2xl font-bold mb-2">One-Time</h3>
-                    <div className="flex items-baseline gap-2">
-                        <span className="text-4xl font-bold">€{TOKEN_CONFIG.ONETIME_PRICE}</span>
+                <div className="p-8 space-y-6 text-center">
+                    <div>
+                        <h3 className="text-2xl font-bold mb-2">Monthly Subscription</h3>
+                        <p className="text-sm text-muted">
+                            Renews automatically every month
+                        </p>
                     </div>
+                    
+                    <div className="py-4">
+                        <div className="text-5xl font-bold mb-2">
+                            ${TOKEN_CONFIG.SUBSCRIPTION_PRICE}
+                        </div>
+                        <p className="text-muted">per month</p>
+                    </div>
+
+                    <div className="space-y-2 text-sm">
+                        <div className="flex items-center justify-center gap-2">
+                            <span className="text-2xl font-bold text-primary">
+                                {TOKEN_CONFIG.SUBSCRIPTION_TOKENS}
+                            </span>
+                            <span className="text-muted">tokens/month</span>
+                        </div>
+                        <p className="text-muted">
+                            ~33 Pro Studio images or 100 Playground generations
+                        </p>
+                    </div>
+
+                    <Button
+                        onClick={() => onPurchase('subscription')}
+                        className="w-full"
+                        size="lg"
+                        disabled={loading}
+                    >
+                        Subscribe Now
+                    </Button>
+
+                    <p className="text-xs text-muted">
+                        Cancel anytime, no questions asked
+                    </p>
                 </div>
+            </Card>
 
-                <ul className="space-y-3 mb-8 flex-grow">
-                    <li className="flex items-start gap-2">
-                        <span className="text-green-600">✓</span>
-                        <span>{TOKEN_CONFIG.ONETIME_TOKENS} tokens</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <span className="text-green-600">✓</span>
-                        <span>Never expire</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <span className="text-green-600">✓</span>
-                        <span>No commitment</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <span className="text-green-600">✓</span>
-                        <span>Perfect for occasional use</span>
-                    </li>
-                </ul>
+            {/* One-Time Pack Card */}
+            <Card>
+                <div className="p-8 space-y-6 text-center">
+                    <div>
+                        <h3 className="text-2xl font-bold mb-2">Token Pack</h3>
+                        <p className="text-sm text-muted">
+                            One-time purchase, never expires
+                        </p>
+                    </div>
+                    
+                    <div className="py-4">
+                        <div className="text-5xl font-bold mb-2">
+                            ${TOKEN_CONFIG.ONETIME_PRICE}
+                        </div>
+                        <p className="text-muted">one-time</p>
+                    </div>
 
-                <Button
-                    onClick={() => handleSelect('onetime')}
-                    disabled={loading}
-                    variant="ghost"
-                    className="w-full"
-                >
-                    {isLoggedIn ? 'Buy Now' : 'Get Started'}
-                </Button>
-            </div>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex items-center justify-center gap-2">
+                            <span className="text-2xl font-bold text-primary">
+                                {TOKEN_CONFIG.ONETIME_TOKENS}
+                            </span>
+                            <span className="text-muted">tokens</span>
+                        </div>
+                        <p className="text-muted">
+                            ~16 Pro Studio images or 50 Playground generations
+                        </p>
+                    </div>
+
+                    <Button
+                        onClick={() => onPurchase('onetime')}
+                        className="w-full"
+                        variant="outline"
+                        size="lg"
+                        disabled={loading}
+                    >
+                        Buy Token Pack
+                    </Button>
+
+                    <p className="text-xs text-muted">
+                        Stack unlimited packs
+                    </p>
+                </div>
+            </Card>
         </div>
     )
 }

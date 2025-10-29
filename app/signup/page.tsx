@@ -79,7 +79,7 @@ export default function SignupPage() {
 
     return (
         <>
-            <div className="flex items-center justify-center min-h-screen p-4">
+            <div className="flex items-center justify-center min-h-screen md:p-4 py-10 lg:py-32">
                 <div className="w-full max-w-lg">
                     <Card>
                         <div className="text-center mb-8">
@@ -125,7 +125,7 @@ export default function SignupPage() {
                                 {isSubmitting ? 'Processing...' : t.auth.signup}
                             </Button>
                         </form>
-
+{/* 
                         <div className="mt-6">
                             <div className="relative">
                                 <div className="absolute inset-0 flex items-center">
@@ -136,7 +136,7 @@ export default function SignupPage() {
                                 </div>
                             </div>
 
-                            <div className="mt-6">
+                            {/* <div className="mt-6">
                                 <Button
                                     type="button"
                                     variant="outline"
@@ -156,9 +156,9 @@ export default function SignupPage() {
                                         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                                     </svg>
                                     X
-                                </Button> */}
-                            </div>
-                        </div>
+                                </Button> 
+                            </div> *
+                        </div> */}
 
                         <div className="mt-6 text-center">
                             <Link href="/login" className="text-sm text-muted hover:text-muted">

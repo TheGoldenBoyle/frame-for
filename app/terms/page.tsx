@@ -9,7 +9,7 @@ export default function Terms() {
 
     return (
         <>
-            <div className="min-h-screen flex flex-col relative py-16">
+            <div className="flex items-center justify-center min-h-screen md:p-4 py-10 lg:py-32">
                 <main className="flex-grow flex items-center justify-center px-8 py-16 relative z-10">
                     <div className="max-w-2xl bg-surface border border-border p-8 rounded-lg shadow-md">
                         <h1 className="text-4xl font-bold mb-6">AGB / Terms of Service</h1>
@@ -18,14 +18,14 @@ export default function Terms() {
                             <h2 className="text-2xl font-semibold mb-4">1. Anbieter / Provider</h2>
                             <p>James Patrick Boyle</p>
                             <p>Goldrain 5</p>
-                            <p>36088 Hünfeld, Deutschland</p>
+                            <p>36088 Huenfeld, Deutschland</p>
                             <p className="mt-2">thegoldenboyle@gmail.com</p>
                         </section>
 
                         <section className="mb-6">
                             <h2 className="text-2xl font-semibold mb-4">2. Leistungsumfang / Services</h2>
                             <p className="text-muted mb-2">
-                                BildOro bietet Zugang zu KI-gestützten Bildgenerierungsmodellen.
+                                BildOro bietet Zugang zu KI-gestuetzten Bildgenerierungsmodellen.
                             </p>
                             <p className="text-muted">
                                 BildOro provides access to AI-powered image generation models.
@@ -88,7 +88,7 @@ export default function Terms() {
                         <section className="mb-6">
                             <h2 className="text-2xl font-semibold mb-4">8. Urheberrechte / Copyright</h2>
                             <p className="text-muted mb-2">
-                                Generierte Bilder gehören dem Nutzer. BildOro behält sich das Recht vor, Bilder für Modellverbesserungen zu verwenden.
+                                Generierte Bilder gehören dem Nutzer. BildOro behält sich das Recht vor, Bilder fuer Modellverbesserungen zu verwenden.
                             </p>
                             <p className="text-muted">
                                 Generated images belong to the user. BildOro reserves the right to use images for model improvements.
@@ -96,9 +96,9 @@ export default function Terms() {
                         </section>
 
                         <section className="mb-6">
-                            <h2 className="text-2xl font-semibold mb-4">9. Kündigung / Termination</h2>
+                            <h2 className="text-2xl font-semibold mb-4">9. Kuendigung / Termination</h2>
                             <p className="text-muted mb-2">
-                                Beide Parteien können jederzeit kündigen. Bei Verstoß gegen AGB kann sofort gekündigt werden.
+                                Beide Parteien können jederzeit kuendigen. Bei Verstoß gegen AGB kann sofort gekuendigt werden.
                             </p>
                             <p className="text-muted">
                                 Both parties can terminate at any time. Immediate termination for TOS violations.

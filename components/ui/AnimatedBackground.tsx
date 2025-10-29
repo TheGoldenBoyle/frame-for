@@ -37,7 +37,8 @@ export function AnimatedBackground({
 
         const ctx = canvas.getContext('2d', {
             alpha: true,
-            desynchronized: true
+            desynchronized: true,
+            willReadFrequently: false
         })
         if (!ctx) return
 
@@ -49,8 +50,9 @@ export function AnimatedBackground({
             high: isMobile ? 35 : 60
         }
 
+        // Set dimensions to viewport size, max 100vh
         let w = canvas.width = window.innerWidth
-        let h = canvas.height = window.innerHeight
+        let h = canvas.height = Math.min(window.innerHeight, window.innerHeight)
 
         // Detect if user prefers dark mode
         const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches ||
@@ -214,7 +216,7 @@ export function AnimatedBackground({
             if (!ctx) return
 
             w = canvas.width = window.innerWidth
-            h = canvas.height = window.innerHeight
+            h = canvas.height = Math.min(window.innerHeight, window.innerHeight)
             ctx.clearRect(0, 0, w, h)
 
             opts.cx = w / 2
@@ -251,10 +253,15 @@ export function AnimatedBackground({
     return (
         <canvas
             ref={canvasRef}
-            className={`absolute inset-0 pointer-events-none ${className}`}
+            className={`w-full h-full pointer-events-none ${className}`}
             style={{
-                opacity: 0.6
+                opacity: 0.6,
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                maxHeight: '100vh'
             }}
+            aria-hidden="true"
         />
     )
 }

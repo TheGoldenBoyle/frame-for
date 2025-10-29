@@ -40,7 +40,7 @@ export function DashboardMobileMenu({
     return (
         <>
             <div
-                className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+                className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden max-h-screen overflow-auto"
                 onClick={onCloseAction}
             />
             <div className="fixed top-0 right-0 z-50 w-64 h-full shadow-lg bg-surface md:hidden">

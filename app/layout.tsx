@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from 'next'
 import { I18nProvider } from '@/lib/i18n/context'
 import './styles/globals.css'
 import { Navbar } from '@/components/partials/Navbar'
-import PWARegistration from '@/components/pwa/PWARegistration'
-import PWAInstallPrompt from '@/components/pwa/PWAInstallPrompt'
+// import PWARegistration from '@/components/pwa/PWARegistration'
+// import PWAInstallPrompt from '@/components/pwa/PWAInstallPrompt'
 import { AuthProvider } from '@/lib/auth/provider'
 import { ThemeProvider } from '@/lib/theme/provider'
 import { Lexend, DM_Sans } from 'next/font/google'
@@ -123,8 +123,8 @@ export default function RootLayout({
                         <I18nProvider>
                             <Navbar />
                             {children}
-                            <PWARegistration />
-                            <PWAInstallPrompt />
+                            {/* <PWARegistration />
+                            <PWAInstallPrompt /> */}
                         </I18nProvider>
                     </AuthProvider>
                     <CookieConsent />

@@ -13,6 +13,56 @@ export const en: Translations = {
 		error: "Authentication error",
 	},
 	landing: {
+		// Hero Section
+		heroTitle1: "The best AI models.",
+		heroTitle2: "No restrictions.",
+		heroSubtitle1: "Top quality. Latest models. Tokens that never expire.",
+		heroSubtitle2: "Perfect for casual creators who want to test, forget, and come back when the next trendy model drops.",
+		startFree: "Start Free",
+		tryPlayground: "Try Playground",
+		videoPlaceholder: "Product video coming soon",
+		
+		// Why Section
+		whyTitle: "Why BildOro?",
+		freeTokensTitle: "Free Test Tokens",
+		freeTokensDesc: "Only platform with free tokens to start",
+		neverExpireTitle: "Never Expire",
+		neverExpireDesc: "Buy once, use anytime",
+		topQualityTitle: "Top Quality",
+		topQualityDesc: "Best settings, hard-coded",
+		aiPromptTitle: "AI Prompt Builder",
+		aiPromptDesc: "Free optimizer built-in",
+		oneStopTitle: "One-Stop Shop",
+		oneStopDesc: "All latest models in one place",
+		yourChoiceTitle: "Your Choice",
+		yourChoiceDesc: "Freedom to create your way",
+		
+		// Models Section
+		modelsTitle: "Latest Models Available",
+		modelsSubtitle: "Cutting-edge AI at your fingertips",
+		
+		// Pricing Section
+		pricingTitle: "Simple Pricing",
+		pricingSubtitle: "Better, cheaper, unrestricted",
+		
+		// Final CTA
+		ctaTitle: "Ready to create?",
+		ctaSubtitle: "Start with free tokens. No credit card required.",
+		getStartedFree: "Get Started Free",
+		
+		// Waitlist Mode
+		waitlistTitle: "We've reached capacity",
+		waitlistSubtitle1: "🎯 Testing with a small group first",
+		waitlistSubtitle2: "Join the waitlist for early access when spots open.",
+		emailPlaceholder: "Enter your email",
+		joinWaitlist: "Join Waitlist",
+		joining: "Joining...",
+		waitlistSuccess: "✓ You're on the list! Position #{position}",
+		waitlistError: "Something went wrong",
+		waitlistFailed: "Failed to join waitlist",
+		questionsContact: "Questions? Contact",
+		
+		// Legacy (keeping for backwards compatibility)
 		headline1: "Unleash Your Creativity.",
 		headline2: "AI Image Generation Without Limits.",
 		subheadline1: "No gatekeeping. No restrictions. No barriers.",
@@ -20,19 +70,17 @@ export const en: Translations = {
 		subheadline3: "Join now and get your first 5 tokens free.",
 		cta: "Start Creating",
 	},
-    home: {
-        title: "AI Image Generation Unleashed",
-        hero: "Break free from limitations. Generate without boundaries.",
-        uploadSoon: "Explore Unlimited Models",
+	home: {
+		title: "AI Image Generation Unleashed",
+		hero: "Break free from limitations. Generate without boundaries.",
+		uploadSoon: "Explore Unlimited Models",
 		dashboard: "Dashboard", 
-        studio: "Studio",
+		studio: "Studio",
 		tokens: "Tokens"
-    },
-
+	},
 	dashboard: {
 		createNew: "Create New Memory",
-		createDescription:
-			"Combine photos of loved ones into one beautiful image",
+		createDescription: "Combine photos of loved ones into one beautiful image",
 		viewGallery: "Gallery",
 		galleryDescription: "See all your created memories",
 	},
@@ -40,12 +88,10 @@ export const en: Translations = {
 		title: "Playground",
 		description: "Experiment with the latest AI image generation models",
 		prompt: "Prompt",
-		promptPlaceholder:
-			"A serene mountain landscape at sunset with vibrant colors...",
+		promptPlaceholder: "A serene mountain landscape at sunset with vibrant colors...",
 		selectModels: "Select Models",
 		inputImage: "Input Image (Optional)",
-		inputImageHelp:
-			"Add an image for image-to-image generation, or leave empty for text-to-image",
+		inputImageHelp: "Add an image for image-to-image generation, or leave empty for text-to-image",
 		generate: "Generate Image",
 		compare: "Compare {count} Models",
 		results: "Results",
@@ -56,17 +102,15 @@ export const en: Translations = {
 		saved: "Saved to playground gallery!",
 		errorPrompt: "Please enter a prompt",
 		errorModels: "Please select at least one model",
-		errorSomeFailed:
-			"Some models failed to generate. This can happen due to rate limits or model availability.",
-		tipsTitle: "ðŸ'¡ Tips",
+		errorSomeFailed: "Some models failed to generate. This can happen due to rate limits or model availability.",
+		tipsTitle: "💡 Tips",
 		tip1: "Select multiple models to compare their outputs side-by-side",
 		tip2: "Nano Banana requires an input image for editing",
 		tip3: "Be specific in your prompts for better results",
 		tip4: "Save your favorite results to the playground gallery",
 		galleryTitle: "Playground Gallery",
 		galleryEmpty: "No experiments yet",
-		galleryEmptyDescription:
-			"Start creating in the playground to see your work here",
+		galleryEmptyDescription: "Start creating in the playground to see your work here",
 		goToPlayground: "Go to Playground",
 	},
 	common: {

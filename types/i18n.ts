@@ -16,11 +16,61 @@ export type Translations = {
 		title: string
 		hero: string
 		uploadSoon: string
-		dashboard?: string
+		dashboard: string
 		studio: string
 		tokens: string
 	}
 	landing: {
+		// Hero Section
+		heroTitle1: string
+		heroTitle2: string
+		heroSubtitle1: string
+		heroSubtitle2: string
+		startFree: string
+		tryPlayground: string
+		videoPlaceholder: string
+		
+		// Why Section
+		whyTitle: string
+		freeTokensTitle: string
+		freeTokensDesc: string
+		neverExpireTitle: string
+		neverExpireDesc: string
+		topQualityTitle: string
+		topQualityDesc: string
+		aiPromptTitle: string
+		aiPromptDesc: string
+		oneStopTitle: string
+		oneStopDesc: string
+		yourChoiceTitle: string
+		yourChoiceDesc: string
+		
+		// Models Section
+		modelsTitle: string
+		modelsSubtitle: string
+		
+		// Pricing Section
+		pricingTitle: string
+		pricingSubtitle: string
+		
+		// Final CTA
+		ctaTitle: string
+		ctaSubtitle: string
+		getStartedFree: string
+		
+		// Waitlist Mode
+		waitlistTitle: string
+		waitlistSubtitle1: string
+		waitlistSubtitle2: string
+		emailPlaceholder: string
+		joinWaitlist: string
+		joining: string
+		waitlistSuccess: string
+		waitlistError: string
+		waitlistFailed: string
+		questionsContact: string
+		
+		// Legacy (keeping for backwards compatibility)
 		headline1: string
 		headline2: string
 		subheadline1: string
@@ -69,7 +119,7 @@ export type Translations = {
 		success: string
 		back: string
 		backToDashboard: string
-		contact?: string
+		contact: string
 	}
 	contact: {
 		title: string
