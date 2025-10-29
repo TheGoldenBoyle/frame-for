@@ -1,5 +1,6 @@
 import { prisma } from "./prisma"
 import { createClient } from "@/lib/supabase"
+import { TOKEN_CONFIG } from "@/lib/config/tokens"
 
 type TokenTransactionType = "deduct" | "add" | "reset" | "purchase"
 
@@ -22,9 +23,9 @@ export async function getTokenBalance(userId: string) {
                     data: {
                         id: supabaseUser.id,
                         email: supabaseUser.email!,
-                        username: null, // OAuth users don't have username yet
+                        username: null, 
                         subscriptionStatus: "free",
-                        tokens: 3,
+                        tokens: TOKEN_CONFIG.FREE_TOKENS, 
                         tokenType: "free"
                     },
                     select: { tokens: true, tokenType: true, subscriptionStatus: true, email: true }

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/superbase-server"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
+import { TOKEN_CONFIG } from "@/lib/config/tokens"
 
 export async function GET(request: NextRequest) {
     const { searchParams, origin } = new URL(request.url)
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest) {
                             email: data.user.email!,
                             username: null, // OAuth users don't have username yet
                             subscriptionStatus: "free",
-                            tokens: 3,
+                            tokens: TOKEN_CONFIG.FREE_TOKENS,
                             tokenType: "free"
                         }
                     })

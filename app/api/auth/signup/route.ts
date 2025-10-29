@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/superbase-server"
 import { notifyNewSignup } from "@/lib/email-service"
 import { canAcceptNewSignups } from "@/lib/revenue-tracker"
+import { TOKEN_CONFIG } from "@/lib/config/tokens"
 
 function validateUsername(username: string): string | null {
     // Username validation rules
@@ -93,7 +94,7 @@ export async function POST(request: NextRequest) {
                     email: data.user.email!,
                     username: username,
                     subscriptionStatus: "free",
-                    tokens: 3,
+                    tokens: TOKEN_CONFIG.FREE_TOKENS,
                     tokenType: "free"
                 }
             })
