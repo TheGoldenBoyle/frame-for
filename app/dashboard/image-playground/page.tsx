@@ -21,7 +21,9 @@ export default function ImagePlaygroundPage() {
     const { user } = useAuth()
     const promptRef = useRef<HTMLTextAreaElement>(null)
     
+    // Store the image file reference more reliably
     const [image, setImage] = useState<File | null>(null)
+    const [imagePreview, setImagePreview] = useState<string | null>(null)
     const [prompt, setPrompt] = useState('')
     const [loading, setLoading] = useState(false)
     const [generating, setGenerating] = useState(false)
@@ -29,7 +31,26 @@ export default function ImagePlaygroundPage() {
     const [error, setError] = useState<string | ReactNode | null>(null)
 
     const handleImageChange = (files: File[]) => {
-        setImage(files[0] || null)
+        const file = files[0] || null
+        
+        // Clean up previous preview URL
+        if (imagePreview) {
+            URL.revokeObjectURL(imagePreview)
+        }
+        
+        if (file) {
+            // Create a new File object to ensure it's fresh
+            const freshFile = new File([file], file.name, { type: file.type })
+            setImage(freshFile)
+            
+            // Create preview URL
+            const previewUrl = URL.createObjectURL(freshFile)
+            setImagePreview(previewUrl)
+        } else {
+            setImage(null)
+            setImagePreview(null)
+        }
+        
         setResult(null)
         setError(null)
     }
@@ -50,9 +71,21 @@ export default function ImagePlaygroundPage() {
         setResult(null)
 
         try {
+            // Create FormData and verify the file is attached
             const formData = new FormData()
-            formData.append('image', image)
+            
+            // Re-create the File object from the stored one to ensure it's valid
+            const fileBlob = new Blob([await image.arrayBuffer()], { type: image.type })
+            const freshFile = new File([fileBlob], image.name, { type: image.type })
+            
+            formData.append('image', freshFile)
             formData.append('prompt', prompt.trim())
+
+            // Verify FormData has the image
+            const hasImage = formData.has('image')
+            if (!hasImage) {
+                throw new Error('Image was not properly attached to the request')
+            }
 
             const response = await fetch('/api/image-playground/transform', {
                 method: 'POST',
@@ -82,6 +115,7 @@ export default function ImagePlaygroundPage() {
                 originalUrl: data.originalUrl,
             })
         } catch (err) {
+            console.error('Transform error:', err)
             setError(err instanceof Error ? err.message : 'Something went wrong')
         } finally {
             setGenerating(false)
@@ -89,7 +123,13 @@ export default function ImagePlaygroundPage() {
     }
 
     const handleStartOver = () => {
+        // Clean up preview URL
+        if (imagePreview) {
+            URL.revokeObjectURL(imagePreview)
+        }
+        
         setImage(null)
+        setImagePreview(null)
         setPrompt('')
         setResult(null)
         setError(null)
