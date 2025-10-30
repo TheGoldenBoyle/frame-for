@@ -9,7 +9,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles = {
-    primary: 'bg-primary text-white hover:bg-primary-dark disabled:bg-muted',
+    primary: 'bg-primary text-white hover:bg-primary-dark disabled:bg-muted shadow-elevated-gold',
     ghost: 'bg-transparent text-text hover:bg-surface disabled:text-muted',
     outline: 'bg-transparent border-2 border-border text-text hover:border-primary disabled:border-muted disabled:text-muted',
 }
@@ -22,7 +22,7 @@ const sizeStyles = {
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ({ variant = 'primary', size = 'md', className = '', disabled, children, ...props }, ref) => {
-        const baseStyles = 'font-medium rounded-lg transition-colors disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer'
+        const baseStyles = 'font-medium rounded-lg transition-all disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer transform hover:scale-105 active:scale-95'
 
         return (
             <button

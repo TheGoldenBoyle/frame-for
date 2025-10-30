@@ -14,7 +14,7 @@ const paddingStyles = {
 export function Card({ padding = 'lg', className = '', children, ...props }: CardProps) {
     return (
         <div
-            className={`bg-surface border border-border rounded-lg ${paddingStyles[padding]} ${className}`}
+            className={`bg-surface border border-border rounded-lg shadow-elevated transition-all hover:shadow-elevated-gold hover:-translate-y-1 ${paddingStyles[padding]} ${className}`}
             {...props}
         >
             {children}
