@@ -135,25 +135,25 @@ export default function ProStudioPage() {
     }
 
     return (
-        <>
-            <div className="flex items-center justify-between mb-6 md:mb-8 flex-shrink-0">
+        <div className="relative min-h-screen">
+            <div className="flex items-center justify-between flex-shrink-0 mb-6 md:mb-8">
                 <div>
-                    <h1 className="mb-1 md:mb-2 text-2xl md:text-3xl font-bold">Pro Studio</h1>
+                    <h1 className="mb-1 text-2xl font-bold md:mb-2 md:text-3xl">Pro Studio</h1>
                     <p className="text-sm md:text-base text-muted">
                         Hyper-realistic generation with AI-powered prompt assistance
                     </p>
                 </div>
             </div>
 
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 overflow-auto">
-                <div className="h-fit">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">
+                <div>
                     <ChatInterface
                         onPromptSelect={handlePromptSelect}
                         disabled={generating}
                     />
                 </div>
 
-                <div className="h-fit">
+                <div className="lg:sticky lg:top-6">
                     <GenerationControls
                         imageCount={imageCount}
                         onImageCountChange={setImageCount}
@@ -167,10 +167,10 @@ export default function ProStudioPage() {
             </div>
 
             {error && (
-                <div className="p-4 mt-6 text-sm text-red-600 border border-red-200 rounded-lg bg-red-50 flex-shrink-0">
+                <div className="flex-shrink-0 p-4 mt-6 text-sm text-red-600 border border-red-200 rounded-lg bg-red-50">
                     {error}
                 </div>
             )}
-        </>
+        </div>
     )
 }

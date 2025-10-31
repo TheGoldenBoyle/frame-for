@@ -49,42 +49,53 @@ export function ResultsGrid({ results, batchId, prompt, onRevisionComplete }: Re
     }
 
     return (
-        <>
-            <Card>
-                <div className="mb-6 flex items-center justify-between">
+        <div className="space-y-6">
+            <Card className="p-6">
+                <div className="space-y-4">
                     <div>
-                        <h2 className="text-2xl font-bold mb-2">Results</h2>
-                        <p className="text-sm text-muted">{prompt}</p>
+                        <h2 className="mb-2 text-xl font-semibold">Your Prompt</h2>
+                        <p className="text-sm leading-relaxed text-muted">{prompt}</p>
                     </div>
-                    {successfulResults.length > 1 && (
-                        <Button variant="outline" onClick={handleDownloadAll}>
-                            Download All
-                        </Button>
+
+                    {successfulResults.length > 0 && (
+                        <div className="flex flex-col gap-2 pt-2">
+                            <span className="text-sm font-medium text-muted">
+                                {successfulResults.length} {successfulResults.length === 1 ? 'image' : 'images'} generated
+                            </span>
+                            {successfulResults.length > 1 && (
+                                <Button variant="outline" size="sm" onClick={handleDownloadAll}>
+                                    Download All
+                                </Button>
+                            )}
+                        </div>
                     )}
                 </div>
+            </Card>
 
-                <div className={`grid gap-4 ${
-                    successfulResults.length === 1
-                        ? 'grid-cols-1 max-w-2xl mx-auto'
-                        : successfulResults.length === 2
-                            ? 'grid-cols-1 md:grid-cols-2'
-                            : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
-                }`}>
-                    {results.map((result) => (
-                        <div key={result.index} className="space-y-3">
-                            {result.imageUrl ? (
-                                <>
-                                    <div
-                                        className="relative overflow-hidden rounded-lg bg-surface cursor-pointer hover:opacity-90 transition-opacity"
-                                        style={{ aspectRatio: '1/1' }}
-                                        onClick={() => handleImageClick(result)}
-                                    >
-                                        <img
-                                            src={result.imageUrl}
-                                            alt={`Generated image ${result.index + 1}`}
-                                            className="object-cover w-full h-full"
-                                        />
-                                    </div>
+            <div className={`grid gap-4 ${
+                successfulResults.length === 1
+                    ? 'grid-cols-1 max-w-3xl mx-auto'
+                    : successfulResults.length === 2
+                        ? 'grid-cols-1 md:grid-cols-2'
+                        : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+            }`}>
+                {results.map((result) => (
+                    <Card key={result.index} className="overflow-hidden">
+                        {result.imageUrl ? (
+                            <div className="space-y-0">
+                                <div
+                                    className="relative overflow-hidden transition-opacity cursor-pointer bg-surface hover:opacity-95 group"
+                                    style={{ aspectRatio: '1/1' }}
+                                    onClick={() => handleImageClick(result)}
+                                >
+                                    <img
+                                        src={result.imageUrl}
+                                        alt={`Generated image ${result.index + 1}`}
+                                        className="object-cover w-full h-full"
+                                    />
+                                    <div className="absolute inset-0 transition-colors bg-black/0 group-hover:bg-black/5" />
+                                </div>
+                                <div className="p-4">
                                     <Button
                                         variant="outline"
                                         size="sm"
@@ -93,24 +104,26 @@ export function ResultsGrid({ results, batchId, prompt, onRevisionComplete }: Re
                                     >
                                         Revise Image
                                     </Button>
-                                </>
-                            ) : (
-                                <div className="aspect-square rounded-lg bg-red-50 border-2 border-red-200 flex items-center justify-center p-4">
-                                    <p className="text-sm text-red-600 text-center">
-                                        {result.error || 'Generation failed'}
-                                    </p>
                                 </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
+                            </div>
+                        ) : (
+                            <div className="flex items-center justify-center p-6 aspect-square bg-red-50">
+                                <p className="text-sm text-center text-red-600">
+                                    {result.error || 'Generation failed'}
+                                </p>
+                            </div>
+                        )}
+                    </Card>
+                ))}
+            </div>
 
-                {results.some(r => !r.imageUrl) && (
-                    <div className="p-4 mt-6 text-sm text-orange-600 border border-orange-200 rounded-lg bg-orange-50">
-                        Some images failed to generate. This can happen due to rate limits or model availability.
-                    </div>
-                )}
-            </Card>
+            {results.some(r => !r.imageUrl) && (
+                <Card className="p-4 border-orange-200 bg-orange-50">
+                    <p className="text-sm text-orange-700">
+                        <span className="font-medium">Note:</span> Some images failed to generate. This can happen due to rate limits or model availability.
+                    </p>
+                </Card>
+            )}
 
             {selectedImage && (
                 <RevisionModal
@@ -126,6 +139,6 @@ export function ResultsGrid({ results, batchId, prompt, onRevisionComplete }: Re
                     onRevisionComplete={handleRevisionComplete}
                 />
             )}
-        </>
+        </div>
     )
 }

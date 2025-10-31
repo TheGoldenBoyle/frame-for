@@ -6,6 +6,7 @@ type ComparisonGridProps = {
     results: ComparisonResult[]
     originalImageUrl?: string
     onSaveResult?: (modelId: string) => void
+    onReviseResult?: (modelId: string) => void
     savingStates?: Record<string, boolean>
 }
 
@@ -13,6 +14,7 @@ export function ComparisonGrid({
     results,
     originalImageUrl,
     onSaveResult,
+    onReviseResult,
     savingStates = {}
 }: ComparisonGridProps) {
     if (results.length === 0) return null
@@ -34,6 +36,7 @@ export function ComparisonGrid({
                         modelName={result.modelName}
                         originalImageUrl={originalImageUrl}
                         onSave={onSaveResult ? () => onSaveResult(result.modelId) : undefined}
+                        onRevise={onReviseResult ? () => onReviseResult(result.modelId) : undefined}
                         saving={savingStates[result.modelId]}
                     />
                 ))

@@ -54,7 +54,7 @@ export function DashboardHeader({
                                 <button
                                     key={item.path}
                                     onClick={() => router.push(item.path)}
-                                    className={`px-4 py-2 rounded-lg transition-colors ${isActive(item.path)
+                                    className={`px-4 py-2 rounded-lg transition-colors cursor-pointer ${isActive(item.path)
                                             ? 'bg-primary/10 text-primary font-medium'
                                             : 'text-muted hover:text-text'
                                         }`}

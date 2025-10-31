@@ -20,14 +20,15 @@ export const Navbar = () => {
             <Link
                 href="/"
                 title="Go to home page"
-                className="!text-2xl font-bold">
+                className="!text-2xl font-bold"
+            >
                 Bild<span className="font-black text-primary">Oro</span>
             </Link>
             <div className="flex items-center gap-4">
                 <ThemeToggle />
                 <button
                     onClick={() => setLocale(locale === 'en' ? 'de' : 'en')}
-                    className="text-sm text-muted hover:text-text transition-colors"
+                    className="text-sm transition-colors text-muted hover:text-text"
                 >
                     {locale === 'en' ? 'DE' : 'EN'}
                 </button>

@@ -172,10 +172,10 @@ export async function POST(request: NextRequest) {
 		if (
 			!Array.isArray(modelIds) ||
 			modelIds.length === 0 ||
-			modelIds.length > 3
+			modelIds.length > 5
 		) {
 			return NextResponse.json(
-				{ error: "Select 1-3 models" },
+				{ error: "Select 1-5 models" },
 				{ status: 400 }
 			)
 		}
