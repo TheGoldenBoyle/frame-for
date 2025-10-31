@@ -3,9 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { ImageUpload } from '@/components/ImageUpload'
 import { PromptInput } from '@/components/PromptInput'
-import { ModelSelector } from '@/components/ModelSelector'
 import { GenerationLoader } from '@/components/GenerationLoader'
 import { ComparisonGrid } from '@/components/ComparisonGrid'
 import { useAuth } from '@/hooks/useAuth'
@@ -13,6 +11,15 @@ import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/Button'
 import { Loader } from '@/components/ui/Loader'
 import { Card } from '@/components/ui/Card'
+import { RequestModelForm } from '@/components/RequestModelForm'
+
+const MODELS = [
+    { id: 'flux-1.1-pro', name: 'FLUX 1.1 Pro', provider: 'Black Forest Labs' },
+    { id: 'imagen-4', name: 'Imagen 4', provider: 'Google' },
+    { id: 'seedream-4', name: 'Seedream 4', provider: 'ByteDance' },
+    { id: 'ideogram-v3-turbo', name: 'Ideogram v3 Turbo', provider: 'Ideogram AI' },
+    { id: 'recraft-v3', name: 'Recraft v3', provider: 'Recraft AI' },
+]
 
 type PlaygroundResult = {
     modelId: string
@@ -32,7 +39,7 @@ function toComparisonResult(result: PlaygroundResult): ComparisonResult | null {
         return {
             modelId: result.modelId,
             modelName: result.modelName,
-            imageUrl: result.imageUrl
+            imageUrl: result.imageUrl,
         }
     }
     return null
@@ -50,6 +57,7 @@ export default function PlaygroundPage() {
     const [playgroundPhotoId, setPlaygroundPhotoId] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [savingStates, setSavingStates] = useState<Record<string, boolean>>({})
+    const [showRequestForm, setShowRequestForm] = useState(false)
 
     useEffect(() => {
         if (!loading && !generating && results.length === 0 && promptRef.current) {
@@ -66,15 +74,8 @@ export default function PlaygroundPage() {
     }
 
     const handleGenerate = async () => {
-        if (!prompt.trim()) {
-            setError('Please enter a prompt')
-            return
-        }
-
-        if (selectedModels.length === 0) {
-            setError('Please select at least one model')
-            return
-        }
+        if (!prompt.trim()) return setError('Please enter a prompt')
+        if (selectedModels.length === 0) return setError('Please select at least one model')
 
         setGenerating(true)
         setError(null)
@@ -89,12 +90,8 @@ export default function PlaygroundPage() {
                 method: 'POST',
                 body: formData,
             })
-
             const data = await response.json()
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Generation failed')
-            }
+            if (!response.ok) throw new Error(data.error || 'Generation failed')
 
             setResults(data.results || [])
             setPlaygroundPhotoId(data.playgroundPhotoId)
@@ -107,27 +104,17 @@ export default function PlaygroundPage() {
 
     const handleSaveResult = async (modelId: string) => {
         if (!playgroundPhotoId) return
-
         setSavingStates((prev) => ({ ...prev, [modelId]: true }))
 
         try {
             const response = await fetch('/api/playground/save', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    playgroundPhotoId,
-                    modelId,
-                }),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ playgroundPhotoId, modelId }),
             })
 
             const data = await response.json()
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Save failed')
-            }
-
+            if (!response.ok) throw new Error(data.error || 'Save failed')
             alert('Saved to playground gallery!')
         } catch (err) {
             alert(err instanceof Error ? err.message : 'Save failed')
@@ -144,15 +131,8 @@ export default function PlaygroundPage() {
         setError(null)
     }
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <Loader />
-            </div>
-        )
-    }
-
-    if (generating) {
+    if (loading) return <Loader fullScreen />
+    if (generating)
         return (
             <GenerationLoader
                 modelCount={selectedModels.length}
@@ -161,39 +141,33 @@ export default function PlaygroundPage() {
                 prompt={prompt}
             />
         )
-    }
 
     if (results.length > 0) {
         return (
-            <div className="min-h-screen p-2 md:p-4">
+            <div className="min-h-screen p-4">
                 <div className="mx-auto max-w-7xl">
                     <div className="flex items-center justify-between mb-8">
                         <Button variant="ghost" onClick={() => router.push('/dashboard')}>
                             ← Back to Dashboard
                         </Button>
-                        <div className="flex gap-4">
-                            <Button variant="ghost" onClick={handleStartOver}>
-                                Start Over
-                            </Button>
-                        </div>
+                        <Button variant="ghost" onClick={handleStartOver}>
+                            Start Over
+                        </Button>
                     </div>
 
                     <Card>
-                        <div className="mb-6">
-                            <h2 className="mb-2 text-2xl font-bold">Results</h2>
-                            <p className="text-sm text-muted">{prompt}</p>
-                        </div>
+                        <h2 className="mb-4 text-xl font-semibold">Results</h2>
+                        <p className="mb-6 text-sm text-muted">{prompt}</p>
 
                         <ComparisonGrid
                             results={results
                                 .map(toComparisonResult)
-                                .filter((result): result is ComparisonResult => result !== null)
-                            }
+                                .filter((result): result is ComparisonResult => result !== null)}
                             onSaveResult={handleSaveResult}
                             savingStates={savingStates}
                         />
 
-                        {results.some(r => !r.imageUrl) && (
+                        {results.some((r) => !r.imageUrl) && (
                             <div className="p-4 mt-6 text-sm text-orange-600 border border-orange-200 rounded-lg bg-orange-50">
                                 Some models failed to generate. This can happen due to rate limits or model availability.
                             </div>
@@ -205,55 +179,78 @@ export default function PlaygroundPage() {
     }
 
     return (
-        <>
-            <div className="flex items-center justify-between mb-6 md:mb-8 flex-shrink-0">
-                <div>
-                    <h1 className="mb-1 md:mb-2 text-2xl md:text-3xl font-bold">Playground</h1>
-                    <p className="text-sm md:text-base text-muted">
-                        Experiment with the latest AI image generation models
-                    </p>
+        <div className="min-h-screen">
+            <div className="flex flex-col gap-6 mx-auto max-w-7xl md:flex-row">
+                {/* Left Column: Model Selection */}
+                <div className="flex flex-col gap-4 md:w-1/3">
+                    <h2 className="mb-2 text-xl font-semibold">Models</h2>
+                    <Card className="flex flex-col flex-1" animate={false}>
+                        <div className="grid flex-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
+                            {MODELS.map((model, index) => {
+                                const isSelected = selectedModels.includes(model.id)
+                                return (
+                                    <Card
+                                        key={model.id}
+                                        onClick={() => handleModelSelect(model.id)}
+                                        className={`cursor-pointer p-5 border ${
+                                            isSelected
+                                                ? 'border-primary bg-surface/80 shadow-elevated-gold'
+                                                : 'border-border bg-surface/60'
+                                        } animate-fade-in-up stagger-${(index % 6) + 1}`}
+                                    >
+                                        <h3 className={`font-semibold mb-1 ${isSelected ? 'text-primary' : 'text-text'}`}>
+                                            {model.name}
+                                        </h3>
+                                        <p className="text-sm text-muted">{model.provider}</p>
+                                    </Card>
+                                )
+                            })}
+
+                            <Card
+                                onClick={() => setShowRequestForm(true)}
+                                className="p-5 text-center border border-dashed cursor-pointer border-primary/40 bg-surface/40 animate-fade-in-up"
+                            >
+                                <h3 className="mb-1 font-semibold text-primary">Request a Model</h3>
+                                <p className="text-sm text-muted">Tell us what you’d like next</p>
+                            </Card>
+                        </div>
+                    </Card>
+                </div>
+
+                {/* Right Column: Prompt + Generate */}
+                <div className="flex flex-col gap-4 md:w-2/3">
+                    <h2 className="mb-2 text-xl font-semibold">Prompt</h2>
+                    <Card className="flex flex-col flex-1" animate={false}>
+                        <PromptInput
+                            ref={promptRef}
+                            value={prompt}
+                            onChange={setPrompt}
+                            placeholder="A serene mountain landscape at sunset with vibrant colors..."
+                            label="Prompt"
+                            maxLength={1000}
+                            disabled={generating}
+                        />
+                    </Card>
+
+                    {error && (
+                        <div className="p-4 text-sm text-red-600 border border-red-200 rounded-lg bg-red-50">
+                            {error}
+                        </div>
+                    )}
+
+                    <Button
+                        onClick={handleGenerate}
+                        disabled={generating || !prompt.trim() || selectedModels.length === 0}
+                        className="w-full"
+                    >
+                        {selectedModels.length > 1
+                            ? `Compare ${selectedModels.length} Models`
+                            : 'Generate Image'}
+                    </Button>
                 </div>
             </div>
 
-            <div className="flex-1 flex flex-col gap-4 md:gap-6 overflow-hidden">
-                <Card className="flex-shrink-0">
-                    <ModelSelector
-                        selectedModels={selectedModels}
-                        onSelect={handleModelSelect}
-                        maxSelection={3}
-                        disabled={generating}
-                        hasImage={false}
-                    />
-                </Card>
-
-                <Card className="flex-1 overflow-auto">
-                    <PromptInput
-                        ref={promptRef}
-                        value={prompt}
-                        onChange={setPrompt}
-                        placeholder="A serene mountain landscape at sunset with vibrant colors..."
-                        label="Prompt"
-                        maxLength={1000}
-                        disabled={generating}
-                    />
-                </Card>
-
-                {error && (
-                    <div className="p-4 text-sm text-red-600 border border-red-200 rounded-lg bg-red-50 flex-shrink-0">
-                        {error}
-                    </div>
-                )}
-
-                <Button
-                    onClick={handleGenerate}
-                    disabled={generating || !prompt.trim() || selectedModels.length === 0}
-                    className="w-full flex-shrink-0"
-                >
-                    {selectedModels.length > 1
-                        ? `Compare ${selectedModels.length} Models`
-                        : 'Generate Image'}
-                </Button>
-            </div>
-        </>
+            {showRequestForm && <RequestModelForm onClose={() => setShowRequestForm(false)} />}
+        </div>
     )
 }

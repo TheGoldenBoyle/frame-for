@@ -7,6 +7,7 @@ type PromptInputProps = {
     maxLength?: number
     disabled?: boolean
     label?: string
+    className?: string
 }
 
 export const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(
@@ -17,7 +18,8 @@ export const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(
             placeholder = 'Describe the image you want to create...',
             maxLength = 1000,
             disabled = false,
-            label = 'Prompt'
+            label = 'Prompt',
+            className = ''
         },
         ref
     ) {
@@ -26,11 +28,11 @@ export const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(
         const isNearLimit = charCount > maxLength * 0.8
 
         return (
-            <div className=''>
+            <div className={`flex flex-col flex-1 ${className}`}>
                 <label className="block mb-2 text-sm font-medium text-text">
                     {label}
                 </label>
-                <div className="relative">
+                <div className="relative flex-1">
                     <textarea
                         ref={ref}
                         value={value}
@@ -40,7 +42,7 @@ export const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(
                         placeholder={placeholder}
                         maxLength={maxLength}
                         disabled={disabled}
-                        className={`w-full px-4 py-3 rounded-lg border max-h-[190px] transition-all min-h-[120px] bg-surface text-text placeholder:text-muted ${isFocused
+                        className={`w-full h-full px-4 py-3 rounded-lg border resize-none transition-all bg-surface text-text placeholder:text-muted ${isFocused
                                 ? 'border-primary ring-2 ring-primary/20'
                                 : 'border-border'
                             } ${disabled ? 'opacity-60 cursor-not-allowed' : ''} focus:outline-none`}
