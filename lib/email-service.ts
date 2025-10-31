@@ -32,6 +32,48 @@ async function sendEmail({
     }
 }
 
+// ✅ NEW: Model Request Email Notification
+export async function notifyModelRequest({
+    email,
+    modelName,
+}: {
+    email: string
+    modelName: string
+}) {
+    await sendEmail({
+        subject: `✨ New Model Request - ${modelName}`,
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #333; border-bottom: 2px solid #D4AF37; padding-bottom: 10px;">
+                    ✨ New Model Request
+                </h2>
+                <div style="background-color: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                    <p style="margin: 10px 0;">
+                        <strong style="color: #555;">User Email:</strong> 
+                        <span style="color: #333;">${email}</span>
+                    </p>
+                    <p style="margin: 10px 0;">
+                        <strong style="color: #555;">Requested Model:</strong> 
+                        <span style="color: #333;">${modelName}</span>
+                    </p>
+                </div>
+                <p style="color: #999; font-size: 12px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px;">
+                    This is an automated notification from BildOro
+                </p>
+            </div>
+        `,
+        text: `
+✨ New Model Request
+
+User Email: ${email}
+Requested Model: ${modelName}
+
+---
+This is an automated notification from BildOro
+        `.trim(),
+    })
+}
+
 export async function notifyNewSignup(userData: {
     email: string
     userId: string

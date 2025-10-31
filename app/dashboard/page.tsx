@@ -26,7 +26,7 @@ export default function DashboardPage() {
                 const response = await fetch('/api/tokens')
                 const data = await response.json()
 
-                setTokens(data.tokens)
+                setTokens(data.tokens ?? 0) // default to 0 if null
                 setTokenType(data.tokenType)
                 setSubscriptionStatus(data.subscriptionStatus)
             } catch (error) {
@@ -78,9 +78,7 @@ export default function DashboardPage() {
 
         setDeleteLoading(true)
         try {
-            const response = await fetch('/api/account/delete', {
-                method: 'POST'
-            })
+            const response = await fetch('/api/account/delete', { method: 'POST' })
 
             if (response.ok) {
                 router.push('/')
@@ -98,27 +96,6 @@ export default function DashboardPage() {
         }
     }
 
-    const getPlanBadge = () => {
-        if (subscriptionStatus === 'active') {
-            return (
-                <span className="text-sm font-medium text-primary">
-                    Active Subscription
-                </span>
-            )
-        } else if (tokenType === 'onetime') {
-            return (
-                <span className="text-sm font-medium text-muted">
-                    One-Time Pack
-                </span>
-            )
-        }
-        return (
-            <span className="text-sm font-medium text-muted">
-                Free Plan
-            </span>
-        )
-    }
-
     if (isLoading) {
         return <Loader fullScreen />
     }
@@ -127,9 +104,26 @@ export default function DashboardPage() {
 
     return (
         <div className="min-h-[calc(100vh-80px)] overflow-y-auto p-4 md:p-8">
-            <div className="max-w-5xl mx-auto space-y-8">
-            
+            {/* Plan Badge + Token Count */}
+            <div className="flex items-center max-w-5xl gap-4 mx-auto mb-6">
+                <span
+                    className={`px-2 py-1 text-sm font-medium rounded ${
+                        isSubscribed ? 'text-white bg-primary' : 'text-muted border border-border'
+                    }`}
+                >
+                    {isSubscribed
+                        ? 'Active Subscription'
+                        : tokenType === 'onetime'
+                        ? 'One-Time Pack'
+                        : 'Free Plan'}
+                </span>
 
+                <span className="px-2 py-1 text-sm font-medium border rounded text-primary border-primary">
+                    {tokens ?? 0} {tokens === 1 ? 'token' : 'tokens'}
+                </span>
+            </div>
+
+            <div className="max-w-5xl mx-auto space-y-8">
                 {tokens < 3 && (
                     <div className="p-4 border rounded-lg bg-yellow-500/5 border-yellow-500/20">
                         <p className="text-sm font-medium text-yellow-800">
@@ -138,12 +132,13 @@ export default function DashboardPage() {
                     </div>
                 )}
 
+                {/* Quick Actions */}
                 <div>
                     <h2 className="mb-4 text-xl font-semibold">Quick Actions</h2>
-                    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                    <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
                         <button
                             onClick={() => router.push('/dashboard/playground')}
-                            className="flex flex-col items-center justify-center p-6 text-left transition-all border rounded-xl bg-surface border-border hover:border-primary/30"
+                            className="flex flex-col items-center justify-center p-6 text-center transition-all border rounded-xl bg-surface border-border hover:border-primary/30"
                         >
                             <Sparkles className="w-6 h-6 mb-3 text-primary" />
                             <div className="mb-1 font-semibold">Playground</div>
@@ -152,7 +147,7 @@ export default function DashboardPage() {
 
                         <button
                             onClick={() => router.push('/dashboard/image-playground')}
-                            className="flex flex-col items-center justify-center p-6 text-left transition-all border rounded-xl bg-surface border-border hover:border-primary/30"
+                            className="flex flex-col items-center justify-center p-6 text-center transition-all border rounded-xl bg-surface border-border hover:border-primary/30"
                         >
                             <ImagePlus className="w-6 h-6 mb-3 text-primary" />
                             <div className="mb-1 font-semibold">Image Playground</div>
@@ -161,7 +156,7 @@ export default function DashboardPage() {
 
                         <button
                             onClick={() => router.push('/dashboard/pro-studio')}
-                            className="flex flex-col items-center justify-center p-6 text-left transition-all border rounded-xl bg-surface border-border hover:border-primary/30"
+                            className="flex flex-col items-center justify-center p-6 text-center transition-all border rounded-xl bg-surface border-border hover:border-primary/30"
                         >
                             <Zap className="w-6 h-6 mb-3 text-primary" />
                             <div className="mb-1 font-semibold">Pro Studio</div>
@@ -170,7 +165,7 @@ export default function DashboardPage() {
 
                         <button
                             onClick={() => router.push('/dashboard/gallery')}
-                            className="flex flex-col items-center justify-center p-6 text-left transition-all border rounded-xl bg-surface border-border hover:border-primary/30"
+                            className="flex flex-col items-center justify-center p-6 text-center transition-all border rounded-xl bg-surface border-border hover:border-primary/30"
                         >
                             <Image className="w-6 h-6 mb-3 text-primary" />
                             <div className="mb-1 font-semibold">Gallery</div>
@@ -179,18 +174,24 @@ export default function DashboardPage() {
                     </div>
                 </div>
 
+                {/* Get More Tokens */}
                 <div>
                     <h2 className="mb-4 text-xl font-semibold">Get More Tokens</h2>
                     <div className="grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
-                        <div className={`p-6 rounded-xl border transition-all ${
-                            isSubscribed 
-                                ? 'bg-primary/5 border-primary' 
-                                : 'bg-surface border-border hover:border-primary/30'
-                        }`}>
+                        <div
+                            className={`p-6 rounded-xl border transition-all ${
+                                isSubscribed
+                                    ? 'bg-primary/5 border-primary'
+                                    : 'bg-surface border-border hover:border-primary/30'
+                            }`}
+                        >
                             <div className="flex items-start justify-between mb-4">
                                 <div>
                                     <h3 className="mb-1 font-semibold">Monthly</h3>
-                                    <div className="text-2xl font-bold">€4.99<span className="text-sm font-normal text-muted">/mo</span></div>
+                                    <div className="text-2xl font-bold">
+                                        €4.99
+                                        <span className="text-sm font-normal text-muted">/mo</span>
+                                    </div>
                                 </div>
                                 {isSubscribed && (
                                     <span className="px-2 py-1 text-xs font-medium text-white rounded bg-primary">
@@ -226,7 +227,10 @@ export default function DashboardPage() {
                         <div className="p-6 transition-all border rounded-xl bg-surface border-border hover:border-primary/30">
                             <div className="mb-4">
                                 <h3 className="mb-1 font-semibold">One-Time</h3>
-                                <div className="text-2xl font-bold">€9.99<span className="text-sm font-normal text-muted"> once</span></div>
+                                <div className="text-2xl font-bold">
+                                    €9.99
+                                    <span className="text-sm font-normal text-muted"> once</span>
+                                </div>
                             </div>
                             <ul className="mb-4 space-y-2 text-sm">
                                 <li className="flex items-center gap-2">
@@ -254,6 +258,7 @@ export default function DashboardPage() {
                     </div>
                 </div>
 
+                {/* Account Section */}
                 <div className="pt-8 border-t border-border">
                     <h2 className="mb-4 text-xl font-semibold">Account</h2>
                     <div className="mb-4">
@@ -268,15 +273,23 @@ export default function DashboardPage() {
                             <LogOut className="w-4 h-4 mr-2" />
                             Logout
                         </Button>
-                        
+
                         <Button
                             onClick={handleDeleteAccount}
                             variant="outline"
-                            className={`flex flex-col items-center justify-center ${showDeleteConfirm ? 'border-red-500 text-red-500 hover:bg-red-50' : ''}`}
+                            className={`flex flex-col items-center justify-center ${
+                                showDeleteConfirm
+                                    ? 'border-red-500 text-red-500 hover:bg-red-50'
+                                    : ''
+                            }`}
                             disabled={deleteLoading}
                         >
                             <Trash2 className="w-4 h-4 mr-2" />
-                            {deleteLoading ? 'Deleting...' : showDeleteConfirm ? 'Confirm Delete' : 'Delete Account'}
+                            {deleteLoading
+                                ? 'Deleting...'
+                                : showDeleteConfirm
+                                ? 'Confirm Delete'
+                                : 'Delete Account'}
                         </Button>
                     </div>
 
