@@ -108,7 +108,7 @@ export const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(
                                 size="sm"
                                 onClick={handleEnhance}
                                 disabled={!canEnhance || enhancing || disabled}
-                                className="flex items-center gap-2"
+                                className="flex justify-center items-center gap-2"
                             >
                                 {enhancing ? (
                                     <>
