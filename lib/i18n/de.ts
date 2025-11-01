@@ -24,6 +24,7 @@ export const de: Translations = {
 		
 		// Why Section
 		whyTitle: "Warum BildOro?",
+		whySubtitle: "Alles was du brauchst, nichts was du nicht brauchst",
 		freeTokensTitle: "Gratis Test-Tokens",
 		freeTokensDesc: "Einzige Plattform mit kostenlosen Tokens zum Start",
 		neverExpireTitle: "Verfallen nie",

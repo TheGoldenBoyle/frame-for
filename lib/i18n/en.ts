@@ -24,6 +24,7 @@ export const en: Translations = {
 		
 		// Why Section
 		whyTitle: "Why BildOro?",
+		whySubtitle: "Everything you need, nothing you don't",
 		freeTokensTitle: "Free Test Tokens",
 		freeTokensDesc: "Only platform with free tokens to start",
 		neverExpireTitle: "Never Expire",

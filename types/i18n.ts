@@ -32,6 +32,7 @@ export type Translations = {
 		
 		// Why Section
 		whyTitle: string
+		whySubtitle: string
 		freeTokensTitle: string
 		freeTokensDesc: string
 		neverExpireTitle: string

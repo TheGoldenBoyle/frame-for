@@ -3,12 +3,11 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
-import { Card } from '@/components/ui/Card'
 import { Footer } from '@/components/partials/Footer'
 import { useAuth } from '@/hooks/useAuth'
-import { AnimatedBackground } from '@/components/ui/AnimatedBackground'
 import { PricingCards } from '@/components/PricingCards'
 import { Gift, Infinity, Zap, Wand2, Sparkles, Layers } from 'lucide-react'
+import { useI18n } from '@/lib/i18n/context'
 
 const MODELS = [
     { name: "FLUX 1.1 Pro", provider: "Black Forest Labs" },
@@ -22,6 +21,7 @@ const MODELS = [
 export default function LandingPage() {
     const router = useRouter()
     const { user } = useAuth()
+    const { t } = useI18n()
     const [isWaitlistMode, setIsWaitlistMode] = useState(false)
     const [email, setEmail] = useState('')
     const [loading, setLoading] = useState(false)
@@ -58,13 +58,13 @@ export default function LandingPage() {
             const data = await response.json()
 
             if (response.ok) {
-                setMessage(`✓ You're on the list! Position #${data.position}`)
+                setMessage(t.landing.waitlistSuccess.replace('{position}', data.position))
                 setEmail('')
             } else {
-                setMessage(data.error || 'Something went wrong')
+                setMessage(data.error || t.landing.waitlistError)
             }
         } catch (error) {
-            setMessage('Failed to join waitlist')
+            setMessage(t.landing.waitlistFailed)
         } finally {
             setLoading(false)
         }
@@ -100,16 +100,16 @@ export default function LandingPage() {
                     <div className="max-w-4xl animate-fade-in-up">
                         <div className="mb-8 space-y-3">
                             <h2 className="text-5xl md:text-7xl font-bold leading-tight">
-                                We've reached capacity
+                                {t.landing.waitlistTitle}
                             </h2>
                         </div>
 
                         <div className="text-xl text-muted max-w-2xl mx-auto mb-8 space-y-2 animate-fade-in-up stagger-1">
                             <p className="font-medium text-primary">
-                                🎯 Testing with a small group first
+                                {t.landing.waitlistSubtitle1}
                             </p>
                             <p>
-                                Join the waitlist for early access when spots open.
+                                {t.landing.waitlistSubtitle2}
                             </p>
                         </div>
 
@@ -119,13 +119,13 @@ export default function LandingPage() {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="Enter your email"
+                                    placeholder={t.landing.emailPlaceholder}
                                     className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:outline-none"
                                     required
                                     disabled={loading}
                                 />
                                 <Button type="submit" size="lg" disabled={loading}>
-                                    {loading ? 'Joining...' : 'Join Waitlist'}
+                                    {loading ? t.landing.joining : t.landing.joinWaitlist}
                                 </Button>
                             </div>
                             {message && (
@@ -136,7 +136,7 @@ export default function LandingPage() {
                         </form>
 
                         <p className="text-sm text-muted animate-fade-in-up stagger-3">
-                            Questions? Contact{' '}
+                            {t.landing.questionsContact}{' '}
                             <a href="https://x.com/thegoldenboyle" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                                 @theGoldenBoyle
                             </a>
@@ -153,17 +153,17 @@ export default function LandingPage() {
             <main className="relative z-10 px-6 py-20">
                 <section className="max-w-5xl mx-auto text-center mb-32">
                     <h1 className="text-6xl md:text-8xl font-bold mb-6 animate-fade-in-up">
-                        The best AI models.
+                        {t.landing.heroTitle1}
                         <br />
-                        <span className="text-primary">No restrictions.</span>
+                        <span className="text-primary">{t.landing.heroTitle2}</span>
                     </h1>
                     
                     <p className="text-xl text-muted max-w-2xl mx-auto mb-4 animate-fade-in-up stagger-1">
-                        Top quality. Latest models. Tokens that never expire.
+                        {t.landing.heroSubtitle1}
                     </p>
 
                     <p className="text-lg text-muted max-w-xl mx-auto mb-12 animate-fade-in-up stagger-2">
-                        Perfect for casual creators who want to test, forget, and come back when the next trendy model drops.
+                        {t.landing.heroSubtitle2}
                     </p>
 
                     <div className="flex justify-center gap-4 mb-16 animate-fade-in-up stagger-3">
@@ -172,31 +172,31 @@ export default function LandingPage() {
                             onClick={() => router.push(user ? '/dashboard' : '/signup')}
                             className="shimmer-effect glow-on-hover"
                         >
-                            Start Free
+                            {t.landing.startFree}
                         </Button>
                         <Button
                             variant="outline"
                             size="lg"
                             onClick={() => router.push(user ? '/dashboard/playground' : '/signup')}
                         >
-                            Try Playground
+                            {t.landing.tryPlayground}
                         </Button>
                     </div>
 
                     <div className="max-w-4xl mx-auto animate-fade-in-up stagger-4">
                         <div className="aspect-video bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 rounded-2xl flex items-center justify-center shadow-elevated-gold relative overflow-hidden group">
                             <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                            <p className="text-muted relative z-10">Product video coming soon</p>
+                            <p className="text-muted relative z-10">{t.landing.videoPlaceholder}</p>
                         </div>
                     </div>
                 </section>
 
                 <section className="max-w-6xl mx-auto mb-32">
                     <h2 className="text-3xl font-bold text-center mb-4 animate-fade-in-up">
-                        Why BildOro?
+                        {t.landing.whyTitle}
                     </h2>
                     <p className="text-center text-muted mb-16 animate-fade-in-up stagger-1">
-                        Everything you need, nothing you don't
+                        {t.landing.whySubtitle}
                     </p>
                     
                     <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
@@ -204,9 +204,9 @@ export default function LandingPage() {
                             <div className="mb-6 inline-flex p-4 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                                 <Gift className="w-8 h-8 text-primary" />
                             </div>
-                            <h3 className="text-xl font-bold mb-3">Free Test Tokens</h3>
+                            <h3 className="text-xl font-bold mb-3">{t.landing.freeTokensTitle}</h3>
                             <p className="text-muted leading-relaxed">
-                                Only platform with free tokens to start
+                                {t.landing.freeTokensDesc}
                             </p>
                         </div>
 
@@ -214,9 +214,9 @@ export default function LandingPage() {
                             <div className="mb-6 inline-flex p-4 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                                 <Infinity className="w-8 h-8 text-primary" />
                             </div>
-                            <h3 className="text-xl font-bold mb-3">Never Expire</h3>
+                            <h3 className="text-xl font-bold mb-3">{t.landing.neverExpireTitle}</h3>
                             <p className="text-muted leading-relaxed">
-                                Buy once, use anytime
+                                {t.landing.neverExpireDesc}
                             </p>
                         </div>
 
@@ -224,9 +224,9 @@ export default function LandingPage() {
                             <div className="mb-6 inline-flex p-4 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                                 <Zap className="w-8 h-8 text-primary" />
                             </div>
-                            <h3 className="text-xl font-bold mb-3">Top Quality</h3>
+                            <h3 className="text-xl font-bold mb-3">{t.landing.topQualityTitle}</h3>
                             <p className="text-muted leading-relaxed">
-                                Best settings, hard-coded
+                                {t.landing.topQualityDesc}
                             </p>
                         </div>
 
@@ -234,9 +234,9 @@ export default function LandingPage() {
                             <div className="mb-6 inline-flex p-4 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                                 <Wand2 className="w-8 h-8 text-primary" />
                             </div>
-                            <h3 className="text-xl font-bold mb-3">AI Prompt Builder</h3>
+                            <h3 className="text-xl font-bold mb-3">{t.landing.aiPromptTitle}</h3>
                             <p className="text-muted leading-relaxed">
-                                Free optimizer built-in
+                                {t.landing.aiPromptDesc}
                             </p>
                         </div>
 
@@ -244,9 +244,9 @@ export default function LandingPage() {
                             <div className="mb-6 inline-flex p-4 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                                 <Layers className="w-8 h-8 text-primary" />
                             </div>
-                            <h3 className="text-xl font-bold mb-3">One-Stop Shop</h3>
+                            <h3 className="text-xl font-bold mb-3">{t.landing.oneStopTitle}</h3>
                             <p className="text-muted leading-relaxed">
-                                All latest models in one place
+                                {t.landing.oneStopDesc}
                             </p>
                         </div>
 
@@ -254,9 +254,9 @@ export default function LandingPage() {
                             <div className="mb-6 inline-flex p-4 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                                 <Sparkles className="w-8 h-8 text-primary" />
                             </div>
-                            <h3 className="text-xl font-bold mb-3">Your Choice</h3>
+                            <h3 className="text-xl font-bold mb-3">{t.landing.yourChoiceTitle}</h3>
                             <p className="text-muted leading-relaxed">
-                                Freedom to create your way
+                                {t.landing.yourChoiceDesc}
                             </p>
                         </div>
                     </div>
@@ -264,10 +264,10 @@ export default function LandingPage() {
 
                 <section className="max-w-5xl mx-auto mb-32">
                     <h2 className="text-3xl font-bold text-center mb-4 animate-fade-in-up">
-                        Latest Models Available
+                        {t.landing.modelsTitle}
                     </h2>
                     <p className="text-center text-muted mb-16 animate-fade-in-up stagger-1">
-                        Cutting-edge AI at your fingertips
+                        {t.landing.modelsSubtitle}
                     </p>
                     
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -285,10 +285,10 @@ export default function LandingPage() {
 
                 <section className="max-w-6xl mx-auto mb-32">
                     <h2 className="text-3xl font-bold text-center mb-4 animate-fade-in-up">
-                        Simple Pricing
+                        {t.landing.pricingTitle}
                     </h2>
                     <p className="text-center text-muted mb-12 animate-fade-in-up stagger-1">
-                        Better, cheaper, unrestricted
+                        {t.landing.pricingSubtitle}
                     </p>
                     
                     <div className="animate-fade-in-up stagger-2">
@@ -301,17 +301,17 @@ export default function LandingPage() {
                         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 blur-3xl opacity-30 animate-pulse"></div>
                         <div className="relative z-10">
                             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                                Ready to create?
+                                {t.landing.ctaTitle}
                             </h2>
                             <p className="text-xl text-muted mb-10 max-w-xl mx-auto">
-                                Start with free tokens. No credit card required.
+                                {t.landing.ctaSubtitle}
                             </p>
                             <Button
                                 size="lg"
                                 onClick={() => router.push(user ? '/dashboard' : '/signup')}
                                 className="shimmer-effect glow-on-hover text-lg px-8 py-4"
                             >
-                                Get Started Free
+                                {t.landing.getStartedFree}
                             </Button>
                         </div>
                     </div>
