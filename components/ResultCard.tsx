@@ -132,7 +132,7 @@ export function ResultCard({
                 >
                     <button
                         onClick={handleCloseFullscreen}
-                        className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors"
+                        className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-[100]"
                         title="Close"
                     >
                         <X className="size-8" />
