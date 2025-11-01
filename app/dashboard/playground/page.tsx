@@ -169,11 +169,10 @@ export default function PlaygroundPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Revision failed')
 
-      // ✅ Properly update the results using `data.results`
       if (data.results && data.results.length > 0) {
         setResults(data.results.map((r: any) => ({
           ...r,
-          imageUrl: `${r.imageUrl}?v=${Date.now()}` // cache bust
+          imageUrl: `${r.imageUrl}?v=${Date.now()}`
         })))
         setRevisionCount(prev => prev + 1)
       }
@@ -228,7 +227,7 @@ export default function PlaygroundPage() {
             )}
 
             <h2 className="mb-4 text-xl font-semibold">Results</h2>
-            <p className="mb-6 text-sm text-muted">{prompt}</p>
+            <p className="mb-6 text-sm text-muted max-w-[700px]">{prompt}</p>
 
             <ComparisonGrid
               results={results
@@ -297,7 +296,7 @@ export default function PlaygroundPage() {
                 className="p-5 text-center border border-dashed cursor-pointer border-primary/40 bg-surface/40 animate-fade-in-up"
               >
                 <h3 className="mb-1 font-semibold text-primary">Request a Model</h3>
-                <p className="text-sm text-muted">Tell us what you’d like next</p>
+                <p className="text-sm text-muted">Tell us what you'd like next</p>
               </Card>
             </div>
           </Card>
@@ -317,6 +316,7 @@ export default function PlaygroundPage() {
               label="Prompt"
               maxLength={1000}
               disabled={generating}
+              showEnhanceButton={true}
             />
 
             <Button

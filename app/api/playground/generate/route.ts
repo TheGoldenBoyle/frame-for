@@ -3,7 +3,6 @@ import Replicate from "replicate"
 import { prisma } from "@/lib/prisma"
 import { createClient } from "@/lib/superbase-server"
 import { PlaygroundResult } from "@/types/globals"
-
 import { FormDataError, getString } from "@/lib/form-utils"
 import { checkTokens, deductTokens } from "@/lib/tokens"
 import { TOKEN_CONFIG } from "@/lib/config/tokens"
@@ -44,21 +43,10 @@ async function generateWithModel(
 ): Promise<string> {
 	if (modelId === "flux-1.1-pro") {
 		const output = await replicate.run(modelPath, {
-			input: {
-				prompt,
-				prompt_upsampling: true,
-			},
+			input: { prompt, prompt_upsampling: true },
 		})
-
 		if (typeof output === "string") return output
-		if (
-			output &&
-			typeof output === "object" &&
-			"url" in output &&
-			typeof output.url === "function"
-		)
-			return output.url()
-		if (Array.isArray(output) && output.length > 0) return output[0]
+		if (Array.isArray(output)) return output[0]
 		throw new Error("Unexpected output format from flux-1.1-pro")
 	}
 
@@ -70,79 +58,36 @@ async function generateWithModel(
 				safety_filter_level: "block_medium_and_above",
 			},
 		})
-
 		if (typeof output === "string") return output
-		if (
-			output &&
-			typeof output === "object" &&
-			"url" in output &&
-			typeof output.url === "function"
-		)
-			return output.url()
-		if (Array.isArray(output) && output.length > 0) return output[0]
+		if (Array.isArray(output)) return output[0]
 		throw new Error("Unexpected output format from imagen-4")
 	}
 
 	if (modelId === "seedream-4") {
 		const output = await replicate.run(modelPath, {
-			input: {
-				prompt,
-				aspect_ratio: "1:1",
-			},
+			input: { prompt, aspect_ratio: "1:1" },
 		})
-
 		if (Array.isArray(output) && output.length > 0) {
-			const first = output[0]
-			if (typeof first === "string") return first
-			if (
-				first &&
-				typeof first === "object" &&
-				"url" in first &&
-				typeof first.url === "function"
-			)
-				return first.url()
+			if (typeof output[0] === "string") return output[0]
 		}
-		if (typeof output === "string") return output
 		throw new Error("Unexpected output format from seedream-4")
 	}
 
 	if (modelId === "ideogram-v3-turbo") {
 		const output = await replicate.run(modelPath, {
-			input: {
-				prompt,
-				aspect_ratio: "1:1",
-			},
+			input: { prompt, aspect_ratio: "1:1" },
 		})
-
 		if (typeof output === "string") return output
-		if (
-			output &&
-			typeof output === "object" &&
-			"url" in output &&
-			typeof output.url === "function"
-		)
-			return output.url()
-		if (Array.isArray(output) && output.length > 0) return output[0]
+		if (Array.isArray(output)) return output[0]
 		throw new Error("Unexpected output format from ideogram-v3-turbo")
 	}
 
 	if (modelId === "recraft-v3") {
 		const output = await replicate.run(modelPath, {
-			input: {
-				prompt,
-				size: "1024x1024",
-			},
+			input: { prompt, size: "1024x1024" },
 		})
-
 		if (typeof output === "string") return output
-		if (
-			output &&
-			typeof output === "object" &&
-			"url" in output &&
-			typeof output.url === "function"
-		)
-			return output.url()
-		if (Array.isArray(output) && output.length > 0) return output[0]
+		if (Array.isArray(output)) return output[0]
 		throw new Error("Unexpected output format from recraft-v3")
 	}
 
@@ -152,7 +97,6 @@ async function generateWithModel(
 export async function POST(request: NextRequest) {
 	try {
 		const supabase = await createClient()
-
 		const {
 			data: { user },
 			error: authError,
@@ -163,25 +107,15 @@ export async function POST(request: NextRequest) {
 		}
 
 		const formData = await request.formData()
-
 		const prompt = getString(formData, "prompt")
 		const modelIdsString = getString(formData, "modelIds")
-
 		const modelIds = JSON.parse(modelIdsString) as string[]
 
-		if (
-			!Array.isArray(modelIds) ||
-			modelIds.length === 0 ||
-			modelIds.length > 5
-		) {
-			return NextResponse.json(
-				{ error: "Select 1-5 models" },
-				{ status: 400 }
-			)
+		if (!Array.isArray(modelIds) || modelIds.length === 0 || modelIds.length > 5) {
+			return NextResponse.json({ error: "Select 1–5 models" }, { status: 400 })
 		}
 
-		const tokensNeeded =
-			modelIds.length * TOKEN_CONFIG.COSTS.PLAYGROUND_PER_MODEL
+		const tokensNeeded = modelIds.length * TOKEN_CONFIG.COSTS.PLAYGROUND_PER_MODEL
 		const hasTokens = await checkTokens(user.id, tokensNeeded)
 
 		if (!hasTokens) {
@@ -197,65 +131,55 @@ export async function POST(request: NextRequest) {
 			)
 		}
 
-		const results: PlaygroundResult[] = []
-
-		for (const modelId of modelIds) {
-			const config = MODEL_CONFIG[modelId]
-			if (!config) {
-				console.error(`Unknown model: ${modelId}`)
-				continue
-			}
-
-			try {
-				const generatedUrl = await generateWithModel(
-					modelId,
-					config.path,
-					prompt
-				)
-
-				const response = await fetch(generatedUrl)
-				if (!response.ok) {
-					throw new Error(
-						`Failed to fetch generated image: ${response.statusText}`
-					)
+		// 🧠 Parallel model generation
+		const results = await Promise.all(
+			modelIds.map(async (modelId) => {
+				const config = MODEL_CONFIG[modelId]
+				if (!config) {
+					console.error(`Unknown model: ${modelId}`)
+					return null
 				}
 
-				const blob = await response.blob()
-				const arrayBuffer = await blob.arrayBuffer()
-				const buffer = Buffer.from(arrayBuffer)
+				try {
+					const generatedUrl = await generateWithModel(modelId, config.path, prompt)
+					const response = await fetch(generatedUrl)
+					if (!response.ok)
+						throw new Error(`Failed to fetch generated image: ${response.statusText}`)
 
-				const resultFileName = `${
-					user.id
-				}/playground-result-${Date.now()}-${modelId}.webp`
+					const blob = await response.blob()
+					const arrayBuffer = await blob.arrayBuffer()
+					const buffer = Buffer.from(arrayBuffer)
 
-				const { data: resultUpload, error: resultError } =
-					await supabase.storage
+					const resultFileName = `${user.id}/playground-result-${Date.now()}-${modelId}.webp`
+
+					const { data: resultUpload, error: resultError } = await supabase.storage
 						.from("user-images")
 						.upload(resultFileName, buffer, {
 							contentType: "image/webp",
 							upsert: false,
 						})
 
-				if (resultError) {
-					console.error(`Upload error for ${modelId}:`, resultError)
-					continue
+					if (resultError) throw resultError
+
+					const { data: urlData } = supabase.storage
+						.from("user-images")
+						.getPublicUrl(resultUpload.path)
+
+					return {
+						modelId,
+						modelName: config.name,
+						imageUrl: urlData.publicUrl,
+					}
+				} catch (error) {
+					console.error(`Failed to generate with ${modelId}:`, error)
+					return null
 				}
+			})
+		)
 
-				const { data: urlData } = supabase.storage
-					.from("user-images")
-					.getPublicUrl(resultUpload.path)
+		const filteredResults = results.filter(Boolean) as PlaygroundResult[]
 
-				results.push({
-					modelId,
-					modelName: config.name,
-					imageUrl: urlData.publicUrl,
-				})
-			} catch (error) {
-				console.error(`Failed to generate with ${modelId}:`, error)
-			}
-		}
-
-		if (results.length === 0) {
+		if (filteredResults.length === 0) {
 			return NextResponse.json(
 				{ error: "Failed to generate images for any model" },
 				{ status: 500 }
@@ -273,14 +197,14 @@ export async function POST(request: NextRequest) {
 				userId: user.id,
 				prompt,
 				originalUrl: null,
-				results: results as any,
+				results: filteredResults as any,
 				tokensCost: tokensNeeded,
 			},
 		})
 
 		return NextResponse.json({
 			success: true,
-			results,
+			results: filteredResults,
 			playgroundPhotoId: playgroundPhoto.id,
 		})
 	} catch (error) {
@@ -303,10 +227,7 @@ export async function POST(request: NextRequest) {
 
 		return NextResponse.json(
 			{
-				error:
-					error instanceof Error
-						? error.message
-						: "Generation failed",
+				error: error instanceof Error ? error.message : "Generation failed",
 			},
 			{ status: 500 }
 		)
