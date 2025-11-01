@@ -89,7 +89,7 @@ export const en: Translations = {
 		title: "Playground",
 		description: "Experiment with the latest AI image generation models",
 		prompt: "Prompt",
-		promptPlaceholder: "A serene mountain landscape at sunset with vibrant colors...",
+		promptPlaceholder: "Describe your vision: photorealistic portraits, professional logos, product photography, UI mockups, illustrations, advertisements, fashion shots, food photography, architectural renders, packaging designs, editorial layouts, brand materials, and more. Our top-tier models deliver studio-quality, hyper-realistic results every time. Use 'Enhance with AI' to optimize your prompt!",
 		selectModels: "Select Models",
 		inputImage: "Input Image (Optional)",
 		inputImageHelp: "Add an image for image-to-image generation, or leave empty for text-to-image",

@@ -1,8 +1,12 @@
 'use client'
 
+import { ThemeToggle } from '@/components/ThemeToggle'
+
 type NavItem = {
     path: string
     label: string
+    disabled?: boolean
+    comingSoon?: boolean
 }
 
 type MobileMenuProps = {
@@ -30,9 +34,11 @@ export function DashboardMobileMenu({
 }: MobileMenuProps) {
     const isActive = (path: string) => pathname === path
 
-    const handleNavigate = (path: string) => {
-        onNavigateAction(path)
-        onCloseAction()
+    const handleNavigate = (item: NavItem) => {
+        if (!item.disabled) {
+            onNavigateAction(item.path)
+            onCloseAction()
+        }
     }
 
     if (!isOpen) return null
@@ -43,7 +49,7 @@ export function DashboardMobileMenu({
                 className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden h-screen overflow-auto"
                 onClick={onCloseAction}
             />
-            <div className="fixed top-0 right-0 z-50 w-64 h-full shadow-lg bg-surface md:hidden">
+            <div className="fixed top-0 right-0 z-50 w-64 h-full shadow-lg bg-white/80 md:hidden">
                 <div className="flex flex-col h-full">
                     <div className="flex items-center justify-between p-4 border-b border-border">
                         <span className="text-xl font-bold">
@@ -64,28 +70,40 @@ export function DashboardMobileMenu({
                         {navItems.map((item) => (
                             <button
                                 key={item.path}
-                                onClick={() => handleNavigate(item.path)}
-                                className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
-                                    isActive(item.path)
+                                onClick={() => handleNavigate(item)}
+                                disabled={item.disabled}
+                                className={`w-full text-left px-4 py-3 rounded-lg transition-colors relative ${item.disabled
+                                        ? 'cursor-not-allowed opacity-60'
+                                        : ''
+                                    } ${isActive(item.path)
                                         ? 'bg-primary/10 text-primary font-medium'
                                         : 'text-text hover:bg-surface-hover'
-                                }`}
+                                    }`}
                             >
+                                {item.comingSoon && (
+                                    <span className="absolute -top-1 -right-1 px-2 py-0.5 text-[9px] font-bold rounded-full bg-primary text-white shadow-md">
+                                        SOON
+                                    </span>
+                                )}
                                 {item.label}
                             </button>
                         ))}
                     </div>
 
                     <div className="p-4 space-y-2 border-t border-border">
-                        <button
-                            onClick={() => {
-                                onLocaleChangeAction()
-                                onCloseAction()
-                            }}
-                            className="w-full px-4 py-2 text-left transition-colors rounded-lg text-muted hover:text-text hover:bg-surface-hover"
-                        >
-                            {locale === 'en' ? '🇩🇪 Deutsch' : '🇺🇸 English'}
-                        </button>
+                        <div className="flex items-center justify-between w-full py-2 rounded-lg text-muted">
+                            <ThemeToggle />
+                            <button
+                                onClick={() => {
+                                    onLocaleChangeAction()
+                                    onCloseAction()
+                                }}
+                                className=" px-4 py-2 text-left transition-colors rounded-lg text-muted hover:text-text hover:bg-surface-hover"
+                            >
+                                {locale === 'en' ? 'DE' : 'EN'}
+                            </button>
+                        </div>
+
                         <button
                             onClick={() => {
                                 onSignOutAction()

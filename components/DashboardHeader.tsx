@@ -26,14 +26,20 @@ export function DashboardHeader({
     const isVisible = useScrollDirection()
 
     const navItems = [
-        { path: '/dashboard', label: t.home.tokens },
-        { path: '/dashboard/playground', label: t.playground.title },
-        { path: '/dashboard/image-playground', label: 'Image Playground' },
-        { path: '/dashboard/pro-studio', label: 'Pro Studio' },
-        { path: '/dashboard/gallery', label: t.dashboard.viewGallery },
+        { path: '/dashboard', label: t.home.tokens, disabled: false },
+        { path: '/dashboard/playground', label: t.playground.title, disabled: false },
+        { path: '/dashboard/image-playground', label: 'Image Playground', disabled: true, comingSoon: true },
+        { path: '/dashboard/pro-studio', label: 'Pro Studio', disabled: true, comingSoon: true },
+        { path: '/dashboard/gallery', label: t.dashboard.viewGallery, disabled: false },
     ]
 
     const isActive = (path: string) => pathname === path
+
+    const handleNavClick = (item: any) => {
+        if (!item.disabled) {
+            router.push(item.path)
+        }
+    }
 
     return (
         <>
@@ -57,13 +63,23 @@ export function DashboardHeader({
                             {navItems.map((item) => (
                                 <button
                                     key={item.path}
-                                    onClick={() => router.push(item.path)}
-                                    className={`px-4 py-2 rounded-lg transition-colors cursor-pointer ${
+                                    onClick={() => handleNavClick(item)}
+                                    disabled={item.disabled}
+                                    className={`relative px-4 py-2 rounded-lg transition-colors ${
+                                        item.disabled
+                                            ? 'cursor-not-allowed opacity-60'
+                                            : 'cursor-pointer'
+                                    } ${
                                         isActive(item.path)
                                             ? 'bg-primary/10 text-primary font-medium'
                                             : 'text-muted hover:text-text'
                                     }`}
                                 >
+                                    {item.comingSoon && (
+                                        <span className="absolute -top-2 -right-2 px-2 py-0.5 text-[9px] font-bold rounded-full bg-primary text-white shadow-md">
+                                            SOON
+                                        </span>
+                                    )}
                                     {item.label}
                                 </button>
                             ))}

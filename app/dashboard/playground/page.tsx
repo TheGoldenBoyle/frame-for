@@ -343,7 +343,7 @@ export default function PlaygroundPage() {
                             ref={promptRef}
                             value={prompt}
                             onChange={setPrompt}
-                            placeholder="A serene mountain landscape at sunset with vibrant colors..."
+                            placeholder="Describe your vision: photorealistic portraits, professional logos, product photography, UI mockups, illustrations, advertisements, fashion shots, food photography, architectural renders, packaging designs, editorial layouts, brand materials, and more. Our top-tier models deliver studio-quality, hyper-realistic results every time. Use 'Enhance with AI' to optimize your prompt!"
                             label="Prompt"
                             maxLength={1000}
                             disabled={generating}
