@@ -22,16 +22,20 @@ export function ComparisonGrid({
 }: ComparisonGridProps) {
     if (results.length === 0) return null
 
-    // Define grid classes safely (Tailwind cannot parse dynamic col numbers)
-    let gridCols = ''
-    if (results.length === 1) gridCols = 'grid-cols-1'
-    else if (results.length === 2) gridCols = 'grid-cols-2'
-    else if (results.length === 3) gridCols = 'grid-cols-3'
-    else if (results.length === 4) gridCols = 'grid-cols-4'
-    else gridCols = 'grid-cols-5'
+    const validResults = results.filter((result) => result.imageUrl)
+
+    // Responsive grid that adapts to screen size and result count
+    const getGridClass = () => {
+        const count = validResults.length
+        if (count === 1) return 'grid-cols-1 max-w-3xl mx-auto'
+        if (count === 2) return 'grid-cols-1 md:grid-cols-2'
+        if (count === 3) return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+        if (count === 4) return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'
+        return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'
+    }
 
     return (
-        <div className="space-y-6">
+        <div className="w-full space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
                 {onStartFresh && (
@@ -47,23 +51,19 @@ export function ComparisonGrid({
                 )}
             </div>
 
-            {/* Smart Responsive Grid */}
-            <div
-                className={`grid gap-6 ${gridCols} auto-rows-auto items-start justify-items-center`}
-            >
-                {results
-                    .filter((result) => result.imageUrl)
-                    .map((result) => (
-                        <ResultCard
-                            key={result.modelId}
-                            imageUrl={result.imageUrl}
-                            modelName={result.modelName}
-                            originalImageUrl={originalImageUrl}
-                            onSave={onSaveResult ? () => onSaveResult(result.modelId) : undefined}
-                            onRevise={onReviseResult ? () => onReviseResult(result.modelId) : undefined}
-                            saving={savingStates[result.modelId]}
-                        />
-                    ))}
+            {/* Responsive Grid - maximizes image size */}
+            <div className={`grid gap-4 md:gap-6 ${getGridClass()} w-full`}>
+                {validResults.map((result) => (
+                    <ResultCard
+                        key={result.modelId}
+                        imageUrl={result.imageUrl}
+                        modelName={result.modelName}
+                        originalImageUrl={originalImageUrl}
+                        onSave={onSaveResult ? () => onSaveResult(result.modelId) : undefined}
+                        onRevise={onReviseResult ? () => onReviseResult(result.modelId) : undefined}
+                        saving={savingStates[result.modelId]}
+                    />
+                ))}
             </div>
         </div>
     )
