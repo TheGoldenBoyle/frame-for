@@ -6,26 +6,42 @@ type GenerationLoaderProps = {
     modelNames?: string[]
     hasImage?: boolean
     prompt?: string
+    isRevision?: boolean
 }
 
 const MODEL_DISPLAY_NAMES: Record<string, string> = {
     'nano-banana': 'Nano Banana',
     'flux-dev': 'Flux Dev',
     'flux-pro': 'Flux Pro',
+    'flux-1.1-pro': 'FLUX 1.1 Pro',
     'stable-diffusion': 'Stable Diffusion',
-    // Add more as needed
+    'imagen-4': 'Imagen 4',
+    'seedream-4': 'Seedream 4',
+    'ideogram-v3-turbo': 'Ideogram v3 Turbo',
+    'recraft-v3': 'Recraft v3',
 }
 
 export function GenerationLoader({ 
     modelCount = 1, 
     modelNames = [],
     hasImage = false,
-    prompt = ''
+    prompt = '',
+    isRevision = false
 }: GenerationLoaderProps) {
     const [loadingStep, setLoadingStep] = useState(0)
     const [progress, setProgress] = useState(0)
 
-    const loadingSteps = hasImage 
+    const loadingSteps = isRevision
+        ? [
+            'Analyzing your changes...',
+            'Initializing Nano Banana AI...',
+            'Processing edit mask...',
+            'Understanding modifications...',
+            'Applying revisions...',
+            'Refining details...',
+            'Almost done...'
+          ]
+        : hasImage 
         ? [
             'Uploading your image...',
             `Initializing ${modelCount > 1 ? modelNames.length + ' AI models' : 'AI model'}...`,
@@ -49,7 +65,7 @@ export function GenerationLoader({
           ]
 
     useEffect(() => {
-        const stepDuration = 2000
+        const stepDuration = isRevision ? 1500 : 2000
         const progressInterval = 50
 
         const stepTimer = setInterval(() => {
@@ -75,11 +91,13 @@ export function GenerationLoader({
             clearInterval(stepTimer)
             clearInterval(progressTimer)
         }
-    }, [loadingSteps.length])
+    }, [loadingSteps.length, isRevision])
 
-    const displayModelNames = modelNames
-        .map(id => MODEL_DISPLAY_NAMES[id] || id)
-        .join(', ')
+    const displayModelNames = isRevision 
+        ? 'Nano Banana'
+        : modelNames
+            .map(id => MODEL_DISPLAY_NAMES[id] || id)
+            .join(', ')
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
@@ -99,9 +117,14 @@ export function GenerationLoader({
                     {/* Title and Models */}
                     <div className="text-center">
                         <h3 className="mb-2 text-xl font-bold text-text">
-                            {modelCount > 1 ? `Generating ${modelCount} Images` : 'Creating Your Image'}
+                            {isRevision 
+                                ? 'Revising Your Image'
+                                : modelCount > 1 
+                                    ? `Generating ${modelCount} Images` 
+                                    : 'Creating Your Image'
+                            }
                         </h3>
-                        {modelNames.length > 0 && (
+                        {(modelNames.length > 0 || isRevision) && (
                             <p className="text-sm font-medium text-muted mb-1">
                                 Using: {displayModelNames}
                             </p>
@@ -120,13 +143,16 @@ export function GenerationLoader({
                     {/* Prompt Preview */}
                     {prompt && (
                         <div className="p-3 text-xs text-muted bg-surface rounded-lg border border-border">
-                            <span className="font-medium">Prompt:</span> {prompt.slice(0, 100)}{prompt.length > 100 ? '...' : ''}
+                            <span className="font-medium">{isRevision ? 'Revision:' : 'Prompt:'}</span> {prompt.slice(0, 100)}{prompt.length > 100 ? '...' : ''}
                         </div>
                     )}
 
                     {/* Info */}
                     <p className="text-xs text-center text-muted">
-                        This may take 10-40 seconds depending on model complexity
+                        {isRevision 
+                            ? 'This will take about 5-15 seconds'
+                            : 'This may take 10-40 seconds depending on model complexity'
+                        }
                     </p>
                 </div>
             </Card>

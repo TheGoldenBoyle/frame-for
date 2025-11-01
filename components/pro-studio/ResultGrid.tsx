@@ -50,7 +50,7 @@ export function ResultsGrid({ results, batchId, prompt, onRevisionComplete }: Re
 
     return (
         <div className="space-y-6">
-            <Card className="p-6">
+            <Card className="p-4">
                 <div className="space-y-4">
                     <div>
                         <h2 className="mb-2 text-xl font-semibold">Your Prompt</h2>
@@ -107,7 +107,7 @@ export function ResultsGrid({ results, batchId, prompt, onRevisionComplete }: Re
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex items-center justify-center p-6 aspect-square bg-red-50">
+                            <div className="flex items-center justify-center p-4 aspect-square bg-red-50">
                                 <p className="text-sm text-center text-red-600">
                                     {result.error || 'Generation failed'}
                                 </p>

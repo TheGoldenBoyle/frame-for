@@ -83,7 +83,7 @@ export function RevisionModal({
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             <div className="bg-surface rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-                <div className="p-6">
+                <div className="p-4">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-2xl font-bold">Revise Image</h2>
                         <button

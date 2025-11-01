@@ -274,7 +274,7 @@ export default function LandingPage() {
                         {MODELS.map((model, index) => (
                             <div 
                                 key={model.name} 
-                                className={`animate-fade-in-up stagger-${(index % 6) + 1} p-6 rounded-xl bg-surface/50 border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-elevated-gold group`}
+                                className={`animate-fade-in-up stagger-${(index % 6) + 1} p-4 rounded-xl bg-surface/50 border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-elevated-gold group`}
                             >
                                 <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">{model.name}</h3>
                                 <p className="text-sm text-muted">{model.provider}</p>

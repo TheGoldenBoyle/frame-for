@@ -143,7 +143,7 @@ export function RevisionModal({
                     </button>
                 </div>
 
-                <div className="p-4 space-y-4 overflow-y-auto max-h-[calc(100vh-12rem)]">
+                <div className="p-4 space-y-4 overflow-y-auto max-h-[calc(100vh-10rem)]">
                     <div className="relative">
                         <img
                             ref={imageRef}

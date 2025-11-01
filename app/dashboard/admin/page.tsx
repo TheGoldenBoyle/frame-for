@@ -94,7 +94,7 @@ export default function AdminDashboard() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <Card>
-                        <div className="p-6">
+                        <div className="p-4">
                             <div className="text-sm text-muted mb-2">Total Revenue</div>
                             <div className="text-3xl font-bold text-primary">
                                 €{stats.totalRevenue.toFixed(2)}
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
                     </Card>
 
                     <Card>
-                        <div className="p-6">
+                        <div className="p-4">
                             <div className="text-sm text-muted mb-2">Remaining Capacity</div>
                             <div className="text-3xl font-bold">
                                 €{stats.remainingCapacity.toFixed(2)}
@@ -118,7 +118,7 @@ export default function AdminDashboard() {
                     </Card>
 
                     <Card>
-                        <div className="p-6">
+                        <div className="p-4">
                             <div className="text-sm text-muted mb-2">Status</div>
                             <div className={`text-2xl font-bold ${stats.canSignup ? 'text-green-600' : 'text-red-600'}`}>
                                 {stats.canSignup ? 'ACCEPTING' : 'WAITLIST'}
@@ -132,7 +132,7 @@ export default function AdminDashboard() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Card>
-                        <div className="p-6">
+                        <div className="p-4">
                             <h3 className="text-xl font-bold mb-4">Breakdown</h3>
                             <div className="space-y-3">
                                 <div className="flex justify-between">
@@ -157,7 +157,7 @@ export default function AdminDashboard() {
                     </Card>
 
                     <Card>
-                        <div className="p-6">
+                        <div className="p-4">
                             <h3 className="text-xl font-bold mb-4">Progress to Cap</h3>
                             <div className="space-y-4">
                                 <div>
@@ -190,7 +190,7 @@ export default function AdminDashboard() {
 
                 {waitlist.length > 0 && (
                     <Card>
-                        <div className="p-6">
+                        <div className="p-4">
                             <h3 className="text-xl font-bold mb-4">
                                 Waitlist ({waitlist.length} users)
                             </h3>
@@ -228,7 +228,7 @@ export default function AdminDashboard() {
 
                 {waitlist.length === 0 && (
                     <Card>
-                        <div className="p-6 text-center text-muted">
+                        <div className="p-4 text-center text-muted">
                             No users on waitlist yet
                         </div>
                     </Card>

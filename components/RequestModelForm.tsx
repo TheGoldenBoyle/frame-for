@@ -32,7 +32,7 @@ export function RequestModelForm({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-fade-in">
-      <div className="w-full max-w-md p-6 bg-surface rounded-2xl shadow-elevated-gold">
+      <div className="w-full max-w-md p-4 bg-surface rounded-2xl shadow-elevated-gold">
         <h2 className="mb-2 text-xl font-bold">Request a Model</h2>
         <p className="mb-4 text-sm text-muted">
           Suggest a model you'd like to see on BildOro.

@@ -30,7 +30,7 @@ export const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(
         const [isFocused, setIsFocused] = useState(false)
         const [enhancing, setEnhancing] = useState(false)
         const [enhancementCount, setEnhancementCount] = useState(0)
-        
+
         const charCount = value.length
         const isNearLimit = charCount > maxLength * 0.8
         const canEnhance = value.trim().length > 0 && enhancementCount < 3
@@ -39,19 +39,19 @@ export const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(
             if (!canEnhance || enhancing) return
 
             setEnhancing(true)
-            
+
             try {
                 const response = await fetch('/api/playground/enhance-prompt', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
+                    body: JSON.stringify({
                         prompt: value.trim(),
-                        enhancementCount 
+                        enhancementCount
                     })
                 })
 
                 const data = await response.json()
-                
+
                 if (!response.ok) {
                     throw new Error(data.error || 'Enhancement failed')
                 }
@@ -85,20 +85,31 @@ export const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(
                             placeholder={placeholder}
                             maxLength={maxLength}
                             disabled={disabled || enhancing}
-                            className={`w-full h-full min-h-[200px] px-4 py-3 rounded-lg border resize-none transition-all bg-surface text-text placeholder:text-muted ${
-                                isFocused
+                            className={`w-full h-full min-h-[200px] px-4 py-3 rounded-lg border resize-none transition-all bg-surface text-text placeholder:text-muted ${isFocused
                                     ? 'border-primary ring-2 ring-primary/20'
                                     : 'border-border'
-                            } ${disabled || enhancing ? 'opacity-60 cursor-not-allowed' : ''} focus:outline-none`}
+                                } ${disabled || enhancing ? 'opacity-60 cursor-not-allowed' : ''} focus:outline-none`}
                         />
                         <div
-                            className={`absolute bottom-3 right-3 text-xs transition-colors ${
-                                isNearLimit ? 'text-orange-500 font-medium' : 'text-muted'
-                            }`}
+                            className={`absolute bottom-3 right-3 text-xs transition-colors ${isNearLimit ? 'text-orange-500 font-medium' : 'text-muted'
+                                }`}
                         >
                             {charCount}/{maxLength}
                         </div>
                     </div>
+
+                    {value.match(/\[PLACEHOLDER:[^\]]+\]/g) && (
+                        <div className="flex items-center gap-2 px-3 py-2 text-xs rounded-lg bg-surface/50 border border-border">
+                            <span style={{ color: '#d4af37' }}>💡</span>
+                            <span className="text-muted">
+                                Replace{' '}
+                                <span style={{ color: '#d4af37', fontWeight: '600' }}>
+                                    [PLACEHOLDER]
+                                </span>
+                                {' '}fields with your specific details
+                            </span>
+                        </div>
+                    )}
 
                     {showEnhanceButton && (
                         <div className="flex items-center gap-2">
@@ -141,13 +152,13 @@ export const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(
                                     </>
                                 )}
                             </Button>
-                            
+
                             {canEnhance && !enhancing && (
-                                <span className="text-xs text-primary font-medium">
+                                <span className="text-xs font-medium" style={{ color: '#d4af37' }}>
                                     Free • Recommended!
                                 </span>
                             )}
-                            
+
                             {enhancementCount >= 3 && (
                                 <span className="text-xs text-muted">
                                     Max enhancements reached

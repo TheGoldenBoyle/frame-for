@@ -138,7 +138,7 @@ export default function DashboardPage() {
                     <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
                         <button
                             onClick={() => router.push('/dashboard/playground')}
-                            className="flex flex-col items-center justify-center p-6 text-center transition-all border rounded-xl bg-surface border-border hover:border-primary/30"
+                            className="flex flex-col items-center justify-center p-4 text-center transition-all border rounded-xl bg-surface border-border hover:border-primary/30"
                         >
                             <Sparkles className="w-6 h-6 mb-3 text-primary" />
                             <div className="mb-1 font-semibold">Playground</div>
@@ -147,7 +147,7 @@ export default function DashboardPage() {
 
                         <button
                             onClick={() => router.push('/dashboard/image-playground')}
-                            className="flex flex-col items-center justify-center p-6 text-center transition-all border rounded-xl bg-surface border-border hover:border-primary/30"
+                            className="flex flex-col items-center justify-center p-4 text-center transition-all border rounded-xl bg-surface border-border hover:border-primary/30"
                         >
                             <ImagePlus className="w-6 h-6 mb-3 text-primary" />
                             <div className="mb-1 font-semibold">Image Playground</div>
@@ -156,7 +156,7 @@ export default function DashboardPage() {
 
                         <button
                             onClick={() => router.push('/dashboard/pro-studio')}
-                            className="flex flex-col items-center justify-center p-6 text-center transition-all border rounded-xl bg-surface border-border hover:border-primary/30"
+                            className="flex flex-col items-center justify-center p-4 text-center transition-all border rounded-xl bg-surface border-border hover:border-primary/30"
                         >
                             <Zap className="w-6 h-6 mb-3 text-primary" />
                             <div className="mb-1 font-semibold">Pro Studio</div>
@@ -165,7 +165,7 @@ export default function DashboardPage() {
 
                         <button
                             onClick={() => router.push('/dashboard/gallery')}
-                            className="flex flex-col items-center justify-center p-6 text-center transition-all border rounded-xl bg-surface border-border hover:border-primary/30"
+                            className="flex flex-col items-center justify-center p-4 text-center transition-all border rounded-xl bg-surface border-border hover:border-primary/30"
                         >
                             <Image className="w-6 h-6 mb-3 text-primary" />
                             <div className="mb-1 font-semibold">Gallery</div>
@@ -179,7 +179,7 @@ export default function DashboardPage() {
                     <h2 className="mb-4 text-xl font-semibold">Get More Tokens</h2>
                     <div className="grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
                         <div
-                            className={`p-6 rounded-xl border transition-all ${
+                            className={`p-4 rounded-xl border transition-all ${
                                 isSubscribed
                                     ? 'bg-primary/5 border-primary'
                                     : 'bg-surface border-border hover:border-primary/30'
@@ -224,7 +224,7 @@ export default function DashboardPage() {
                             )}
                         </div>
 
-                        <div className="p-6 transition-all border rounded-xl bg-surface border-border hover:border-primary/30">
+                        <div className="p-4 transition-all border rounded-xl bg-surface border-border hover:border-primary/30">
                             <div className="mb-4">
                                 <h3 className="mb-1 font-semibold">One-Time</h3>
                                 <div className="text-2xl font-bold">
