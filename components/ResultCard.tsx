@@ -7,6 +7,7 @@ type ResultCardProps = {
     modelName: string
     originalImageUrl?: string
     onSave?: () => void
+    onRevise?: () => void
     onDownload?: () => void
     saving?: boolean
 }
@@ -16,6 +17,7 @@ export function ResultCard({
     modelName,
     originalImageUrl,
     onSave,
+    onRevise,
     onDownload,
     saving = false
 }: ResultCardProps) {
@@ -79,6 +81,15 @@ export function ResultCard({
             </div>
 
             <div className="flex gap-2 p-3">
+                {onRevise && (
+                    <Button
+                        variant="ghost"
+                        onClick={onRevise}
+                        className="flex-1"
+                    >
+                        Revise
+                    </Button>
+                )}
                 <Button
                     variant="ghost"
                     onClick={handleDownload}

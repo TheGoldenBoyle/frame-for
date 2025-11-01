@@ -25,10 +25,10 @@ export function GenerationControls({
     const totalTokens = imageCount * tokensPerImage
 
     return (
-        <Card>
-            <div className="space-y-6">
+        <Card animate={false}>
+            <div className="space-y-4">
                 <div>
-                    <label className="block text-sm font-medium mb-3">
+                    <label className="block mb-3 text-sm font-medium">
                         Final Prompt
                     </label>
                     <textarea
@@ -41,7 +41,7 @@ export function GenerationControls({
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium mb-3">
+                    <label className="block mb-3 text-sm font-medium">
                         Number of Images
                     </label>
                     <div className="grid grid-cols-6 gap-2">
@@ -61,7 +61,7 @@ export function GenerationControls({
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-surface border border-border rounded-lg">
+                <div className="flex items-center justify-between p-4 border rounded-lg bg-surface border-border">
                     <div>
                         <p className="text-sm font-medium">Token Cost</p>
                         <p className="text-xs text-muted">

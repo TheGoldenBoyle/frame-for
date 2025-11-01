@@ -6,176 +6,153 @@ import { Card } from '@/components/ui/Card'
 import { Loader } from '@/components/ui/Loader'
 
 type Message = {
-    role: 'user' | 'assistant'
-    content: string
+  role: 'user' | 'assistant'
+  content: string
 }
 
 type ChatInterfaceProps = {
-    onPromptSelect: (prompt: string) => void
-    disabled?: boolean
+  onPromptSelect: (prompt: string) => void
+  disabled?: boolean
 }
 
 export function ChatInterface({ onPromptSelect, disabled }: ChatInterfaceProps) {
-    const [messages, setMessages] = useState<Message[]>([])
-    const [input, setInput] = useState('')
-    const [loading, setLoading] = useState(false)
-    const [suggestedPrompt, setSuggestedPrompt] = useState<string | null>(null)
-    const messagesEndRef = useRef<HTMLDivElement>(null)
-    const inputRef = useRef<HTMLTextAreaElement>(null)
+  const [messages, setMessages] = useState<Message[]>([])
+  const [input, setInput] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [suggestedPrompt, setSuggestedPrompt] = useState<string | null>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
 
-    useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, [messages])
+  // Auto-scroll to bottom
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
 
-    useEffect(() => {
-        if (!disabled && !loading && inputRef.current) {
-            inputRef.current.focus()
-        }
-    }, [disabled, loading])
+  useEffect(() => {
+    if (!disabled && !loading && inputRef.current) inputRef.current.focus()
+  }, [disabled, loading])
 
-    const handleSend = async () => {
-        if (!input.trim() || loading) return
+  const handleSend = async () => {
+    if (!input.trim() || loading) return
 
-        const userMessage: Message = {
-            role: 'user',
-            content: input.trim()
-        }
+    const userMessage: Message = { role: 'user', content: input.trim() }
+    setMessages(prev => [...prev, userMessage])
+    setInput('')
+    setLoading(true)
+    setSuggestedPrompt(null)
 
-        setMessages(prev => [...prev, userMessage])
-        setInput('')
-        setLoading(true)
-        setSuggestedPrompt(null)
+    try {
+      const response = await fetch('/api/pro-studio/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMessage.content, chatHistory: messages }),
+      })
+      const data = await response.json()
 
-        try {
-            const response = await fetch('/api/pro-studio/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    message: userMessage.content,
-                    chatHistory: messages,
-                }),
-            })
+      if (!response.ok) throw new Error(data.error || 'Failed to send message')
 
-            const data = await response.json()
+      const assistantMessage: Message = { role: 'assistant', content: data.message }
+      setMessages(prev => [...prev, assistantMessage])
 
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to send message')
-            }
-
-            const assistantMessage: Message = {
-                role: 'assistant',
-                content: data.message
-            }
-
-            setMessages(prev => [...prev, assistantMessage])
-
-            if (data.suggestedPrompt) {
-                setSuggestedPrompt(data.suggestedPrompt)
-            }
-        } catch (error) {
-            console.error('Chat error:', error)
-            const errorMessage: Message = {
-                role: 'assistant',
-                content: 'Sorry, I encountered an error. Please try again.'
-            }
-            setMessages(prev => [...prev, errorMessage])
-        } finally {
-            setLoading(false)
-        }
+      if (data.suggestedPrompt) setSuggestedPrompt(data.suggestedPrompt)
+    } catch (error) {
+      console.error('Chat error:', error)
+      setMessages(prev => [
+        ...prev,
+        { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' },
+      ])
+    } finally {
+      setLoading(false)
     }
+  }
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault()
-            handleSend()
-        }
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSend()
     }
+  }
 
-    const handleUsePrompt = () => {
-        if (suggestedPrompt) {
-            onPromptSelect(suggestedPrompt)
-        }
-    }
+  const handleUsePrompt = () => suggestedPrompt && onPromptSelect(suggestedPrompt)
 
-    return (
-        <Card className="flex flex-col h-full">
-            <div className="mb-4">
-                <h3 className="text-lg font-semibold mb-1">AI Prompt Assistant</h3>
-                <p className="text-sm text-muted">
-                    Chat with AI to craft the perfect hyper-realistic prompt
-                </p>
+  return (
+    <Card className="flex flex-col h-full" animate={false}>
+      {/* Header */}
+      <div className="mb-4">
+        <h3 className="mb-1 text-lg font-semibold">AI Prompt Assistant</h3>
+        <p className="text-sm text-muted">
+          Chat with AI to craft the perfect hyper-realistic prompt
+        </p>
+      </div>
+
+      {/* Chat messages */}
+      <div className="flex flex-col flex-1 pb-4 space-y-3 overflow-y-auto">
+        {messages.length === 0 && (
+          <div className="py-8 text-center text-muted">
+            <p className="mb-2">👋 Hi! I'm here to help you create amazing prompts.</p>
+            <p className="text-sm">Tell me what you'd like to generate!</p>
+          </div>
+        )}
+
+        {messages.map((message, idx) => (
+          <div
+            key={idx}
+            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div
+              className={`max-w-[75%] px-4 py-2 rounded-lg shadow-sm whitespace-pre-wrap ${
+                message.role === 'user'
+                  ? 'bg-primary text-white'
+                  : 'bg-surface border border-border'
+              }`}
+            >
+              {message.content}
             </div>
+          </div>
+        ))}
 
-            <div className="flex-1 overflow-y-auto mb-4 space-y-4 min-h-[300px] max-h-[500px]">
-                {messages.length === 0 && (
-                    <div className="text-center py-8 text-muted">
-                        <p className="mb-2">👋 Hi! I'm here to help you create amazing prompts.</p>
-                        <p className="text-sm">Tell me what you'd like to generate!</p>
-                    </div>
-                )}
-
-                {messages.map((message, index) => (
-                    <div
-                        key={index}
-                        className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                        <div
-                            className={`max-w-[80%] rounded-lg px-4 py-2 ${message.role === 'user'
-                                    ? 'bg-primary text-white'
-                                    : 'bg-surface border border-border'
-                                }`}
-                        >
-                            <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                        </div>
-                    </div>
-                ))}
-
-                {loading && (
-                    <div className="flex justify-start">
-                        <div className="bg-surface border border-border rounded-lg px-4 py-2">
-                            <Loader size="sm" />
-                        </div>
-                    </div>
-                )}
-
-                <div ref={messagesEndRef} />
+        {loading && (
+          <div className="flex justify-start">
+            <div className="px-4 py-2 border rounded-lg bg-surface border-border">
+              <Loader size="sm" />
             </div>
+          </div>
+        )}
 
-            {suggestedPrompt && (
-                <div className="mb-4 p-3 bg-primary/10 border border-primary/30 rounded-lg">
-                    <p className="text-xs font-medium text-primary mb-2">✨ Optimized Prompt Ready</p>
-                    <p className="text-sm mb-3">{suggestedPrompt}</p>
-                    <Button
-                        size="sm"
-                        onClick={handleUsePrompt}
-                        disabled={disabled}
-                    >
-                        Use This Prompt
-                    </Button>
-                </div>
-            )}
+        <div ref={messagesEndRef} />
+      </div>
 
-            <div className="flex gap-2">
-                <textarea
-                    ref={inputRef}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Describe what you want to create..."
-                    disabled={disabled || loading}
-                    className="flex-1 px-4 py-2 bg-background border border-border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary"
-                    rows={2}
-                />
-                <Button
-                    onClick={handleSend}
-                    disabled={!input.trim() || disabled || loading}
-                    className="self-end"
-                >
-                    Send
-                </Button>
-            </div>
-        </Card>
-    )
+      {/* Suggested Prompt */}
+      {suggestedPrompt && (
+        <div className="p-3 mb-4 border rounded-lg bg-primary/10 border-primary/30">
+          <p className="mb-2 text-xs font-medium text-primary">✨ Optimized Prompt Ready</p>
+          <p className="mb-3 text-sm">{suggestedPrompt}</p>
+          <Button size="sm" onClick={handleUsePrompt} disabled={disabled}>
+            Use This Prompt
+          </Button>
+        </div>
+      )}
+
+      {/* Input area */}
+      <div className="flex gap-2 mt-auto">
+        <textarea
+          ref={inputRef}
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Describe what you want to create..."
+          disabled={disabled || loading}
+          rows={2}
+          className="flex-1 px-4 py-3 border rounded-lg resize-none bg-background border-border focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+        <Button
+          onClick={handleSend}
+          disabled={!input.trim() || disabled || loading}
+          className="self-end"
+        >
+          Send
+        </Button>
+      </div>
+    </Card>
+  )
 }

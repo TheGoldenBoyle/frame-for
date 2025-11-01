@@ -65,6 +65,7 @@ model PlaygroundPhoto {
   userId      String
   prompt      String
   originalUrl String?
+  revisionCount Int      @default(0)
   results     Json
   tokensCost  Int
   createdAt   DateTime @default(now())
