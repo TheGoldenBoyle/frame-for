@@ -8,11 +8,13 @@ import { GenerationLoader } from '@/components/GenerationLoader'
 import { ComparisonGrid } from '@/components/ComparisonGrid'
 import { RevisionModal } from '@/components/RevisionModal'
 import { useAuth } from '@/hooks/useAuth'
+import { useTokens } from '@/hooks/useTokens'
 
 import { Button } from '@/components/ui/Button'
 import { Loader } from '@/components/ui/Loader'
 import { Card } from '@/components/ui/Card'
 import { RequestModelForm } from '@/components/RequestModelForm'
+import { Coins } from 'lucide-react'
 
 const MODELS = [
     { id: 'flux-1.1-pro', name: 'FLUX 1.1 Pro', provider: 'Black Forest Labs', description: 'Best for realism and detail' },
@@ -49,6 +51,7 @@ function toComparisonResult(result: PlaygroundResult): ComparisonResult | null {
 export default function PlaygroundPage() {
     const router = useRouter()
     const { user } = useAuth()
+    const { tokens, isLoading: tokensLoading, calculateCost, hasEnoughTokens } = useTokens()
     const promptRef = useRef<HTMLTextAreaElement>(null)
 
     const [prompt, setPrompt] = useState('')
@@ -334,9 +337,28 @@ export default function PlaygroundPage() {
                 </div>
 
                 <div className="flex flex-col gap-4 md:w-2/3">
-                    <div>
-                        <h2 className="mb-1 text-xl font-semibold">Prompt</h2>
-                        <p className="text-sm text-muted">Describe what you want to generate</p>
+                    {!tokensLoading && selectedModels.length > 0 && !hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)) && (
+                        <div className="p-4 text-sm font-medium text-red-800 border border-red-200 rounded-lg bg-red-50">
+                            ⚠️ Not enough tokens. You need {calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)} tokens but only have {tokens}.
+                        </div>
+                    )}
+                    
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <h2 className="mb-1 text-xl font-semibold">Prompt</h2>
+                            <p className="text-sm text-muted">Describe what you want to generate</p>
+                        </div>
+
+                        <div className="flex gap-2 items-center">
+                            {!tokensLoading && (
+                                <>
+                                    <span className={`text-sm font-medium ${!hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)) && selectedModels.length > 0 ? 'text-red-500' : 'text-muted'}`}>
+                                        {tokens - calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)}
+                                    </span>
+                                    <Coins className={`w-4 h-4 ${selectedModels.length > 0 && !hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)) ? 'text-red-500' : 'text-primary'}`} />
+                                </>
+                            )}
+                        </div>
                     </div>
                     <Card className="flex flex-col flex-1" animate={false}>
                         <PromptInput
@@ -352,11 +374,20 @@ export default function PlaygroundPage() {
 
                         <Button
                             onClick={handleGenerate}
-                            disabled={generating || !prompt.trim() || selectedModels.length === 0}
+                            disabled={
+                                generating || 
+                                !prompt.trim() || 
+                                selectedModels.length === 0 || 
+                                !hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length))
+                            }
                             className="w-full mt-4"
                         >
-                            {selectedModels.length > 1
-                                ? `Compare ${selectedModels.length} Models`
+                            {!hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)) && selectedModels.length > 0
+                                ? `Not enough tokens (need ${calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)})`
+                                : selectedModels.length > 1
+                                ? `Compare ${selectedModels.length} Models (${calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)} tokens)`
+                                : selectedModels.length === 1
+                                ? `Generate Image (${calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)} token)`
                                 : 'Generate Image'}
                         </Button>
                     </Card>
