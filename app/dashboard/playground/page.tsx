@@ -242,17 +242,17 @@ export default function PlaygroundPage() {
     if (results.length > 0) {
         return (
             <div>
-                <div className="max-w-8xl mx-auto grid gap-6 lg:grid-cols-[1fr_3fr] xl:grid-cols-[1fr_4fr]">
+                <div className="max-w-8xl mx-auto grid gap-6 lg:grid-cols-[1fr_3fr] xl:grid-cols-[1fr_4fr] p-4">
                     {/* Left Panel / Summary */}
                     <div className="space-y-6">
                         <Card className="p-4 shadow-sm border" animate={false}>
                             <h2 className="text-lg font-semibold mb-4">Prompt</h2>
-                            <p className="text-sm text-muted-foreground leading-relaxed">{prompt}</p>
+                            <p className="text-sm text-muted leading-relaxed">{prompt}</p>
                         </Card>
 
                         <Card className="p-4 shadow-sm border" animate={false}>
                             <h2 className="text-lg font-semibold mb-4">Session Info</h2>
-                            <ul className="text-sm space-y-2 text-muted-foreground">
+                            <ul className="text-sm space-y-2 text-muted">
                                 <li>Total Models: {results.length}</li>
                                 <li>Successful: {results.filter(r => r.imageUrl).length}</li>
                                 <li>Failed: {results.filter(r => !r.imageUrl).length}</li>
@@ -260,7 +260,7 @@ export default function PlaygroundPage() {
                         </Card>
                     </div>
 
-                    {/* Right Panel / Main Grid */}
+                    {/* Right Panel / Main Grid - ENHANCED WITH LARGER IMAGES */}
                     <Card className="p-4 shadow-sm border" animate={false}>
                         <ComparisonGrid
                             results={results
@@ -294,10 +294,8 @@ export default function PlaygroundPage() {
         )
     }
 
-
-
     return (
-        <div className="min-h-screen">
+        <div className="py-4 lg:py-10">
             <div className="flex flex-col gap-6 mx-auto max-w-7xl md:flex-row">
                 <div className="flex flex-col gap-4 md:w-1/3">
                     <div>
@@ -313,8 +311,8 @@ export default function PlaygroundPage() {
                                         key={model.id}
                                         onClick={() => handleModelSelect(model.id)}
                                         className={`cursor-pointer p-5 border ${isSelected
-                                            ? 'border-primary bg-surface/80 shadow-elevated-gold'
-                                            : 'border-border bg-surface/60'
+                                                ? 'border-primary bg-surface/80 shadow-elevated-gold'
+                                                : 'border-border bg-surface/60'
                                             } animate-fade-in-up stagger-${(index % 6) + 1}`}
                                     >
                                         <h3 className={`font-semibold mb-1 ${isSelected ? 'text-primary' : 'text-text'}`}>
@@ -342,7 +340,7 @@ export default function PlaygroundPage() {
                             ⚠️ Not enough tokens. You need {calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)} tokens but only have {tokens}.
                         </div>
                     )}
-                    
+
                     <div className="flex justify-between items-center">
                         <div>
                             <h2 className="mb-1 text-xl font-semibold">Prompt</h2>
@@ -375,9 +373,9 @@ export default function PlaygroundPage() {
                         <Button
                             onClick={handleGenerate}
                             disabled={
-                                generating || 
-                                !prompt.trim() || 
-                                selectedModels.length === 0 || 
+                                generating ||
+                                !prompt.trim() ||
+                                selectedModels.length === 0 ||
                                 !hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length))
                             }
                             className="w-full mt-4"
@@ -385,10 +383,10 @@ export default function PlaygroundPage() {
                             {!hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)) && selectedModels.length > 0
                                 ? `Not enough tokens (need ${calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)})`
                                 : selectedModels.length > 1
-                                ? `Compare ${selectedModels.length} Models (${calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)} tokens)`
-                                : selectedModels.length === 1
-                                ? `Generate Image (${calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)} token)`
-                                : 'Generate Image'}
+                                    ? `Compare ${selectedModels.length} Models (${calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)} tokens)`
+                                    : selectedModels.length === 1
+                                        ? `Generate Image (${calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)} token)`
+                                        : 'Generate Image'}
                         </Button>
                     </Card>
 

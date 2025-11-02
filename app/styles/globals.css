@@ -7,6 +7,15 @@
 /* =========================================
    Theme Variables
 ========================================= */
+
+::-webkit-scrollbar {
+    display: none;
+  }
+  .scroll-smooth {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  
 @theme {
     /* Colors */
     --color-primary: #d4af37;
@@ -62,6 +71,11 @@ body {
     text-rendering: optimizeLegibility;
     position: relative;
     overflow-x: hidden;
+}
+
+/* Prevent scroll when modal is open */
+body.modal-open {
+    overflow: hidden !important;
 }
 
 /* =========================================

@@ -11,7 +11,7 @@ export default function PlaygroundLayout({
                 <div className="particle particle-3"></div>
             </div>
             <div className="min-h-[calc(100vh-72px)] relative z-10">
-                <div className="h-full flex flex-col p-4 md:p-8 mx-auto max-w-7xl">
+                <div className="h-full flex flex-col mx-auto">
                     {children}
                 </div>
             </div>

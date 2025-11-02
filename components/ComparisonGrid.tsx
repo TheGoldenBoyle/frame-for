@@ -1,7 +1,5 @@
 import { ResultCard } from './ResultCard'
 import { ComparisonResult } from '@/types/globals'
-import { Button } from './ui/Button'
-import { RotateCcw } from 'lucide-react'
 
 type ComparisonGridProps = {
     results: ComparisonResult[]
@@ -17,45 +15,35 @@ export function ComparisonGrid({
     originalImageUrl,
     onSaveResult,
     onReviseResult,
-    onStartFresh,
     savingStates = {},
 }: ComparisonGridProps) {
     if (results.length === 0) return null
 
     const validResults = results.filter((result) => result.imageUrl)
+    const resultCount = validResults.length
 
-    // Responsive grid that adapts to screen size and result count
+    // Optimized grid layout for maximum image size
     const getGridClass = () => {
-        const count = validResults.length
-        if (count === 1) return 'grid-cols-1 max-w-3xl mx-auto'
-        if (count === 2) return 'grid-cols-1 md:grid-cols-2'
-        if (count === 3) return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
-        if (count === 4) return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'
-        return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'
+        if (resultCount === 1) return 'grid-cols-1 max-w-3xl mx-auto'
+        if (resultCount === 2) return 'grid-cols-1 lg:grid-cols-2'
+        if (resultCount === 3) return 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
+        if (resultCount === 4) return 'grid-cols-1 md:grid-cols-2 2xl:grid-cols-4'
+        // 5 results
+        return 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'
     }
 
     return (
-        <div className="w-full space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                {onStartFresh && (
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={onStartFresh}
-                        className="flex items-center gap-2"
-                    >
-                        <RotateCcw className="h-4 w-4" />
-                        <span>Start Fresh</span>
-                    </Button>
-                )}
-            </div>
-
-            {/* Responsive Grid - maximizes image size */}
-            <div className={`grid gap-4 md:gap-6 ${getGridClass()} w-full`}>
-                {validResults.map((result) => (
+        <div className={`grid ${getGridClass()} gap-3 sm:gap-4 lg:gap-6 w-full`}>
+            {validResults.map((result, index) => (
+                <div
+                    key={result.modelId}
+                    className="animate-scale-in opacity-0 w-full"
+                    style={{
+                        animationDelay: `${index * 0.08}s`,
+                        animationFillMode: 'forwards',
+                    }}
+                >
                     <ResultCard
-                        key={result.modelId}
                         imageUrl={result.imageUrl}
                         modelName={result.modelName}
                         originalImageUrl={originalImageUrl}
@@ -63,8 +51,8 @@ export function ComparisonGrid({
                         onRevise={onReviseResult ? () => onReviseResult(result.modelId) : undefined}
                         saving={savingStates[result.modelId]}
                     />
-                ))}
-            </div>
+                </div>
+            ))}
         </div>
     )
 }

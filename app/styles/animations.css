@@ -210,6 +210,7 @@
     animation-delay: 0.6s;
     opacity: 0;
 }
+
 @keyframes particle-float-1 {
     0%, 100% { 
         transform: translate(0, 0) scale(1);
@@ -253,4 +254,74 @@
         transform: translate(-60px, -40px) scale(1.15);
         opacity: 0.5;
     }
+}
+
+/* NEW ANIMATIONS FOR ENHANCED COMPONENTS */
+
+@keyframes image-zoom {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes glow-ring {
+    0%, 100% {
+        box-shadow: 
+            0 0 20px rgba(212, 175, 55, 0.3),
+            inset 0 0 20px rgba(212, 175, 55, 0.1);
+    }
+    50% {
+        box-shadow: 
+            0 0 40px rgba(212, 175, 55, 0.5),
+            inset 0 0 40px rgba(212, 175, 55, 0.2);
+    }
+}
+
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounce-subtle {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+@keyframes gradient-shift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Utility classes for new animations */
+.animate-image-zoom {
+    animation: image-zoom 0.5s ease-out forwards;
+}
+
+.animate-glow-ring {
+    animation: glow-ring 2s ease-in-out infinite;
+}
+
+.animate-slide-up {
+    animation: slide-up 0.6s ease-out forwards;
+}
+
+.animate-bounce-subtle {
+    animation: bounce-subtle 2s ease-in-out infinite;
 }

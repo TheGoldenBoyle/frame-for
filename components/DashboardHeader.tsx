@@ -44,7 +44,7 @@ export function DashboardHeader({
     return (
         <>
             <nav
-                className={`fixed top-0 left-0 right-0 bg-surface border-b border-border z-30 transition-transform duration-300 ${
+                className={`fixed top-0 left-0 right-0 bg-surface border-b border-border z-10 transition-transform duration-300 ${
                     isVisible ? 'translate-y-0' : '-translate-y-full'
                 }`}
             >
