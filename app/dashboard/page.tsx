@@ -107,15 +107,14 @@ export default function DashboardPage() {
             {/* Plan Badge + Token Count */}
             <div className="flex items-center max-w-5xl gap-4 mx-auto mb-6">
                 <span
-                    className={`px-2 py-1 text-sm font-medium rounded ${
-                        isSubscribed ? 'text-white bg-primary' : 'text-muted border border-border'
-                    }`}
+                    className={`px-2 py-1 text-sm font-medium rounded ${isSubscribed ? 'text-white bg-primary' : 'text-muted border border-border'
+                        }`}
                 >
                     {isSubscribed
                         ? 'Active Subscription'
                         : tokenType === 'onetime'
-                        ? 'One-Time Pack'
-                        : 'Free Plan'}
+                            ? 'One-Time Pack'
+                            : 'Free Plan'}
                 </span>
 
                 <span className="px-2 py-1 text-sm font-medium border rounded text-primary border-primary">
@@ -175,21 +174,24 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Get More Tokens */}
+                {/* Get More Tokens */}
                 <div>
                     <h2 className="mb-4 text-xl font-semibold">Get More Tokens</h2>
+
                     <div className="grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
+                        {/* Monthly Plan */}
                         <div
-                            className={`p-4 rounded-xl border transition-all ${
-                                isSubscribed
+                            className={`p-4 rounded-xl border transition-all ${isSubscribed
                                     ? 'bg-primary/5 border-primary'
                                     : 'bg-surface border-border hover:border-primary/30'
-                            }`}
+                                }`}
                         >
                             <div className="flex items-start justify-between mb-4">
                                 <div>
                                     <h3 className="mb-1 font-semibold">Monthly</h3>
-                                    <div className="text-2xl font-bold">
-                                        €4.99
+                                    <div className="text-2xl font-bold flex items-baseline gap-2">
+                                        <span className="text-muted line-through text-lg">€7.99</span>
+                                        <span>€4.99</span>
                                         <span className="text-sm font-normal text-muted">/mo</span>
                                     </div>
                                 </div>
@@ -199,6 +201,7 @@ export default function DashboardPage() {
                                     </span>
                                 )}
                             </div>
+
                             <ul className="mb-4 space-y-2 text-sm">
                                 <li className="flex items-center gap-2">
                                     <span className="text-primary">✓</span>
@@ -212,7 +215,16 @@ export default function DashboardPage() {
                                     <span className="text-primary">✓</span>
                                     <span>Cancel anytime</span>
                                 </li>
+                                <li className="pt-2 mt-2 border-t border-border/50 flex items-center gap-2 text-sm">
+                                    <span className="text-primary">✨</span>
+                                    <span>AI Optimizations included</span>
+                                </li>
+                                <li className="flex items-center gap-2 text-sm">
+                                    <span className="text-primary">✨</span>
+                                    <span>Custom System Prompts included</span>
+                                </li>
                             </ul>
+
                             {!isSubscribed && (
                                 <Button
                                     onClick={() => handlePurchaseTokens('subscription')}
@@ -224,14 +236,17 @@ export default function DashboardPage() {
                             )}
                         </div>
 
+                        {/* One-Time Plan */}
                         <div className="p-4 transition-all border rounded-xl bg-surface border-border hover:border-primary/30">
                             <div className="mb-4">
                                 <h3 className="mb-1 font-semibold">One-Time</h3>
-                                <div className="text-2xl font-bold">
-                                    €9.99
+                                <div className="text-2xl font-bold flex items-baseline gap-2">
+                                    <span className="text-muted line-through text-lg">€14.99</span>
+                                    <span>€9.99</span>
                                     <span className="text-sm font-normal text-muted"> once</span>
                                 </div>
                             </div>
+
                             <ul className="mb-4 space-y-2 text-sm">
                                 <li className="flex items-center gap-2">
                                     <span className="text-primary">✓</span>
@@ -245,7 +260,16 @@ export default function DashboardPage() {
                                     <span className="text-primary">✓</span>
                                     <span>No commitment</span>
                                 </li>
+                                <li className="pt-2 mt-2 border-t border-border/50 flex items-center gap-2 text-sm">
+                                    <span className="text-primary">✨</span>
+                                    <span>AI Optimizations included</span>
+                                </li>
+                                <li className="flex items-center gap-2 text-sm">
+                                    <span className="text-primary">✨</span>
+                                    <span>Custom System Prompts included</span>
+                                </li>
                             </ul>
+
                             <Button
                                 onClick={() => handlePurchaseTokens('onetime')}
                                 disabled={purchaseLoading}
@@ -257,6 +281,7 @@ export default function DashboardPage() {
                         </div>
                     </div>
                 </div>
+
 
                 {/* Account Section */}
                 <div className="pt-8 border-t border-border">
@@ -277,19 +302,18 @@ export default function DashboardPage() {
                         <Button
                             onClick={handleDeleteAccount}
                             variant="outline"
-                            className={`flex flex-col items-center justify-center ${
-                                showDeleteConfirm
+                            className={`flex flex-col items-center justify-center ${showDeleteConfirm
                                     ? 'border-red-500 text-red-500 hover:bg-red-50'
                                     : ''
-                            }`}
+                                }`}
                             disabled={deleteLoading}
                         >
                             <Trash2 className="w-4 h-4 mr-2" />
                             {deleteLoading
                                 ? 'Deleting...'
                                 : showDeleteConfirm
-                                ? 'Confirm Delete'
-                                : 'Delete Account'}
+                                    ? 'Confirm Delete'
+                                    : 'Delete Account'}
                         </Button>
                     </div>
 
