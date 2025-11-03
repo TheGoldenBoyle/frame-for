@@ -142,10 +142,10 @@ export default function DashboardPage() {
                         >
                             <Sparkles className="w-6 h-6 mb-3 text-primary" />
                             <div className="mb-1 font-semibold">Playground</div>
-                            <div className="text-xs text-muted">Compare models</div>
+                            <div className="text-xs text-muted">Use all models</div>
                         </button>
 
-                        <button
+                        {/* <button
                             onClick={() => router.push('/dashboard/image-playground')}
                             className="flex flex-col items-center justify-center p-4 text-center transition-all border rounded-xl bg-surface border-border hover:border-primary/30"
                         >
@@ -161,7 +161,7 @@ export default function DashboardPage() {
                             <Zap className="w-6 h-6 mb-3 text-primary" />
                             <div className="mb-1 font-semibold">Pro Studio</div>
                             <div className="text-xs text-muted">Hyper-realistic</div>
-                        </button>
+                        </button> */}
 
                         <button
                             onClick={() => router.push('/dashboard/gallery')}

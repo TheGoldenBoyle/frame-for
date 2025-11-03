@@ -28,8 +28,8 @@ export function DashboardHeader({
     const navItems = [
         { path: '/dashboard', label: t.home.tokens, disabled: false },
         { path: '/dashboard/playground', label: t.playground.title, disabled: false },
-        { path: '/dashboard/image-playground', label: 'Image Playground', disabled: true, comingSoon: true },
-        { path: '/dashboard/pro-studio', label: 'Pro Studio', disabled: true, comingSoon: true },
+        // { path: '/dashboard/image-playground', label: 'Image Playground', disabled: true, comingSoon: true },
+        // { path: '/dashboard/pro-studio', label: 'Pro Studio', disabled: true, comingSoon: true },
         { path: '/dashboard/gallery', label: t.dashboard.viewGallery, disabled: false },
     ]
 
@@ -75,11 +75,11 @@ export function DashboardHeader({
                                             : 'text-muted hover:text-text'
                                     }`}
                                 >
-                                    {item.comingSoon && (
+                                    {/* {item.comingSoon && (
                                         <span className="absolute -top-2 -right-2 px-2 py-0.5 text-[9px] font-bold rounded-full bg-primary text-white shadow-md">
                                             SOON
                                         </span>
-                                    )}
+                                    )} */}
                                     {item.label}
                                 </button>
                             ))}

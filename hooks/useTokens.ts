@@ -33,23 +33,41 @@ export function useTokens(): UseTokensReturn {
 
     const fetchTokenBalance = useCallback(async () => {
         try {
+            setIsLoading(true)
             setError(null)
-            const response = await fetch('/api/tokens')
+            
+            const response = await fetch('/api/tokens', {
+                method: 'GET',
+                cache: 'no-store',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
             
             if (!response.ok) {
-                throw new Error('Failed to fetch token balance')
+                const errorText = await response.text()
+                console.error('Token fetch failed:', response.status, errorText)
+                throw new Error(`Failed to fetch tokens: ${response.status}`)
             }
 
             const data = await response.json()
+            
+            console.log('Token data received:', data)
 
             setTokenData({
                 tokens: data.tokens ?? 0,
-                tokenType: data.tokenType,
-                subscriptionStatus: data.subscriptionStatus
+                tokenType: data.tokenType || 'free',
+                subscriptionStatus: data.subscriptionStatus || 'free'
             })
         } catch (err) {
             console.error('Failed to fetch token balance:', err)
-            setError('Failed to load token balance')
+            setError(err instanceof Error ? err.message : 'Failed to load token balance')
+            // Set default values on error
+            setTokenData({
+                tokens: 0,
+                tokenType: 'free',
+                subscriptionStatus: 'free'
+            })
         } finally {
             setIsLoading(false)
         }
