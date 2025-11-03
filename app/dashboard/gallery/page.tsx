@@ -7,7 +7,7 @@ import { Photo } from '@/types/globals'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Loader } from '@/components/ui/Loader'
-import { ResultCard } from '@/components/ResultCard'
+import { ResultCard } from "@/components/ResultCard"
 
 type PlaygroundResult = {
     modelId: string

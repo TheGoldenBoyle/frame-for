@@ -9,7 +9,7 @@ import { ComparisonGrid } from '@/components/ComparisonGrid'
 import { RevisionModal } from '@/components/RevisionModal'
 import { RequestModelForm } from '@/components/RequestModelForm'
 import { SystemPromptManager } from '@/components/SystemPromptManager'
- 
+
 import { useAuth } from '@/hooks/useAuth'
 import { useTokens } from '@/hooks/useTokens'
 
@@ -79,9 +79,9 @@ export default function PlaygroundPage() {
     useEffect(() => {
         if (results.length > 0 && resultsRef.current) {
             setTimeout(() => {
-                resultsRef.current?.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
+                resultsRef.current?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
                 })
             }, 100)
         }
@@ -125,12 +125,12 @@ export default function PlaygroundPage() {
             formData.append('prompt', finalPrompt)
             formData.append('modelIds', JSON.stringify(selectedModels))
 
-            const response = await fetch('/api/playground/generate', { 
-                method: 'POST', 
-                body: formData 
+            const response = await fetch('/api/playground/generate', {
+                method: 'POST',
+                body: formData
             })
             const data = await response.json()
-            
+
             if (!response.ok) {
                 throw new Error(data.error || 'Generation failed')
             }
@@ -167,22 +167,22 @@ export default function PlaygroundPage() {
     const handleReviseResult = (modelId: string) => {
         const result = results.find((r) => r.modelId === modelId)
         if (!result || !result.imageUrl) return
-        setRevisingImage({ 
-            imageUrl: result.imageUrl, 
-            modelId: result.modelId, 
-            modelName: result.modelName 
+        setRevisingImage({
+            imageUrl: result.imageUrl,
+            modelId: result.modelId,
+            modelName: result.modelName
         })
     }
 
     const handleReviseSubmit = async (
-        revisionPrompt: string, 
-        modelIds: string[], 
+        revisionPrompt: string,
+        modelIds: string[],
         maskData: string | null
     ) => {
         if (!revisingImage || !playgroundPhotoId) return
         setRevising(true)
         setRevisingImage(null)
-        
+
         try {
             let finalPrompt = revisionPrompt.trim()
 
@@ -202,24 +202,24 @@ export default function PlaygroundPage() {
             const res = await fetch('/api/playground/revise', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    imageUrl: revisingImage.imageUrl, 
-                    modelId: revisingImage.modelId, 
-                    prompt: finalPrompt, 
-                    playgroundPhotoId, 
-                    maskData 
+                body: JSON.stringify({
+                    imageUrl: revisingImage.imageUrl,
+                    modelId: revisingImage.modelId,
+                    prompt: finalPrompt,
+                    playgroundPhotoId,
+                    maskData
                 }),
             })
             const data = await res.json()
-            
+
             if (!res.ok) {
                 throw new Error(data.error || 'Revision failed')
             }
-            
+
             if (data.results && data.results.length > 0) {
-                setResults(data.results.map((r: any) => ({ 
-                    ...r, 
-                    imageUrl: `${r.imageUrl}?v=${Date.now()}` 
+                setResults(data.results.map((r: any) => ({
+                    ...r,
+                    imageUrl: `${r.imageUrl}?v=${Date.now()}`
                 })))
                 setRevisionCount((prev) => prev + 1)
             }
@@ -248,20 +248,20 @@ export default function PlaygroundPage() {
     // ---------- Render ----------
     if (loading) return <Loader fullScreen />
     if (generating)
-        return <GenerationLoader 
-            modelCount={selectedModels.length} 
-            modelNames={selectedModels} 
-            hasImage={false} 
-            prompt={prompt} 
-            isRevision={false} 
+        return <GenerationLoader
+            modelCount={selectedModels.length}
+            modelNames={selectedModels}
+            hasImage={false}
+            prompt={prompt}
+            isRevision={false}
         />
     if (revising)
-        return <GenerationLoader 
-            modelCount={1} 
-            modelNames={['nano-banana']} 
-            hasImage={true} 
-            prompt={prompt} 
-            isRevision={true} 
+        return <GenerationLoader
+            modelCount={1}
+            modelNames={['nano-banana']}
+            hasImage={true}
+            prompt={prompt}
+            isRevision={true}
         />
 
     return (
@@ -271,7 +271,7 @@ export default function PlaygroundPage() {
                 <div className="flex flex-col gap-4 md:w-1/3">
                     <div>
                         <h2 className="mb-1 text-xl font-semibold">Models</h2>
-                        <p className="text-sm text-muted">Choose 1–5 models to generate your images</p>
+                        <p className="text-sm text-muted line-clamp-1">Choose 1–5 models to generate your images</p>
                     </div>
                     <Card className="flex flex-col flex-1 p-4" animate={false}>
                         <div className="grid gap-4 grid-cols-1">
@@ -281,11 +281,10 @@ export default function PlaygroundPage() {
                                     <Card
                                         key={model.id}
                                         onClick={() => handleModelSelect(model.id)}
-                                        className={`cursor-pointer p-4 border ${
-                                            isSelected
+                                        className={`cursor-pointer p-4 border ${isSelected
                                                 ? 'border-primary bg-surface/80 shadow-elevated-gold'
                                                 : 'border-border bg-surface/60'
-                                        }`}
+                                            }`}
                                     >
                                         <h3 className={`font-semibold mb-1 ${isSelected ? 'text-primary' : 'text-text'}`}>
                                             {model.name}
@@ -322,18 +321,16 @@ export default function PlaygroundPage() {
                         <div className="flex gap-2 items-center">
                             {!tokensLoading && (
                                 <>
-                                    <span className={`text-sm font-medium ${
-                                        !hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)) && selectedModels.length > 0
+                                    <span className={`text-sm font-medium ${!hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)) && selectedModels.length > 0
                                             ? 'text-red-500'
                                             : 'text-muted'
-                                    }`}>
+                                        }`}>
                                         {tokens - calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)}
                                     </span>
-                                    <Coins className={`w-4 h-4 ${
-                                        selectedModels.length > 0 && !hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length))
+                                    <Coins className={`w-4 h-4 ${selectedModels.length > 0 && !hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length))
                                             ? 'text-red-500'
                                             : 'text-primary'
-                                    }`} />
+                                        }`} />
                                 </>
                             )}
                         </div>
@@ -341,55 +338,57 @@ export default function PlaygroundPage() {
 
                     {/* Prompt Card */}
                     <Card className="flex flex-col flex-1 p-4" animate={false}>
-                        <PromptInput
-                            ref={promptRef}
-                            value={prompt}
-                            onChange={setPrompt}
-                            placeholder="Describe your vision: photorealistic portraits, professional logos, UI mockups, illustrations, advertisements, fashion shots, food photography, architectural renders, packaging designs, editorial layouts, brand materials, and more."
-                            label="Prompt"
-                            maxLength={1000}
-                            disabled={generating}
-                            showEnhanceButton={true}
-                        />
+                        <>
+                            <PromptInput
+                                ref={promptRef}
+                                value={prompt}
+                                onChange={setPrompt}
+                                placeholder="Describe your vision: photorealistic portraits, professional logos, UI mockups, illustrations, advertisements, fashion shots, food photography, architectural renders, packaging designs, editorial layouts, brand materials, and more."
+                                label="Prompt"
+                                maxLength={1000}
+                                disabled={generating}
+                                showEnhanceButton={true}
+                            />
 
-                        {/* System Prompt Button */}
-                        <div className="mt-3">
-                            <Button
-                                size="sm"
-                                variant="primary"
-                                onClick={() => setShowSystemPromptManager(true)}
-                                className="flex items-center gap-2"
-                            >
-                                <Sparkles className="w-4 h-4" />
-                                Manage System Prompt
-                            </Button>
-                        </div>
+                            {/* System Prompt Button */}
+                            <div className="flex flex-col py-2 items-center justify-center gap-2 lg:flex-row">
 
-                        {/* Generate Button */}
-                        <Button
-                            onClick={handleGenerate}
-                            disabled={
-                                generating ||
-                                !prompt.trim() ||
-                                selectedModels.length === 0 ||
-                                !hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length))
-                            }
-                            className="w-full mt-4"
-                        >
-                            {!hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)) && selectedModels.length > 0
-                                ? `Not enough tokens (need ${calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)})`
-                                : selectedModels.length > 1
-                                    ? `Compare ${selectedModels.length} Models (${calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)} tokens)`
-                                    : selectedModels.length === 1
-                                        ? `Generate Image (${calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)} token)`
-                                        : 'Generate Image'}
-                        </Button>
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => setShowSystemPromptManager(true)}
+                                    className="flex items-center justify-center gap-2 w-full"
+                                >
+                                    Manage System Prompt
+                                </Button>
 
-                        {error && (
-                            <div className="p-4 mt-2 text-sm text-red-600 border border-red-200 rounded-lg bg-red-50">
-                                {error}
+                                {/* Generate Button */}
+                                <Button
+                                    onClick={handleGenerate}
+                                    disabled={
+                                        generating ||
+                                        !prompt.trim() ||
+                                        selectedModels.length === 0 ||
+                                        !hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length))
+                                    }
+                                    className="w-full"
+                                >
+                                    {!hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)) && selectedModels.length > 0
+                                        ? `Not enough tokens (need ${calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)})`
+                                        : selectedModels.length > 1
+                                            ? `Compare ${selectedModels.length} Models (${calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)} tokens)`
+                                            : selectedModels.length === 1
+                                                ? `Generate Image (${calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)} token)`
+                                                : 'Generate Image'}
+                                </Button>
+
                             </div>
-                        )}
+
+                            {error && (
+                                <div className="p-4 mt-2 text-sm text-red-600 border border-red-200 rounded-lg bg-red-50">
+                                    {error}
+                                </div>
+                            )}
+                        </>
                     </Card>
                 </div>
             </div>
@@ -409,8 +408,8 @@ export default function PlaygroundPage() {
             )}
 
             {showSystemPromptManager && (
-                <SystemPromptManager 
-                    onClose={() => setShowSystemPromptManager(false)} 
+                <SystemPromptManager
+                    onClose={() => setShowSystemPromptManager(false)}
                 />
             )}
 

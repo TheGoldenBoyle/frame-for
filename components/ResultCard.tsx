@@ -80,7 +80,7 @@ export function ResultCard({
     return (
         <>
             <div
-                className="group relative border border-border rounded-xl bg-surface overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 w-full"
+                className="group relative border border-border rounded-xl bg-surface  shadow-md hover:shadow-2xl transition-all duration-300 w-full"
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
