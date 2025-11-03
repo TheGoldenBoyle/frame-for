@@ -36,6 +36,36 @@ const MODEL_CONFIG: Record<string, { path: ReplicateModel; name: string }> = {
 	},
 }
 
+function applySystemPrompt(
+	systemPromptTemplate: string,
+	userPrompt: string
+): string {
+	return systemPromptTemplate.replace("{USER_PROMPT}", userPrompt)
+}
+
+// Helper to get active system prompt for user
+async function getActiveSystemPrompt(userId: string): Promise<string> {
+	// Try to get user's active custom prompt
+	let activePrompt = await prisma.systemPromptTemplate.findFirst({
+		where: {
+			userId: userId,
+			isActive: true,
+		},
+	})
+
+	// If no user override, get default
+	if (!activePrompt) {
+		activePrompt = await prisma.systemPromptTemplate.findFirst({
+			where: {
+				isDefault: true,
+				userId: null,
+			},
+		})
+	}
+
+	return activePrompt?.promptTemplate || "{USER_PROMPT}"
+}
+
 async function generateWithModel(
 	modelId: string,
 	modelPath: ReplicateModel,
@@ -111,11 +141,19 @@ export async function POST(request: NextRequest) {
 		const modelIdsString = getString(formData, "modelIds")
 		const modelIds = JSON.parse(modelIdsString) as string[]
 
-		if (!Array.isArray(modelIds) || modelIds.length === 0 || modelIds.length > 5) {
-			return NextResponse.json({ error: "Select 1–5 models" }, { status: 400 })
+		if (
+			!Array.isArray(modelIds) ||
+			modelIds.length === 0 ||
+			modelIds.length > 5
+		) {
+			return NextResponse.json(
+				{ error: "Select 1–5 models" },
+				{ status: 400 }
+			)
 		}
 
-		const tokensNeeded = modelIds.length * TOKEN_CONFIG.COSTS.PLAYGROUND_PER_MODEL
+		const tokensNeeded =
+			modelIds.length * TOKEN_CONFIG.COSTS.PLAYGROUND_PER_MODEL
 		const hasTokens = await checkTokens(user.id, tokensNeeded)
 
 		if (!hasTokens) {
@@ -131,6 +169,21 @@ export async function POST(request: NextRequest) {
 			)
 		}
 
+		// 🎯 Get user's system prompt template and apply it
+		const systemPromptTemplate = await getActiveSystemPrompt(user.id)
+		const finalPrompt = applySystemPrompt(systemPromptTemplate, prompt)
+		
+		// Enhanced logging
+		console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+		console.log(`🎯 System Prompt Template for user ${user.id}:`)
+		console.log(systemPromptTemplate)
+		console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+		console.log(`📝 Original User Prompt: "${prompt}"`)
+		console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+		console.log(`✨ Final Prompt Sent to Models:`)
+		console.log(finalPrompt)
+		console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+
 		// 🧠 Parallel model generation
 		const results = await Promise.all(
 			modelIds.map(async (modelId) => {
@@ -141,23 +194,35 @@ export async function POST(request: NextRequest) {
 				}
 
 				try {
-					const generatedUrl = await generateWithModel(modelId, config.path, prompt)
+					console.log(`📤 Sending to ${config.name}: "${finalPrompt.substring(0, 100)}..."`)
+					
+					const generatedUrl = await generateWithModel(
+						modelId,
+						config.path,
+						finalPrompt
+					)
+					
 					const response = await fetch(generatedUrl)
 					if (!response.ok)
-						throw new Error(`Failed to fetch generated image: ${response.statusText}`)
+						throw new Error(
+							`Failed to fetch generated image: ${response.statusText}`
+						)
 
 					const blob = await response.blob()
 					const arrayBuffer = await blob.arrayBuffer()
 					const buffer = Buffer.from(arrayBuffer)
 
-					const resultFileName = `${user.id}/playground-result-${Date.now()}-${modelId}.webp`
+					const resultFileName = `${
+						user.id
+					}/playground-result-${Date.now()}-${modelId}.webp`
 
-					const { data: resultUpload, error: resultError } = await supabase.storage
-						.from("user-images")
-						.upload(resultFileName, buffer, {
-							contentType: "image/webp",
-							upsert: false,
-						})
+					const { data: resultUpload, error: resultError } =
+						await supabase.storage
+							.from("user-images")
+							.upload(resultFileName, buffer, {
+								contentType: "image/webp",
+								upsert: false,
+							})
 
 					if (resultError) throw resultError
 
@@ -165,13 +230,15 @@ export async function POST(request: NextRequest) {
 						.from("user-images")
 						.getPublicUrl(resultUpload.path)
 
+					console.log(`✅ ${config.name} generated successfully`)
+
 					return {
 						modelId,
 						modelName: config.name,
 						imageUrl: urlData.publicUrl,
 					}
 				} catch (error) {
-					console.error(`Failed to generate with ${modelId}:`, error)
+					console.error(`❌ Failed to generate with ${modelId}:`, error)
 					return null
 				}
 			})
@@ -227,7 +294,10 @@ export async function POST(request: NextRequest) {
 
 		return NextResponse.json(
 			{
-				error: error instanceof Error ? error.message : "Generation failed",
+				error:
+					error instanceof Error
+						? error.message
+						: "Generation failed",
 			},
 			{ status: 500 }
 		)

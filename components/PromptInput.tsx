@@ -1,173 +1,153 @@
-import { useState, forwardRef } from 'react'
-import { Button } from '@/components/ui/Button'
-import { Loader } from '@/components/ui/Loader'
+'use client'
+
+import { useState, useEffect, forwardRef } from 'react'
+
+type EnhancementMode = 'minimal' | 'polish' | 'expand' | 'technical' | 'creative'
+
+const ENHANCE_OPTIONS: { value: EnhancementMode; label: string }[] = [
+  { value: 'minimal', label: 'Minimal' },
+  { value: 'polish', label: 'Polish' },
+  { value: 'expand', label: 'Expand' },
+  { value: 'technical', label: 'Technical' },
+  { value: 'creative', label: 'Creative' },
+]
 
 type PromptInputProps = {
-    value: string
-    onChange: (value: string) => void
-    placeholder?: string
-    maxLength?: number
-    disabled?: boolean
-    label?: string
-    className?: string
-    showEnhanceButton?: boolean
+  value: string
+  onChange: (val: string) => void
+  label?: string
+  placeholder?: string
+  maxLength?: number
+  disabled?: boolean
+  showEnhanceButton?: boolean
+  mode?: string // for fetching default/user prompt
+  onManagePrompts?: () => void
+}
+
+type EnhancedResult = {
+  original: string
+  enhanced: string
 }
 
 export const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(
-    function PromptInput(
-        {
-            value,
-            onChange,
-            placeholder = 'Describe the image you want to create...',
-            maxLength = 1000,
-            disabled = false,
-            label = 'Prompt',
-            className = '',
-            showEnhanceButton = true
-        },
-        ref
-    ) {
-        const [isFocused, setIsFocused] = useState(false)
-        const [enhancing, setEnhancing] = useState(false)
-        const [enhancementCount, setEnhancementCount] = useState(0)
+  (
+    {
+      value,
+      onChange,
+      label = 'Prompt',
+      placeholder = 'Type your prompt here...',
+      maxLength = 1000,
+      disabled = false,
+      showEnhanceButton = true,
+      mode = 'expand',
+      onManagePrompts,
+    },
+    ref
+  ) => {
+    const [enhancing, setEnhancing] = useState(false)
+    const [enhanceOptionsVisible, setEnhanceOptionsVisible] = useState(false)
+    const [enhancedResult, setEnhancedResult] = useState<EnhancedResult | null>(null)
+    const [loadingPrompt, setLoadingPrompt] = useState(true)
 
-        const charCount = value.length
-        const isNearLimit = charCount > maxLength * 0.8
-        const canEnhance = value.trim().length > 0 && enhancementCount < 3
-
-        const handleEnhance = async () => {
-            if (!canEnhance || enhancing) return
-
-            setEnhancing(true)
-
-            try {
-                const response = await fetch('/api/playground/enhance-prompt', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        prompt: value.trim(),
-                        enhancementCount
-                    })
-                })
-
-                const data = await response.json()
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Enhancement failed')
-                }
-
-                // Smooth update with a slight delay for effect
-                setTimeout(() => {
-                    onChange(data.enhancedPrompt)
-                    setEnhancementCount(data.enhancementCount)
-                }, 100)
-            } catch (error) {
-                console.error('Enhancement error:', error)
-                alert(error instanceof Error ? error.message : 'Failed to enhance prompt')
-            } finally {
-                setEnhancing(false)
-            }
+    // Fetch default or user override on mount
+    useEffect(() => {
+      const fetchPrompt = async () => {
+        try {
+          const res = await fetch(`/api/playground/prompts?mode=${mode}`)
+          if (!res.ok) throw new Error('Failed to fetch prompt')
+          const data = await res.json()
+          if (data?.systemPrompt) onChange(data.systemPrompt)
+        } catch (err) {
+          console.error('Prompt fetch error:', err)
+        } finally {
+          setLoadingPrompt(false)
         }
+      }
+      fetchPrompt()
+    }, [mode, onChange])
 
-        return (
-            <div className={`flex flex-col flex-1 ${className}`}>
-                <label className="block mb-2 text-sm font-medium text-text">
-                    {label}
-                </label>
-                <div className="relative flex flex-col flex-1 gap-3">
-                    <div className="relative flex-1">
-                        <textarea
-                            ref={ref}
-                            value={value}
-                            onChange={(e) => onChange(e.target.value)}
-                            onFocus={() => setIsFocused(true)}
-                            onBlur={() => setIsFocused(false)}
-                            placeholder={placeholder}
-                            maxLength={maxLength}
-                            disabled={disabled || enhancing}
-                            className={`w-full h-full min-h-[200px] px-4 py-3 rounded-lg border resize-none transition-all bg-surface text-text placeholder:text-muted ${isFocused
-                                    ? 'border-primary ring-2 ring-primary/20'
-                                    : 'border-border'
-                                } ${disabled || enhancing ? 'opacity-60 cursor-not-allowed' : ''} focus:outline-none`}
-                        />
-                        <div
-                            className={`absolute bottom-3 right-3 text-xs transition-colors ${isNearLimit ? 'text-orange-500 font-medium' : 'text-muted'
-                                }`}
-                        >
-                            {charCount}/{maxLength}
-                        </div>
-                    </div>
+    const handleEnhanceClick = () => setEnhanceOptionsVisible(true)
 
-                    {value.match(/\[PLACEHOLDER:[^\]]+\]/g) && (
-                        <div className="flex items-center gap-2 px-3 py-2 text-xs rounded-lg bg-surface/50 border border-border">
-                            <span style={{ color: '#d4af37' }}>💡</span>
-                            <span className="text-muted">
-                                Replace{' '}
-                                <span style={{ color: '#d4af37', fontWeight: '600' }}>
-                                    [PLACEHOLDER]
-                                </span>
-                                {' '}fields with your specific details
-                            </span>
-                        </div>
-                    )}
-
-                    {showEnhanceButton && (
-                        <div className="flex items-center gap-2">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={handleEnhance}
-                                disabled={!canEnhance || enhancing || disabled}
-                                className="flex justify-center items-center gap-2"
-                            >
-                                {enhancing ? (
-                                    <>
-                                        <div className="w-3 h-3">
-                                            <Loader size="sm" />
-                                        </div>
-                                        <span>Enhancing...</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <svg
-                                            className="w-4 h-4"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-                                            />
-                                        </svg>
-                                        <span>Enhance with AI</span>
-                                        {enhancementCount > 0 && (
-                                            <span className="text-xs text-muted">
-                                                ({enhancementCount}/3)
-                                            </span>
-                                        )}
-                                    </>
-                                )}
-                            </Button>
-
-                            {canEnhance && !enhancing && (
-                                <span className="text-xs font-medium" style={{ color: '#d4af37' }}>
-                                    Free • Recommended!
-                                </span>
-                            )}
-
-                            {enhancementCount >= 3 && (
-                                <span className="text-xs text-muted">
-                                    Max enhancements reached
-                                </span>
-                            )}
-                        </div>
-                    )}
-                </div>
-            </div>
-        )
+    const handleEnhanceOption = async (mode: EnhancementMode) => {
+      setEnhancing(true)
+      try {
+        const res = await fetch('/api/playground/enhance-prompt', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: value, mode }),
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error || 'Enhancement failed')
+        setEnhancedResult({ original: value, enhanced: data.enhancedPrompt })
+        onChange(data.enhancedPrompt)
+      } catch (err: any) {
+        console.error(err)
+        alert(err?.message || 'Failed to enhance prompt')
+      } finally {
+        setEnhancing(false)
+        setEnhanceOptionsVisible(false)
+      }
     }
+
+    return (
+      <div className="flex flex-col gap-3">
+        <label className="text-sm font-semibold">{label}</label>
+
+        <textarea
+          ref={ref}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          maxLength={maxLength}
+          disabled={disabled || loadingPrompt}
+          className="w-full min-h-[150px] p-3 border rounded-lg resize-none bg-gray-900 text-white border-primary focus:ring-2 focus:ring-primary focus:border-primary"
+        />
+
+        <div className="flex items-center gap-2">
+          {showEnhanceButton && (
+            <button
+              onClick={handleEnhanceClick}
+              disabled={enhancing || value.trim().length === 0 || loadingPrompt}
+              className="px-3 py-1.5 rounded bg-primary text-white hover:bg-primary/90 disabled:opacity-50"
+            >
+              {enhancing ? 'Enhancing...' : 'Enhance'}
+            </button>
+          )}
+
+          {onManagePrompts && (
+            <button
+              onClick={onManagePrompts}
+              className="px-3 py-1.5 rounded border border-primary text-primary hover:bg-primary/10"
+            >
+              Manage Prompts
+            </button>
+          )}
+        </div>
+
+        {/* Inline enhancement options */}
+        {enhanceOptionsVisible && (
+          <div className="flex flex-wrap gap-2 mt-2 bg-gray-800 p-2 rounded">
+            {ENHANCE_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                className="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600 text-white text-sm"
+                onClick={() => handleEnhanceOption(opt.value)}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Preview of enhanced prompt */}
+        {enhancedResult && (
+          <div className="mt-2 p-2 border rounded bg-gray-800">
+            <p className="text-xs text-gray-400 mb-1">Enhanced Preview:</p>
+            <div className="text-white text-sm">{enhancedResult.enhanced}</div>
+          </div>
+        )}
+      </div>
+    )
+  }
 )
+PromptInput.displayName = 'PromptInput'
