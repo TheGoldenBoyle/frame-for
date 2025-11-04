@@ -183,12 +183,18 @@ export default function LandingPage() {
                         </Button>
                     </div>
 
-                    <div className="max-w-4xl mx-auto animate-fade-in-up stagger-4">
-                        <div className="aspect-video bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 rounded-2xl flex items-center justify-center shadow-elevated-gold relative overflow-hidden group">
-                            <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                            <p className="text-muted relative z-10">{t.landing.videoPlaceholder}</p>
-                        </div>
-                    </div>
+                    <div className="relative max-w-4xl mx-auto animate-fade-in-up stagger-4">
+  <div className="aspect-video bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 rounded-2xl flex items-center justify-center shadow-elevated-gold overflow-hidden">
+    <iframe
+      className="w-full h-full absolute inset-0 rounded-2xl"
+      src="https://www.youtube.com/embed/tXDXnj8P9X4?rel=0&modestbranding=1"
+      title="Bildoro.app Promo Video"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowFullScreen
+      loading="lazy"
+    />
+  </div>
+</div>
                 </section>
 
                 <section className="max-w-6xl mx-auto mb-32">
