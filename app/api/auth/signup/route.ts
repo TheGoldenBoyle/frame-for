@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/superbase-server"
-import { notifyNewSignup } from "@/lib/email-service"
+import { notifyNewSignup, sendWelcomeEmail } from "@/lib/email-service"
 import { canAcceptNewSignups } from "@/lib/revenue-tracker"
 import { TOKEN_CONFIG } from "@/lib/config/tokens"
 
@@ -104,6 +104,10 @@ export async function POST(request: NextRequest) {
                 userId: data.user.id,
                 signupDate: new Date()
             }).catch(err => console.error('Failed to send signup notification:', err))
+
+            // Send welcome email to the new user
+            sendWelcomeEmail(data.user.email!, username)
+                .catch(err => console.error('Failed to send welcome email:', err))
         }
 
         return NextResponse.json({ 

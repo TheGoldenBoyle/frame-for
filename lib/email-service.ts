@@ -74,6 +74,95 @@ This is an automated notification from BildOro
     })
 }
 
+// ✅ Send welcome email to new users
+export async function sendWelcomeEmail(userEmail: string, username: string) {
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.GMAIL_USER,
+            pass: process.env.GMAIL_APP_PASSWORD,
+        },
+    })
+
+    try {
+        await transporter.sendMail({
+            from: `"BildOro" <${process.env.GMAIL_USER}>`,
+            to: userEmail,
+            subject: 'Welcome to Bildoro – Let\'s Bild This Together',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <h2 style="color: #333; margin-bottom: 20px;">Hey ${username}!</h2>
+                    
+                    <p style="color: #333; line-height: 1.6; margin-bottom: 15px;">
+                        Thanks for signing up for Bildoro – genuinely excited to have you here.
+                    </p>
+                    
+                    <p style="color: #333; line-height: 1.6; margin-bottom: 15px;">
+                        Here's the deal: <strong>I'm iterating fast, and your feedback directly shapes what gets built next.</strong> 
+                        This isn't a "we'll consider your suggestion" situation – tell me what you need, and I'll build it.
+                    </p>
+                    
+                    <div style="background-color: #f9f9f9; padding: 20px; border-radius: 5px; margin: 25px 0;">
+                        <h3 style="color: #333; margin-top: 0;">What I need from you:</h3>
+                        <ul style="color: #333; line-height: 1.8;">
+                            <li>Try it out and tell me what works (and what doesn't)</li>
+                            <li>Request features, add-ons, tweaks – whatever would make this more useful for you</li>
+                            <li>Spot a bug? Report it and I'll hook you up with some tokens as a thank you</li>
+                        </ul>
+                    </div>
+                    
+                    <p style="color: #333; line-height: 1.6; margin-bottom: 15px;">
+                        We're in the early days of this fight, and I'm building Bildoro for people who actually use it. 
+                        Your input isn't just welcome – it's essential.
+                    </p>
+                    
+                    <p style="color: #333; line-height: 1.6; margin-bottom: 15px;">
+                        Hit me up anytime at <a href="mailto:thegoldenboyle@gmail.com" style="color: #D4AF37;">thegoldenboyle@gmail.com</a> 
+                        or on X <a href="https://x.com/thegoldenboyle" style="color: #D4AF37;">@thegoldenboyle</a>
+                    </p>
+                    
+                    <p style="color: #333; line-height: 1.6; margin-bottom: 5px;">
+                        Let's go,<br>
+                        Golden
+                    </p>
+                    
+                    <div style="background-color: #fff3cd; padding: 15px; border-left: 4px solid #D4AF37; margin: 25px 0;">
+                        <p style="margin: 0; color: #856404;">
+                            <strong>P.S.</strong> – There are regular updates dropping, so keep an eye out. 
+                            What you see today won't be what you see next week.
+                        </p>
+                    </div>
+                </div>
+            `,
+            text: `
+Hey ${username}!
+
+Thanks for signing up for Bildoro – genuinely excited to have you here.
+
+Here's the deal: I'm iterating fast, and your feedback directly shapes what gets built next. This isn't a "we'll consider your suggestion" situation – tell me what you need, and I'll build it.
+
+What I need from you:
+• Try it out and tell me what works (and what doesn't)
+• Request features, add-ons, tweaks – whatever would make this more useful for you
+• Spot a bug? Report it and I'll hook you up with some tokens as a thank you
+
+We're in the early days of this fight, and I'm building Bildoro for people who actually use it. Your input isn't just welcome – it's essential.
+
+Hit me up anytime at thegoldenboyle@gmail.com or on X @thegoldenboyle
+
+Let's go,
+Golden
+
+P.S. – There are regular updates dropping, so keep an eye out. What you see today won't be what you see next week.
+            `.trim(),
+        })
+        console.log(`Welcome email sent to: ${userEmail}`)
+    } catch (error) {
+        console.error('Failed to send welcome email:', error)
+        // Don't throw - don't want email failures to break the signup flow
+    }
+}
+
 export async function notifyNewSignup(userData: {
     email: string
     userId: string
