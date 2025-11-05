@@ -14,74 +14,83 @@ export const en: Translations = {
 	},
 	landing: {
 		// Hero Section
-		heroTitle1: "The best AI models.",
-		heroTitle2: "No restrictions.",
-		heroSubtitle1: "Top quality. Latest models. Tokens that never expire.",
-		heroSubtitle2: "Perfect for casual creators who want to test, forget, and come back when the next trendy model drops.",
-		startFree: "Start Free",
-		tryPlayground: "Try Playground",
-		videoPlaceholder: "Product video coming soon",
-		
-		// Why Section
-		whyTitle: "Why BildOro?",
-		whySubtitle: "Everything you need, nothing you don't",
-		freeTokensTitle: "Free Test Tokens",
-		freeTokensDesc: "Only platform with free tokens to start",
-		neverExpireTitle: "Never Expire",
-		neverExpireDesc: "Buy once, use anytime",
-		topQualityTitle: "Top Quality",
-		topQualityDesc: "Best settings, hard-coded",
-		aiPromptTitle: "AI Prompt Builder",
-		aiPromptDesc: "Free optimizer built-in",
-		oneStopTitle: "One-Stop Shop",
-		oneStopDesc: "All latest models in one place",
-		yourChoiceTitle: "Your Choice",
-		yourChoiceDesc: "Freedom to create your way",
-		
-		// Models Section
-		modelsTitle: "Latest Models Available",
-		modelsSubtitle: "Cutting-edge AI at your fingertips",
-		
+		heroTitle: "Your Ideas,",
+		heroTitleHighlight: "Perfected Instantly",
+		heroSubtitle1: "Generate, compare, and refine creative outputs with ease.",
+		heroSubtitle2: "Save your settings, come back anytime, and keep building without constraints.",
+		tryItFree: "Try it Out Free",
+		followJourney: "Follow the Journey",
+		videoTitle: "Bildoro.app Promo Video",
+
+		// How It Works Section
+		howItWorksStep1Title: "All the Latest Models",
+		howItWorksStep1Desc: "Access the top AI models all in one place, running side by side. No juggling tools, no compatibility headaches — just instant, guaranteed results.",
+		howItWorksStep2Title: "Override System Prompts",
+		howItWorksStep2Desc: "Make the app work for you. Generate, leave, and come back — your setup is ready to go again. Perfect for creators who want consistent high-quality results.",
+		howItWorksStep3Title: "Free AI Prompt Enhancer",
+		howItWorksStep3Desc: "Get the most out of your models with AI-powered suggestions and refinements. Make your prompts more effective instantly.",
+		howItWorksStep4Title: "Compare Models Quickly",
+		howItWorksStep4Desc: "Side-by-side comparison to find your perfect asset fast. Choose the best result for your project without juggling multiple tabs.",
+		howItWorksStep5Title: "Revise & Enhance with Precision",
+		howItWorksStep5Desc: "Fine-tune and improve results with accuracy. Make every generation exactly how you want it.",
+
+		// CTA Section
+		ctaTitle: "Follow the Journey. Shape the Dream.",
+		ctaSubtitle: "I'm a dad fighting the good fight, a dreamer building BildOro in real time. Early users shape the product — tell me your use case, and we'll build it together.",
+		ctaButton: "Try It Free",
+
 		// Pricing Section
-		pricingTitle: "Simple Pricing",
-		pricingSubtitle: "Better, cheaper, unrestricted",
+		pricingTitle: "Early Access & Premium Tools",
+		pricingSubtitle: "Early subscribers help shape the product. We focus on value and quality — your first 5 generations are on us. Try it free and see how we do things differently. Your models, your way!",
 		
-		// Final CTA
-		ctaTitle: "Ready to create?",
-		ctaSubtitle: "Start with free tokens. No credit card required.",
-		getStartedFree: "Get Started Free",
-		
+		// Pricing Cards
+		monthlyTitle: "Monthly",
+		monthlyPrice: "€4.99",
+		monthlyOriginalPrice: "€7.99",
+		monthlyPeriod: "/mo",
+		monthlyBadge: "BEST VALUE",
+		monthlyFeature1: "50 tokens/month",
+		monthlyFeature2: "Auto-renewal",
+		monthlyFeature3: "Cancel anytime",
+		monthlyFeature4: "AI Optimizations included",
+		monthlyFeature5: "Custom System Prompts included",
+		monthlyButton: "Subscribe",
+
+		onetimeTitle: "One-Time",
+		onetimePrice: "€9.99",
+		onetimeOriginalPrice: "€14.99",
+		onetimePeriod: "once",
+		onetimeFeature1: "100 tokens",
+		onetimeFeature2: "Never expire",
+		onetimeFeature3: "No commitment",
+		onetimeFeature4: "AI Optimizations included",
+		onetimeFeature5: "Custom System Prompts included",
+		onetimeButton: "Buy Tokens",
+
 		// Waitlist Mode
-		waitlistTitle: "We've reached capacity",
-		waitlistSubtitle1: "🎯 Testing with a small group first",
-		waitlistSubtitle2: "Join the waitlist for early access when spots open.",
+		waitlistTitle: "Capacity Reached",
+		waitlistSubtitle1: "🎯 Currently testing with a small group of creators.",
+		waitlistSubtitle2: "Join the waitlist for early access and help shape the next generation of AI creation.",
 		emailPlaceholder: "Enter your email",
 		joinWaitlist: "Join Waitlist",
 		joining: "Joining...",
 		waitlistSuccess: "✓ You're on the list! Position #{position}",
 		waitlistError: "Something went wrong",
 		waitlistFailed: "Failed to join waitlist",
-		questionsContact: "Questions? Contact",
-		
-		// Legacy (keeping for backwards compatibility)
-		headline1: "Unleash Your Creativity.",
-		headline2: "AI Image Generation Without Limits.",
-		subheadline1: "No gatekeeping. No restrictions. No barriers.",
-		subheadline2: "Your models. Your vision. Your way.",
-		subheadline3: "Join now and get your first 5 tokens free.",
-		cta: "Start Creating",
+		questionsContact: "Questions? Contact:",
 	},
 	home: {
 		title: "AI Image Generation Unleashed",
 		hero: "Break free from limitations. Generate without boundaries.",
 		uploadSoon: "Explore Unlimited Models",
-		dashboard: "Dashboard", 
+		dashboard: "Dashboard",
 		studio: "Studio",
-		tokens: "Tokens"
+		tokens: "Tokens",
 	},
 	dashboard: {
 		createNew: "Create New Memory",
-		createDescription: "Combine photos of loved ones into one beautiful image",
+		createDescription:
+			"Combine photos of loved ones into one beautiful image",
 		viewGallery: "Gallery",
 		galleryDescription: "See all your created memories",
 	},
@@ -89,10 +98,12 @@ export const en: Translations = {
 		title: "Playground",
 		description: "Experiment with the latest AI image generation models",
 		prompt: "Prompt",
-		promptPlaceholder: "Describe your vision: photorealistic portraits, professional logos, product photography, UI mockups, illustrations, advertisements, fashion shots, food photography, architectural renders, packaging designs, editorial layouts, brand materials, and more. Our top-tier models deliver studio-quality, hyper-realistic results every time. Use 'Enhance with AI' to optimize your prompt!",
+		promptPlaceholder:
+			"Describe your vision: photorealistic portraits, professional logos, product photography, UI mockups, illustrations, advertisements, fashion shots, food photography, architectural renders, packaging designs, editorial layouts, brand materials, and more. Our top-tier models deliver studio-quality, hyper-realistic results every time. Use 'Enhance with AI' to optimize your prompt!",
 		selectModels: "Select Models",
 		inputImage: "Input Image (Optional)",
-		inputImageHelp: "Add an image for image-to-image generation, or leave empty for text-to-image",
+		inputImageHelp:
+			"Add an image for image-to-image generation, or leave empty for text-to-image",
 		generate: "Generate Image",
 		compare: "Compare {count} Models",
 		results: "Results",
@@ -103,7 +114,8 @@ export const en: Translations = {
 		saved: "Saved to playground gallery!",
 		errorPrompt: "Please enter a prompt",
 		errorModels: "Please select at least one model",
-		errorSomeFailed: "Some models failed to generate. This can happen due to rate limits or model availability.",
+		errorSomeFailed:
+			"Some models failed to generate. This can happen due to rate limits or model availability.",
 		tipsTitle: "💡 Tips",
 		tip1: "Select multiple models to compare their outputs side-by-side",
 		tip2: "Nano Banana requires an input image for editing",
@@ -111,7 +123,8 @@ export const en: Translations = {
 		tip4: "Save your favorite results to the playground gallery",
 		galleryTitle: "Playground Gallery",
 		galleryEmpty: "No experiments yet",
-		galleryEmptyDescription: "Start creating in the playground to see your work here",
+		galleryEmptyDescription:
+			"Start creating in the playground to see your work here",
 		goToPlayground: "Go to Playground",
 	},
 	common: {
@@ -127,10 +140,12 @@ export const en: Translations = {
 		name: "Name",
 		email: "Email",
 		subject: "Subject",
-		message: "Message", 
+		message: "Message",
 		submit: "Send Message",
-		successMessage: "Thank you for your message! We'll get back to you soon.",
-		errorMessage: "There was an error sending your message. Please try again later."
+		successMessage:
+			"Thank you for your message! We'll get back to you soon.",
+		errorMessage:
+			"There was an error sending your message. Please try again later.",
 	},
 	imprint: {
 		title: "Imprint",
@@ -145,8 +160,9 @@ export const en: Translations = {
 		legal_representation: "Legal Representation",
 		ceo: "Managing Director: James Boyle",
 		disclaimer: "Disclaimer and Terms of Service",
-		disclaimer_text: "We exclusively deliver top-quality results. Used tokens cannot be refunded. The quality of results depends on the models and prompts. Feel free to contact us at any time with questions or concerns. Our goal is to provide value and make every customer feel valued.",
+		disclaimer_text:
+			"We exclusively deliver top-quality results. Used tokens cannot be refunded. The quality of results depends on the models and prompts. Feel free to contact us at any time with questions or concerns. Our goal is to provide value and make every customer feel valued.",
 		social_media: "Social Media",
-		x_account: "X (Twitter): @theGoldenBoyle"
+		x_account: "X (Twitter): @theGoldenBoyle",
 	},
 }

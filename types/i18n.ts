@@ -22,43 +22,59 @@ export type Translations = {
 	}
 	landing: {
 		// Hero Section
-		heroTitle1: string
-		heroTitle2: string
+		heroTitle: string
+		heroTitleHighlight: string
 		heroSubtitle1: string
 		heroSubtitle2: string
-		startFree: string
-		tryPlayground: string
-		videoPlaceholder: string
-		
-		// Why Section
-		whyTitle: string
-		whySubtitle: string
-		freeTokensTitle: string
-		freeTokensDesc: string
-		neverExpireTitle: string
-		neverExpireDesc: string
-		topQualityTitle: string
-		topQualityDesc: string
-		aiPromptTitle: string
-		aiPromptDesc: string
-		oneStopTitle: string
-		oneStopDesc: string
-		yourChoiceTitle: string
-		yourChoiceDesc: string
-		
-		// Models Section
-		modelsTitle: string
-		modelsSubtitle: string
-		
+		tryItFree: string
+		followJourney: string
+		videoTitle: string
+
+		// How It Works Section
+		howItWorksStep1Title: string
+		howItWorksStep1Desc: string
+		howItWorksStep2Title: string
+		howItWorksStep2Desc: string
+		howItWorksStep3Title: string
+		howItWorksStep3Desc: string
+		howItWorksStep4Title: string
+		howItWorksStep4Desc: string
+		howItWorksStep5Title: string
+		howItWorksStep5Desc: string
+
+		// CTA Section
+		ctaTitle: string
+		ctaSubtitle: string
+		ctaButton: string
+
 		// Pricing Section
 		pricingTitle: string
 		pricingSubtitle: string
-		
-		// Final CTA
-		ctaTitle: string
-		ctaSubtitle: string
-		getStartedFree: string
-		
+
+		// Pricing Cards
+		monthlyTitle: string
+		monthlyPrice: string
+		monthlyOriginalPrice: string
+		monthlyPeriod: string
+		monthlyBadge: string
+		monthlyFeature1: string
+		monthlyFeature2: string
+		monthlyFeature3: string
+		monthlyFeature4: string
+		monthlyFeature5: string
+		monthlyButton: string
+
+		onetimeTitle: string
+		onetimePrice: string
+		onetimeOriginalPrice: string
+		onetimePeriod: string
+		onetimeFeature1: string
+		onetimeFeature2: string
+		onetimeFeature3: string
+		onetimeFeature4: string
+		onetimeFeature5: string
+		onetimeButton: string
+
 		// Waitlist Mode
 		waitlistTitle: string
 		waitlistSubtitle1: string
@@ -70,14 +86,6 @@ export type Translations = {
 		waitlistError: string
 		waitlistFailed: string
 		questionsContact: string
-		
-		// Legacy (keeping for backwards compatibility)
-		headline1: string
-		headline2: string
-		subheadline1: string
-		subheadline2: string
-		subheadline3: string
-		cta: string
 	}
 	dashboard: {
 		createNew: string
