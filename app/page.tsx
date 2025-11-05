@@ -190,13 +190,28 @@ export default function LandingPage() {
                     <p className="text-xl text-muted mb-10 max-w-xl mx-auto animate-fade-in-up">
                         {t.landing.ctaSubtitle}
                     </p>
-                    <Button
-                        size="lg"
-                        onClick={() => window.open('https://x.com/thegoldenboyle', '_blank')}
-                        className="shimmer-effect glow-on-hover text-lg px-8 py-4"
-                    >
-                        {t.landing.ctaButton}
-                    </Button>
+                    <div className="grid md:grid-cols-2 gap-4 mb-16 animate-fade-in-up stagger-3">
+
+                        {/* Ghost / Outline Button */}
+                        <Button
+                            variant="outline"
+                            size="lg"
+                            onClick={() => window.open('https://x.com/theGoldenBoyle', '_blank')}
+                        >
+                            @theGoldenBoyle
+                        </Button>
+                        {/* Primary Try For Free */}
+                        <div className="flex flex-col items-center relative w-full">
+                            <Button
+                                size="lg"
+                                onClick={() => router.push('/signup')}
+                                className="shimmer-effect glow-on-hover w-full"
+                            >
+                                {t.landing.startFree}
+                            </Button>
+                            <span className="text-sm text-muted mt-1 absolute -bottom-5">{t.landing.freeTokensDesc}</span>
+                        </div>
+                    </div>
                 </section>
 
                 {/* Pricing */}

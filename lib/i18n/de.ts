@@ -66,6 +66,9 @@ export const de: Translations = {
 		onetimeFeature4: "KI-Optimierungen inklusive",
 		onetimeFeature5: "Individuelle System-Prompts inklusive",
 		onetimeButton: "Token Kaufen",
+		startFree: "Kostenlos ausprobieren",
+		freeTokensDesc: "Keine Kreditkarte nötig",
+		followOnX: "@theGoldenBoyle",
 
 		// Waitlist Mode
 		waitlistTitle: "Kapazität Erreicht",

@@ -67,6 +67,10 @@ export const en: Translations = {
 		onetimeFeature5: "Custom System Prompts included",
 		onetimeButton: "Buy Tokens",
 
+		startFree: "Try for Free",
+		freeTokensDesc: "No credit card required",
+		followOnX: "@theGoldenBoyle",
+
 		// Waitlist Mode
 		waitlistTitle: "Capacity Reached",
 		waitlistSubtitle1: "🎯 Currently testing with a small group of creators.",

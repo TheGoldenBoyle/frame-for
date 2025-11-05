@@ -51,6 +51,10 @@ export type Translations = {
 		pricingTitle: string
 		pricingSubtitle: string
 
+		startFree: string     
+		freeTokensDesc: string 
+		followOnX: string 
+
 		// Pricing Cards
 		monthlyTitle: string
 		monthlyPrice: string
