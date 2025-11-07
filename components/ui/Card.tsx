@@ -7,7 +7,7 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 
 const paddingStyles = {
   none: '',
-  sm: 'p-4',
+  sm: 'p-2',
   md: 'p-4',
   lg: 'p-4 md:p-8',
 }

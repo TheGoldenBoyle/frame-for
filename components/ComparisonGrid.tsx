@@ -1,26 +1,34 @@
 import { ResultCard } from './ResultCard'
-import { ComparisonResult } from '@/types/globals'
+import { ErrorCard } from '@/components/ui/ErrorCard'
+
+// Use the PlaygroundResult type which includes error
+type PlaygroundResult = {
+    modelId: string
+    modelName: string
+    imageUrl: string | null
+    error?: string
+}
 
 type ComparisonGridProps = {
-    results: ComparisonResult[]
+    results: PlaygroundResult[]
+    prompt?: string
+    playgroundPhotoId?: string
     originalImageUrl?: string
-    onSaveResult?: (modelId: string) => void
     onReviseResult?: (modelId: string) => void
-    onStartFresh?: () => void
-    savingStates?: Record<string, boolean>
+    onRetryModel?: (modelId: string) => void
 }
 
 export function ComparisonGrid({
     results,
+    prompt,
+    playgroundPhotoId,
     originalImageUrl,
-    onSaveResult,
     onReviseResult,
-    savingStates = {},
+    onRetryModel,
 }: ComparisonGridProps) {
     if (results.length === 0) return null
 
-    const validResults = results.filter((result) => result.imageUrl)
-    const resultCount = validResults.length
+    const resultCount = results.length
 
     // Optimized grid layout for maximum image size
     const getGridClass = () => {
@@ -34,7 +42,7 @@ export function ComparisonGrid({
 
     return (
         <div className={`grid ${getGridClass()} gap-3 sm:gap-4 lg:gap-6 w-full`}>
-            {validResults.map((result, index) => (
+            {results.map((result, index) => (
                 <div
                     key={result.modelId}
                     className="animate-scale-in opacity-0 w-full"
@@ -43,14 +51,22 @@ export function ComparisonGrid({
                         animationFillMode: 'forwards',
                     }}
                 >
-                    <ResultCard
-                        imageUrl={result.imageUrl}
-                        modelName={result.modelName}
-                        originalImageUrl={originalImageUrl}
-                        onSave={onSaveResult ? () => onSaveResult(result.modelId) : undefined}
-                        onRevise={onReviseResult ? () => onReviseResult(result.modelId) : undefined}
-                        saving={savingStates[result.modelId]}
-                    />
+                    {result.imageUrl ? (
+                        <ResultCard
+                            imageUrl={result.imageUrl}
+                            modelName={result.modelName}
+                            prompt={prompt}
+                            playgroundPhotoId={playgroundPhotoId}
+                            originalImageUrl={originalImageUrl}
+                            onRevise={onReviseResult ? () => onReviseResult(result.modelId) : undefined}
+                        />
+                    ) : (
+                        <ErrorCard
+                            modelName={result.modelName}
+                            error={result.error || 'Unknown error'}
+                            onRetry={onRetryModel ? () => onRetryModel(result.modelId) : undefined}
+                        />
+                    )}
                 </div>
             ))}
         </div>

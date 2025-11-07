@@ -169,32 +169,24 @@ export async function POST(request: NextRequest) {
 			)
 		}
 
-		// 🎯 Get user's system prompt template and apply it
 		const systemPromptTemplate = await getActiveSystemPrompt(user.id)
 		const finalPrompt = applySystemPrompt(systemPromptTemplate, prompt)
 		
-		// Enhanced logging
-		console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-		console.log(`🎯 System Prompt Template for user ${user.id}:`)
-		console.log(systemPromptTemplate)
-		console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-		console.log(`📝 Original User Prompt: "${prompt}"`)
-		console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-		console.log(`✨ Final Prompt Sent to Models:`)
-		console.log(finalPrompt)
-		console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-
-		// 🧠 Parallel model generation
 		const results = await Promise.all(
 			modelIds.map(async (modelId) => {
 				const config = MODEL_CONFIG[modelId]
 				if (!config) {
 					console.error(`Unknown model: ${modelId}`)
-					return null
+					return {
+						modelId,
+						modelName: "Unknown",
+						imageUrl: null,
+						error: "Model not found"
+					}
 				}
 
 				try {
-					console.log(`📤 Sending to ${config.name}: "${finalPrompt.substring(0, 100)}..."`)
+					console.log(`🔤 Sending to ${config.name}: "${finalPrompt.substring(0, 100)}..."`)
 					
 					const generatedUrl = await generateWithModel(
 						modelId,
@@ -239,24 +231,55 @@ export async function POST(request: NextRequest) {
 					}
 				} catch (error) {
 					console.error(`❌ Failed to generate with ${modelId}:`, error)
-					return null
+					
+					// Extract meaningful error message
+					let errorMessage = "Generation failed"
+					if (error instanceof Error) {
+						if (error.message.includes("NSFW")) {
+							errorMessage = "NSFW content detected"
+						} else if (error.message.includes("Task not found")) {
+							errorMessage = "Model service unavailable - try again"  // ✅ Add this
+						} else if (error.message.includes("rate limit")) {
+							errorMessage = "Rate limited"
+						} else if (error.message.includes("timeout")) {
+							errorMessage = "Request timed out"
+						} else {
+							errorMessage = error.message.substring(0, 100)
+						}
+					}
+					
+					return {
+						modelId,
+						modelName: config.name,
+						imageUrl: null,
+						error: errorMessage
+					}
 				}
 			})
 		)
 
-		const filteredResults = results.filter(Boolean) as PlaygroundResult[]
+		// Filter to get successful results
+		const successfulResults = results.filter(r => r.imageUrl) as PlaygroundResult[]
 
-		if (filteredResults.length === 0) {
+		// If ALL models failed, return error with details
+		if (successfulResults.length === 0) {
+			const errors = results.map(r => r.error).filter(Boolean)
+			const errorMessage = errors.length > 0 
+				? `All models failed. Common error: ${errors[0]}`
+				: "Failed to generate images for any model"
+			
 			return NextResponse.json(
-				{ error: "Failed to generate images for any model" },
+				{ error: errorMessage, results },
 				{ status: 500 }
 			)
 		}
 
+		// Deduct tokens only for successful generations
+		const tokensToDeduct = successfulResults.length * TOKEN_CONFIG.COSTS.PLAYGROUND_PER_MODEL
 		await deductTokens(
 			user.id,
-			tokensNeeded,
-			`Playground generation with ${modelIds.length} models`
+			tokensToDeduct,
+			`Playground generation with ${successfulResults.length}/${modelIds.length} successful models`
 		)
 
 		const playgroundPhoto = await prisma.playgroundPhoto.create({
@@ -264,15 +287,18 @@ export async function POST(request: NextRequest) {
 				userId: user.id,
 				prompt,
 				originalUrl: null,
-				results: filteredResults as any,
-				tokensCost: tokensNeeded,
+				results: results as any, // Include both successful and failed results
+				tokensCost: tokensToDeduct,
 			},
 		})
 
+		// Return all results (including failures) so UI can show which ones failed
 		return NextResponse.json({
 			success: true,
-			results: filteredResults,
+			results: results,
 			playgroundPhotoId: playgroundPhoto.id,
+			successCount: successfulResults.length,
+			failureCount: results.length - successfulResults.length,
 		})
 	} catch (error) {
 		console.error("Playground generation error:", error)

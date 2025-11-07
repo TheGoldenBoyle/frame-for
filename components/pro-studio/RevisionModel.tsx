@@ -150,7 +150,7 @@ export function RevisionModal({
                     {!insufficientTokens && (
                         <div className="flex gap-3">
                             <Button
-                                variant="outline"
+                                variant="ghost"
                                 onClick={onClose}
                                 disabled={revising}
                                 className="flex-1"

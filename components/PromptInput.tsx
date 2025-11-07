@@ -92,9 +92,9 @@ export const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(
                     <span>{value.length} / {maxLength} characters</span>
 
   
-                    <div className="flex justify-between items-center gap-2 w-full md:w-auto">
+                    <div className="flex flex-col md:justify-between md:items-center gap-2 w-full md:w-auto">
                         {!enhancedResult && (
-                            <p className="text-sm text-muted italic text-center">
+                            <p className="text-sm text-muted italic md:text-center">
                                 Free — recommended AI enhancement
                             </p>
                         )}
@@ -104,7 +104,7 @@ export const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(
                             <Button
                                 onClick={handleEnhanceClick}
                                 size="sm"
-                                variant="outline"
+                                variant="secondary"
                                 disabled={enhancing || value.trim().length === 0}
                             >
                                 {enhancing ? 'Enhancing...' : enhanceOptionsVisible ? 'Hide Options' : 'Enhance'}

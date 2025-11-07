@@ -70,7 +70,7 @@ export default function PlaygroundGalleryPage() {
      }
 
     return (
-        <div className="min-h-screen p-4 md:p-8">
+        <div className="min-h-screen p-2 md:p-4">
             <div className="mx-auto max-w-7xl">
                 <div className="flex items-center justify-between mb-8">
                     <div>

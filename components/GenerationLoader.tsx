@@ -100,7 +100,7 @@ export function GenerationLoader({
             .join(', ')
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm">
             <Card className="max-w-lg mx-4 w-full">
                 <div className="space-y-6">
                     {/* Spinner */}
@@ -129,11 +129,11 @@ export function GenerationLoader({
                                 Using: {displayModelNames}
                             </p>
                         )}
-                        <p className="text-sm text-muted">{loadingSteps[loadingStep]}</p>
+                        <p className="text-sm text-">{loadingSteps[loadingStep]}</p>
                     </div>
 
                     {/* Progress Bar */}
-                    <div className="w-full h-2 overflow-hidden rounded-full bg-border">
+                    <div className="w-full h-2 overflow-hidden rounded-full bg-background">
                         <div 
                             className="h-full rounded-full bg-gradient-to-r from-primary to-primary-dark transition-all duration-300 ease-out"
                             style={{ width: `${progress}%` }}
@@ -142,13 +142,13 @@ export function GenerationLoader({
 
                     {/* Prompt Preview */}
                     {prompt && (
-                        <div className="p-3 text-xs text-muted bg-surface rounded-lg border border-border">
+                        <div className="p-3 text-xs text-muted dark:bg-background rounded-lg border border-border">
                             <span className="font-medium">{isRevision ? 'Revision:' : 'Prompt:'}</span> {prompt.slice(0, 100)}{prompt.length > 100 ? '...' : ''}
                         </div>
                     )}
 
                     {/* Info */}
-                    <p className="text-xs text-center text-muted">
+                    <p className="text-xs text-center text-gray-500 dark:text-gray-400">
                         {isRevision 
                             ? 'This will take about 5-15 seconds'
                             : 'This may take 10-40 seconds depending on model complexity'

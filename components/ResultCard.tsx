@@ -1,31 +1,37 @@
+"use client"
+
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { BeforeAfterSlider } from './BeforeAfterSlider'
-import { Download, Edit3, Bookmark, Maximize2, X } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
+import { Download, Edit3, Maximize2, X, Share2, Copy } from 'lucide-react'
+import { useShare } from '@/hooks/useShare'
 
 type ResultCardProps = {
     imageUrl: string
     modelName: string
+    prompt?: string
     originalImageUrl?: string
-    onSave?: () => void
+    playgroundPhotoId?: string
     onRevise?: () => void
-    onDownload?: () => void
-    saving?: boolean
 }
 
 export function ResultCard({
     imageUrl,
     modelName,
+    prompt = '',
     originalImageUrl,
-    onSave,
+    playgroundPhotoId,
     onRevise,
-    onDownload,
-    saving = false,
 }: ResultCardProps) {
+    const router = useRouter()
+    const { shareToX, downloadImage, copyImageToClipboard, isSharing } = useShare()
     const [showComparison, setShowComparison] = useState(false)
     const [isFullscreen, setIsFullscreen] = useState(false)
     const [isHovered, setIsHovered] = useState(false)
     const [mounted, setMounted] = useState(false)
+    const [showShareMenu, setShowShareMenu] = useState(false)
+    const [copySuccess, setCopySuccess] = useState(false)
 
     // Check if we're mounted (client-side only)
     useEffect(() => {
@@ -42,7 +48,6 @@ export function ResultCard({
             }
         }
 
-        // Prevent body scroll when fullscreen is open
         document.body.style.overflow = 'hidden'
         window.addEventListener('keydown', handleKeyDown)
 
@@ -52,20 +57,61 @@ export function ResultCard({
         }
     }, [isFullscreen])
 
-    const handleDownload = async () => {
-        if (onDownload) return onDownload()
+    // Close share menu when clicking outside
+    useEffect(() => {
+        if (!showShareMenu) return
 
-        try {
-            const response = await fetch(imageUrl)
-            const blob = await response.blob()
-            const url = URL.createObjectURL(blob)
-            const a = document.createElement('a')
-            a.href = url
-            a.download = `BildOro-${modelName.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.jpg`
-            a.click()
-            URL.revokeObjectURL(url)
-        } catch (error) {
-            console.error('Download failed:', error)
+        const handleClickOutside = () => setShowShareMenu(false)
+        document.addEventListener('click', handleClickOutside)
+        return () => document.removeEventListener('click', handleClickOutside)
+    }, [showShareMenu])
+
+    const handleDownload = async () => {
+        const filename = `BildOro-${modelName.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.jpg`
+        await downloadImage(imageUrl, filename, false)
+    }
+
+    const handleShare = async (e: React.MouseEvent) => {
+        e.stopPropagation()
+        setShowShareMenu(!showShareMenu)
+    }
+
+    const handleShareToX = async (e: React.MouseEvent) => {
+        e.stopPropagation()
+        await shareToX({
+            imageUrl,
+            prompt,
+            modelName,
+            addWatermark: true,
+        })
+        setShowShareMenu(false)
+    }
+
+    const handleCopyImage = async (e: React.MouseEvent) => {
+        e.stopPropagation()
+        const result = await copyImageToClipboard(imageUrl)
+        if (result.success) {
+            setCopySuccess(true)
+            setTimeout(() => setCopySuccess(false), 2000)
+        }
+        setShowShareMenu(false)
+    }
+
+    const handleDownloadWithWatermark = async (e: React.MouseEvent) => {
+        e.stopPropagation()
+        const filename = `BildOro-${modelName.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.jpg`
+        await downloadImage(imageUrl, filename, true)
+        setShowShareMenu(false)
+    }
+
+    const handleEdit = () => {
+        // If we have a revision callback, use it
+        if (onRevise) {
+            onRevise()
+        } 
+        // Otherwise, navigate to playground with the image
+        else if (playgroundPhotoId) {
+            router.push(`/dashboard/playground?edit=${playgroundPhotoId}`)
         }
     }
 
@@ -80,7 +126,7 @@ export function ResultCard({
     return (
         <>
             <div
-                className="group relative border border-border rounded-xl bg-surface  shadow-md hover:shadow-2xl transition-all duration-300 w-full"
+                className="group relative border border-border rounded-xl bg-surface shadow-md hover:shadow-2xl transition-all duration-300 w-full"
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
@@ -100,7 +146,7 @@ export function ResultCard({
                     )}
                 </div>
 
-                {/* Image / Comparison Container - MAXIMIZED */}
+                {/* Image / Comparison Container */}
                 <div
                     className="relative w-full overflow-hidden bg-black/5"
                     style={{ aspectRatio: '1 / 1' }}
@@ -116,7 +162,6 @@ export function ResultCard({
                         </div>
                     ) : (
                         <div className="relative w-full h-full cursor-pointer group/image" onClick={handleFullscreen}>
-                            {/* Image with zoom effect */}
                             <img
                                 src={imageUrl}
                                 alt={`Generated by ${modelName}`}
@@ -125,7 +170,6 @@ export function ResultCard({
                                 }`}
                             />
                             
-                            {/* Hover overlay with gradient */}
                             <div
                                 className={`absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-opacity duration-300 ${
                                     isHovered ? 'opacity-100' : 'opacity-0'
@@ -138,7 +182,6 @@ export function ResultCard({
                                 </div>
                             </div>
 
-                            {/* Corner gradient accents */}
                             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl pointer-events-none" />
                             <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl pointer-events-none" />
                         </div>
@@ -156,16 +199,14 @@ export function ResultCard({
                         <span className="text-xs font-medium hidden md:inline">View</span>
                     </button>
                     
-                    {onRevise && (
-                        <button
-                            onClick={onRevise}
-                            title="Edit / Revise"
-                            className="flex-1 flex items-center justify-center gap-1.5 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg px-2 py-2 transition-all duration-200 hover:scale-105 active:scale-95"
-                        >
-                            <Edit3 className="size-4" />
-                            <span className="text-xs font-medium hidden md:inline">Edit</span>
-                        </button>
-                    )}
+                    <button
+                        onClick={handleEdit}
+                        title="Edit / Revise"
+                        className="flex-1 flex items-center justify-center gap-1.5 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg px-2 py-2 transition-all duration-200 hover:scale-105 active:scale-95"
+                    >
+                        <Edit3 className="size-4" />
+                        <span className="text-xs font-medium hidden md:inline">Edit</span>
+                    </button>
                     
                     <button
                         onClick={handleDownload}
@@ -173,26 +214,47 @@ export function ResultCard({
                         className="flex-1 flex items-center justify-center gap-1.5 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg px-2 py-2 transition-all duration-200 hover:scale-105 active:scale-95"
                     >
                         <Download className="size-4" />
-                        <span className="text-xs font-medium hidden md:inline">Save</span>
+                        <span className="text-xs font-medium hidden md:inline">Download</span>
                     </button>
                     
-                    {onSave && (
+                    <div className="relative flex-1">
                         <button
-                            onClick={onSave}
-                            disabled={saving}
-                            title={saving ? 'Saving...' : 'Save to Gallery'}
-                            className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg px-2 py-2 transition-all duration-200 ${
-                                saving
-                                    ? 'opacity-50 cursor-not-allowed text-muted-foreground'
-                                    : 'text-muted-foreground hover:text-primary hover:bg-primary/5 hover:scale-105 active:scale-95'
-                            }`}
+                            onClick={handleShare}
+                            title="Share"
+                            className="w-full flex items-center justify-center gap-1.5 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg px-2 py-2 transition-all duration-200 hover:scale-105 active:scale-95"
                         >
-                            <Bookmark className={`size-4 ${saving ? 'animate-pulse' : ''}`} />
-                            <span className="text-xs font-medium hidden md:inline">
-                                {saving ? 'Saving...' : 'Gallery'}
-                            </span>
+                            <Share2 className="size-4" />
+                            <span className="text-xs font-medium hidden md:inline">Share</span>
                         </button>
-                    )}
+
+                        {/* Share dropdown menu */}
+                        {showShareMenu && (
+                            <div className="absolute bottom-full right-0 mb-2 bg-surface border border-border rounded-lg shadow-xl py-2 min-w-[180px] z-50">
+                                <button
+                                    onClick={handleShareToX}
+                                    disabled={isSharing}
+                                    className="w-full px-4 py-2 text-left text-sm hover:bg-primary/10 transition-colors flex items-center gap-2"
+                                >
+                                    <Share2 className="size-4" />
+                                    Share to X
+                                </button>
+                                <button
+                                    onClick={handleCopyImage}
+                                    className="w-full px-4 py-2 text-left text-sm hover:bg-primary/10 transition-colors flex items-center gap-2"
+                                >
+                                    <Copy className="size-4" />
+                                    {copySuccess ? '✓ Copied!' : 'Copy Image'}
+                                </button>
+                                <button
+                                    onClick={handleDownloadWithWatermark}
+                                    className="w-full px-4 py-2 text-left text-sm hover:bg-primary/10 transition-colors flex items-center gap-2"
+                                >
+                                    <Download className="size-4" />
+                                    Download + Watermark
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Glow effect on hover */}
@@ -206,14 +268,13 @@ export function ResultCard({
                 />
             </div>
 
-            {/* Fullscreen Modal - Uses createPortal to render at body level */}
+            {/* Fullscreen Modal */}
             {mounted && isFullscreen && createPortal(
                 <div
                     className="fixed inset-0 z-[9999] bg-black/98 flex items-center justify-center animate-fade-in"
                     onClick={handleCloseFullscreen}
                     style={{ margin: 0, padding: 0 }}
                 >
-                    {/* Close button */}
                     <button
                         onClick={handleCloseFullscreen}
                         className="absolute top-4 right-4 md:top-6 md:right-6 text-white/90 hover:text-white transition-all bg-black/60 hover:bg-primary rounded-full p-2.5 md:p-3 backdrop-blur-sm z-50 hover:scale-110 active:scale-95"
@@ -222,7 +283,6 @@ export function ResultCard({
                         <X className="size-6 md:size-7" />
                     </button>
 
-                    {/* Image container - truly centered and maximized */}
                     <div className="relative w-full h-full flex items-center justify-center p-4 md:p-8">
                         <img
                             src={imageUrl}
@@ -233,7 +293,6 @@ export function ResultCard({
                         />
                     </div>
 
-                    {/* Model name badge - bottom center */}
                     <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-md text-white px-4 md:px-6 py-2 md:py-3 rounded-full border border-white/20 shadow-2xl z-50">
                         <div className="flex items-center gap-2 md:gap-3">
                             <span className="inline-block w-1.5 md:w-2 h-1.5 md:h-2 rounded-full bg-primary animate-pulse"></span>
@@ -241,21 +300,18 @@ export function ResultCard({
                         </div>
                     </div>
 
-                    {/* Action buttons - top left */}
                     <div className="absolute top-4 left-4 md:top-6 md:left-6 flex gap-2 md:gap-3 z-50">
-                        {onRevise && (
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    onRevise()
-                                    handleCloseFullscreen()
-                                }}
-                                className="bg-black/60 hover:bg-primary backdrop-blur-sm text-white rounded-full p-2.5 md:p-3 transition-all hover:scale-110 active:scale-95"
-                                title="Edit / Revise"
-                            >
-                                <Edit3 className="size-4 md:size-5" />
-                            </button>
-                        )}
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                handleEdit()
+                                handleCloseFullscreen()
+                            }}
+                            className="bg-black/60 hover:bg-primary backdrop-blur-sm text-white rounded-full p-2.5 md:p-3 transition-all hover:scale-110 active:scale-95"
+                            title="Edit / Revise"
+                        >
+                            <Edit3 className="size-4 md:size-5" />
+                        </button>
                         <button
                             onClick={(e) => {
                                 e.stopPropagation()
@@ -266,23 +322,16 @@ export function ResultCard({
                         >
                             <Download className="size-4 md:size-5" />
                         </button>
-                        {onSave && (
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    onSave()
-                                }}
-                                disabled={saving}
-                                className={`backdrop-blur-sm text-white rounded-full p-2.5 md:p-3 transition-all ${
-                                    saving
-                                        ? 'bg-black/40 cursor-not-allowed opacity-50'
-                                        : 'bg-black/60 hover:bg-primary hover:scale-110 active:scale-95'
-                                }`}
-                                title={saving ? 'Saving...' : 'Save to Gallery'}
-                            >
-                                <Bookmark className={`size-4 md:size-5 ${saving ? 'animate-pulse' : ''}`} />
-                            </button>
-                        )}
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                handleShare(e)
+                            }}
+                            className="bg-black/60 hover:bg-primary backdrop-blur-sm text-white rounded-full p-2.5 md:p-3 transition-all hover:scale-110 active:scale-95"
+                            title="Share"
+                        >
+                            <Share2 className="size-4 md:size-5" />
+                        </button>
                     </div>
                 </div>,
                 document.body

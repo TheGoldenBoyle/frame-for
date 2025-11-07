@@ -86,7 +86,33 @@ export async function POST(request: NextRequest) {
 			generatedUrl = await generateWithNanoBanana(prompt, imageUrl, maskData)
 		} catch (error) {
 			console.error("Nano-banana generation failed:", error)
-			throw new Error("Image revision failed")
+			
+			// Extract meaningful error message
+			let errorMessage = "Image revision failed"
+			if (error instanceof Error) {
+				if (error.message.includes("NSFW")) {
+					errorMessage = "NSFW content detected"
+				} else if (error.message.includes("Task not found")) {
+					errorMessage = "Model service unavailable - try again"
+				} else if (error.message.includes("rate limit")) {
+					errorMessage = "Rate limited"
+				} else if (error.message.includes("timeout")) {
+					errorMessage = "Request timed out"
+				}
+			}
+			
+			return NextResponse.json(
+				{
+					error: errorMessage,
+					results: [{
+						modelId: "nano-banana",
+						modelName: "Nano Banana",
+						imageUrl: null,
+						error: errorMessage
+					}]
+				},
+				{ status: 500 }
+			)
 		}
 
 		// --- Upload revised image ---
@@ -107,24 +133,15 @@ export async function POST(request: NextRequest) {
 			.from("user-images")
 			.getPublicUrl(upload.path)
 
-		// --- Delete old image (if exists) ---
-		if (playgroundPhoto.originalUrl) {
-			try {
-				const oldPath = playgroundPhoto.originalUrl.split("/user-images/")[1]
-				if (oldPath) {
-					await supabase.storage.from("user-images").remove([oldPath])
-				}
-			} catch (err) {
-				console.warn("Failed to delete old image:", err)
-			}
-		}
+		// ✅ DON'T delete old image - keep it in history
+		// Users will see all revisions stacked
 
-		// --- Deduct tokens and update DB ---
+		// --- Deduct tokens and update DB (only save latest to DB) ---
 		await deductTokens(user.id, cost, "Playground revision")
 		await prisma.playgroundPhoto.update({
 			where: { id: playgroundPhotoId },
 			data: {
-				originalUrl: urlData.publicUrl,
+				originalUrl: urlData.publicUrl, // Latest revision
 				revisionCount: { increment: 1 },
 				results: {
 					set: [
@@ -138,6 +155,7 @@ export async function POST(request: NextRequest) {
 			},
 		})
 
+		// Return result with metadata for frontend to add to history
 		return NextResponse.json({
 			success: true,
 			results: [
@@ -147,6 +165,11 @@ export async function POST(request: NextRequest) {
 					imageUrl: urlData.publicUrl,
 				},
 			],
+			revision: {
+				prompt,
+				sourceImageUrl: imageUrl, // The image this was based on
+				timestamp: Date.now(),
+			}
 		})
 	} catch (error) {
 		console.error("Playground revision error:", error)

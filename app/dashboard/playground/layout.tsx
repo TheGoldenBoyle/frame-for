@@ -10,8 +10,8 @@ export default function PlaygroundLayout({
                 <div className="particle particle-2"></div>
                 <div className="particle particle-3"></div>
             </div>
-            <div className="relative z-10">
-                <div className="h-full flex flex-col mx-auto px-2">
+            <div className="relative z-10 px-2">
+                <div className="h-full flex flex-col mx-auto">
                     {children}
                 </div>
             </div>

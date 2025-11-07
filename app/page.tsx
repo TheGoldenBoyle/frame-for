@@ -157,7 +157,7 @@ export default function LandingPage() {
                             {t.landing.tryItFree}
                         </Button>
                         <Button
-                            variant="outline"
+                            variant="ghost"
                             size="lg"
                             onClick={() => window.open('https://x.com/theGoldenBoyle', '_blank')}
                         >
@@ -191,9 +191,9 @@ export default function LandingPage() {
                     </p>
                     <div className="grid md:grid-cols-2 gap-4 mb-16 animate-fade-in-up stagger-3">
 
-                        {/* Ghost / Outline Button */}
+                        {/* Ghost / ghost Button */}
                         <Button
-                            variant="outline"
+                            variant="ghost"
                             size="lg"
                             onClick={() => window.open('https://x.com/theGoldenBoyle', '_blank')}
                         >

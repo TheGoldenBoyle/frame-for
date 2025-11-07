@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import { PromptInput } from '@/components/PromptInput'
 import { GenerationLoader } from '@/components/GenerationLoader'
@@ -16,7 +16,7 @@ import { useTokens } from '@/hooks/useTokens'
 import { Button } from '@/components/ui/Button'
 import { Loader } from '@/components/ui/Loader'
 import { Card } from '@/components/ui/Card'
-import { Coins, Sparkles } from 'lucide-react'
+import { Coins, RotateCcw } from 'lucide-react'
 
 const MODELS = [
     { id: 'flux-1.1-pro', name: 'FLUX 1.1 Pro', provider: 'Black Forest Labs', description: 'Best for realism and detail' },
@@ -33,25 +33,17 @@ type PlaygroundResult = {
     error?: string
 }
 
-type ComparisonResult = {
-    modelId: string
-    modelName: string
-    imageUrl: string
-}
-
-function toComparisonResult(result: PlaygroundResult): ComparisonResult | null {
-    if (result.imageUrl) {
-        return {
-            modelId: result.modelId,
-            modelName: result.modelName,
-            imageUrl: result.imageUrl,
-        }
-    }
-    return null
+type RevisionHistoryItem = {
+    id: string
+    results: PlaygroundResult[]
+    prompt: string
+    timestamp: number
+    sourceImageUrl?: string // The image this revision was based on
 }
 
 export default function PlaygroundPage() {
     const router = useRouter()
+    const searchParams = useSearchParams()
     const { user } = useAuth()
     const { tokens, isLoading: tokensLoading, calculateCost, hasEnoughTokens } = useTokens()
     const promptRef = useRef<HTMLTextAreaElement>(null)
@@ -62,11 +54,11 @@ export default function PlaygroundPage() {
     const [loading, setLoading] = useState(false)
     const [generating, setGenerating] = useState(false)
     const [revising, setRevising] = useState(false)
-    const [results, setResults] = useState<ComparisonResult[]>([])
+    const [currentResults, setCurrentResults] = useState<PlaygroundResult[]>([])
+    const [revisionHistory, setRevisionHistory] = useState<RevisionHistoryItem[]>([])
     const [playgroundPhotoId, setPlaygroundPhotoId] = useState<string | null>(null)
     const [revisionCount, setRevisionCount] = useState(0)
     const [error, setError] = useState<string | null>(null)
-    const [savingStates, setSavingStates] = useState<Record<string, boolean>>({})
     const [showRequestForm, setShowRequestForm] = useState(false)
     const [showSystemPromptManager, setShowSystemPromptManager] = useState(false)
     const [revisingImage, setRevisingImage] = useState<{
@@ -77,7 +69,7 @@ export default function PlaygroundPage() {
 
     // Scroll to results when they update
     useEffect(() => {
-        if (results.length > 0 && resultsRef.current) {
+        if (currentResults.length > 0 && resultsRef.current) {
             setTimeout(() => {
                 resultsRef.current?.scrollIntoView({
                     behavior: 'smooth',
@@ -85,7 +77,30 @@ export default function PlaygroundPage() {
                 })
             }, 100)
         }
-    }, [results.length])
+    }, [currentResults.length])
+
+    // Load existing playground photo if edit param is present
+    useEffect(() => {
+        const editId = searchParams?.get('edit')
+        if (editId && user) {
+            loadPlaygroundPhoto(editId)
+        }
+    }, [searchParams, user])
+
+    const loadPlaygroundPhoto = async (photoId: string) => {
+        try {
+            const response = await fetch(`/api/playground/photos/${photoId}`)
+            if (!response.ok) return
+
+            const data = await response.json()
+            setPrompt(data.prompt)
+            setPlaygroundPhotoId(data.id)
+            setRevisionCount(data.revisionCount || 0)
+            setCurrentResults(data.results || [])
+        } catch (error) {
+            console.error('Failed to load playground photo:', error)
+        }
+    }
 
     // ---------- Model Selection ----------
     const handleModelSelect = (modelId: string) => {
@@ -103,7 +118,16 @@ export default function PlaygroundPage() {
 
         setGenerating(true)
         setError(null)
-        setResults([])
+
+        // Save current results to history before generating new ones
+        if (currentResults.length > 0) {
+            setRevisionHistory(prev => [{
+                id: Date.now().toString(),
+                results: currentResults,
+                prompt: prompt,
+                timestamp: Date.now(),
+            }, ...prev])
+        }
 
         try {
             let finalPrompt = prompt.trim()
@@ -135,7 +159,7 @@ export default function PlaygroundPage() {
                 throw new Error(data.error || 'Generation failed')
             }
 
-            setResults(data.results || [])
+            setCurrentResults(data.results || [])
             setPlaygroundPhotoId(data.playgroundPhotoId)
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Something went wrong')
@@ -144,29 +168,37 @@ export default function PlaygroundPage() {
         }
     }
 
-    // ---------- Save / Revise ----------
-    const handleSaveResult = async (modelId: string) => {
-        if (!playgroundPhotoId) return
-        setSavingStates((prev) => ({ ...prev, [modelId]: true }))
-        try {
-            const res = await fetch('/api/playground/save', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ playgroundPhotoId, modelId }),
-            })
-            const data = await res.json()
-            if (!res.ok) throw new Error(data.error || 'Save failed')
-            alert('Saved to playground gallery!')
-        } catch (err) {
-            alert(err instanceof Error ? err.message : 'Save failed')
-        } finally {
-            setSavingStates((prev) => ({ ...prev, [modelId]: false }))
-        }
+    // ---------- Revise ----------
+    const handleReviseResult = (modelId: string) => {
+        const result = currentResults.find((r) => r.modelId === modelId)
+        if (!result || !result.imageUrl) return
+        setRevisingImage({
+            imageUrl: result.imageUrl,
+            modelId: result.modelId,
+            modelName: result.modelName
+        })
     }
 
-    const handleReviseResult = (modelId: string) => {
-        const result = results.find((r) => r.modelId === modelId)
+    // Revise from history - allows branching
+    const handleReviseFromHistory = (historyItem: RevisionHistoryItem, modelId: string) => {
+        const result = historyItem.results.find((r) => r.modelId === modelId)
         if (!result || !result.imageUrl) return
+
+        // Move current results to history
+        if (currentResults.length > 0) {
+            setRevisionHistory(prev => [{
+                id: Date.now().toString(),
+                results: currentResults,
+                prompt: prompt,
+                timestamp: Date.now(),
+            }, ...prev])
+        }
+
+        // Set this history item as current (branching off)
+        setCurrentResults(historyItem.results)
+        setPrompt(historyItem.prompt)
+
+        // Open revision modal
         setRevisingImage({
             imageUrl: result.imageUrl,
             modelId: result.modelId,
@@ -182,6 +214,16 @@ export default function PlaygroundPage() {
         if (!revisingImage || !playgroundPhotoId) return
         setRevising(true)
         setRevisingImage(null)
+
+        // Save current results to history before revision
+        if (currentResults.length > 0) {
+            setRevisionHistory(prev => [{
+                id: Date.now().toString(),
+                results: currentResults,
+                prompt: prompt,
+                timestamp: Date.now(),
+            }, ...prev])
+        }
 
         try {
             let finalPrompt = revisionPrompt.trim()
@@ -217,11 +259,12 @@ export default function PlaygroundPage() {
             }
 
             if (data.results && data.results.length > 0) {
-                setResults(data.results.map((r: any) => ({
+                setCurrentResults(data.results.map((r: any) => ({
                     ...r,
-                    imageUrl: `${r.imageUrl}?v=${Date.now()}`
+                    imageUrl: r.imageUrl ? `${r.imageUrl}?v=${Date.now()}` : null
                 })))
                 setRevisionCount((prev) => prev + 1)
+                setPrompt(finalPrompt)
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Revision failed')
@@ -233,17 +276,19 @@ export default function PlaygroundPage() {
     const handleStartOver = () => {
         setPrompt('')
         setSelectedModels(['flux-1.1-pro'])
-        setResults([])
+        setCurrentResults([])
+        setRevisionHistory([])
         setPlaygroundPhotoId(null)
         setError(null)
+        setRevisionCount(0)
     }
 
     // ---------- Focus Input ----------
     useEffect(() => {
-        if (!loading && !generating && results.length === 0 && promptRef.current) {
+        if (!loading && !generating && currentResults.length === 0 && promptRef.current) {
             promptRef.current.focus()
         }
-    }, [loading, generating, results.length])
+    }, [loading, generating, currentResults.length])
 
     // ---------- Render ----------
     if (loading) return <Loader fullScreen />
@@ -265,7 +310,7 @@ export default function PlaygroundPage() {
         />
 
     return (
-        <div className="py-4 lg:py-10">
+        <div className="py-8 lg:py-10">
             <div className="flex flex-col gap-6 mx-auto max-w-7xl md:flex-row">
                 {/* ---------- Left Panel: Models ---------- */}
                 <div className="flex flex-col gap-4 md:w-1/3">
@@ -273,7 +318,7 @@ export default function PlaygroundPage() {
                         <h2 className="mb-1 text-xl font-semibold">Models</h2>
                         <p className="text-sm text-muted line-clamp-1">Choose 1–5 models to generate your images</p>
                     </div>
-                    <Card className="flex flex-col flex-1 p-4" animate={false}>
+                    <Card className="flex flex-col flex-1 max-h-[80vh]" padding='md' animate={false}>
                         <div className="grid gap-4 grid-cols-1">
                             {MODELS.map((model) => {
                                 const isSelected = selectedModels.includes(model.id)
@@ -281,9 +326,9 @@ export default function PlaygroundPage() {
                                     <Card
                                         key={model.id}
                                         onClick={() => handleModelSelect(model.id)}
-                                        className={`cursor-pointer p-4 border ${isSelected
-                                                ? 'border-primary bg-surface/80 shadow-elevated-gold'
-                                                : 'border-border bg-surface/60'
+                                        className={`cursor-pointer !px-4 border ${isSelected
+                                            ? 'border-primary bg-surface/80 shadow-elevated-gold'
+                                            : 'border-border bg-surface/60'
                                             }`}
                                     >
                                         <h3 className={`font-semibold mb-1 ${isSelected ? 'text-primary' : 'text-text'}`}>
@@ -305,7 +350,7 @@ export default function PlaygroundPage() {
                 </div>
 
                 {/* ---------- Right Panel: Prompt & Generation ---------- */}
-                <div className="flex flex-col gap-4 md:w-2/3">
+                <div className="flex flex-col gap-4 md:w-2/3 lg:max-h-[90vh]">
                     {!tokensLoading && selectedModels.length > 0 && !hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)) && (
                         <div className="p-4 text-sm font-medium text-red-800 border border-red-200 rounded-lg bg-red-50">
                             ⚠️ Not enough tokens. You need {calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)} tokens but only have {tokens}.
@@ -322,14 +367,14 @@ export default function PlaygroundPage() {
                             {!tokensLoading && (
                                 <>
                                     <span className={`text-sm font-medium ${!hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)) && selectedModels.length > 0
-                                            ? 'text-red-500'
-                                            : 'text-muted'
+                                        ? 'text-red-500'
+                                        : 'text-muted'
                                         }`}>
                                         {tokens - calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)}
                                     </span>
                                     <Coins className={`w-4 h-4 ${selectedModels.length > 0 && !hasEnoughTokens(calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length))
-                                            ? 'text-red-500'
-                                            : 'text-primary'
+                                        ? 'text-red-500'
+                                        : 'text-primary'
                                         }`} />
                                 </>
                             )}
@@ -337,7 +382,7 @@ export default function PlaygroundPage() {
                     </div>
 
                     {/* Prompt Card */}
-                    <Card className="flex flex-col flex-1 p-4" animate={false}>
+                    <Card className="flex flex-col md:justify-between flex-1 max-h-[80vh] p-4" animate={false}>
                         <>
                             <PromptInput
                                 ref={promptRef}
@@ -348,13 +393,13 @@ export default function PlaygroundPage() {
                                 maxLength={1000}
                                 disabled={generating}
                                 showEnhanceButton={true}
+                                
                             />
 
                             {/* System Prompt Button */}
                             <div className="flex flex-col py-2 items-center justify-center gap-2 lg:flex-row">
-
                                 <Button
-                                    variant="ghost"
+                                   variant="secondary"
                                     onClick={() => setShowSystemPromptManager(true)}
                                     className="flex items-center justify-center gap-2 w-full"
                                 >
@@ -380,8 +425,8 @@ export default function PlaygroundPage() {
                                                 ? `Generate Image (${calculateCost('PLAYGROUND_PER_MODEL', selectedModels.length)} token)`
                                                 : 'Generate Image'}
                                 </Button>
-
                             </div>
+
 
                             {error && (
                                 <div className="p-4 mt-2 text-sm text-red-600 border border-red-200 rounded-lg bg-red-50">
@@ -413,43 +458,99 @@ export default function PlaygroundPage() {
                 />
             )}
 
-            {/* Comparison Grid */}
-            {results.length > 0 && (
-                <div ref={resultsRef} className="max-w-8xl mx-auto mt-6 grid gap-6 lg:grid-cols-[1fr_3fr] xl:grid-cols-[1fr_4fr] p-4">
-                    {/* Left Panel / Summary */}
-                    <div className="space-y-6">
-                        <Card className="p-4 shadow-sm border" animate={false}>
-                            <h2 className="text-lg font-semibold mb-4">Prompt</h2>
-                            <p className="text-sm text-muted leading-relaxed">{prompt}</p>
-                        </Card>
+            {/* Current Results + Revision History */}
+            {(currentResults.length > 0 || revisionHistory.length > 0) && (
+                <div ref={resultsRef} className="max-w-8xl mx-auto mt-6 space-y-8 p-4">
+                    {/* Current/Latest Results */}
+                    {currentResults.length > 0 && (
+                        <div className="grid gap-6 lg:grid-cols-[1fr_3fr] xl:grid-cols-[1fr_4fr]">
+                            <div className="space-y-6">
+                                <Card className="p-4 shadow-sm border" animate={false}>
+                                    <h2 className="text-lg font-semibold mb-4">Current Prompt</h2>
+                                    <p className="text-sm text-muted leading-relaxed">{prompt}</p>
+                                </Card>
 
-                        <Card className="p-4 shadow-sm border" animate={false}>
-                            <h2 className="text-lg font-semibold mb-4">Session Info</h2>
-                            <ul className="text-sm space-y-2 text-muted">
-                                <li>Total Models: {results.length}</li>
-                                <li>Successful: {results.filter(r => r.imageUrl).length}</li>
-                                <li>Failed: {results.filter(r => !r.imageUrl).length}</li>
-                            </ul>
-                        </Card>
-                    </div>
-
-                    {/* Right Panel / Main Grid */}
-                    <Card className="p-4 shadow-sm border" animate={false}>
-                        <ComparisonGrid
-                            results={results
-                                .map(toComparisonResult)
-                                .filter((r): r is ComparisonResult => r !== null)}
-                            onSaveResult={handleSaveResult}
-                            onReviseResult={handleReviseResult}
-                            savingStates={savingStates}
-                        />
-
-                        {results.some((r) => !r.imageUrl) && (
-                            <div className="p-4 mt-6 text-sm text-orange-700 border border-orange-200 rounded-lg bg-orange-50">
-                                Some models failed to generate. This can happen due to rate limits or model availability.
+                                <Card className="p-4 shadow-sm border" animate={false}>
+                                    <h2 className="text-lg font-semibold mb-4">Session Info</h2>
+                                    <ul className="text-sm space-y-2 text-muted">
+                                        <li>Total Models: {currentResults.length}</li>
+                                        <li>Successful: {currentResults.filter(r => r.imageUrl).length}</li>
+                                        <li>Revisions: {revisionCount}</li>
+                                        <li>History: {revisionHistory.length}</li>
+                                    </ul>
+                                </Card>
                             </div>
-                        )}
-                    </Card>
+
+                            <Card className="p-4 shadow-sm border" animate={false}>
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-lg font-semibold">Latest Results</h3>
+                                    <span className="px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">
+                                        Current
+                                    </span>
+                                </div>
+                                <ComparisonGrid
+                                    results={currentResults}
+                                    prompt={prompt}
+                                    playgroundPhotoId={playgroundPhotoId || undefined}
+                                    onReviseResult={handleReviseResult}
+                                />
+                            </Card>
+                        </div>
+                    )}
+
+                    {/* Revision History - Stacked */}
+                    {revisionHistory.length > 0 && (
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-xl font-semibold">Revision History</h2>
+                                <p className="text-sm text-muted">{revisionHistory.length} previous version{revisionHistory.length !== 1 ? 's' : ''}</p>
+                            </div>
+                            {revisionHistory.map((revision, index) => (
+                                <Card key={revision.id} className="p-6 shadow-sm border" animate={false}>
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h3 className="text-sm font-semibold text-muted mb-1">
+                                                Revision {revisionHistory.length - index}
+                                            </h3>
+                                            <p className="text-xs text-muted">
+                                                {new Date(revision.timestamp).toLocaleString()}
+                                            </p>
+                                        </div>
+                                        <div className="flex flex-col items-end gap-2">
+                                            <p className="text-sm text-muted max-w-md text-right line-clamp-2">{revision.prompt}</p>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => {
+                                                    // Move current to history
+                                                    if (currentResults.length > 0) {
+                                                        setRevisionHistory(prev => [{
+                                                            id: Date.now().toString(),
+                                                            results: currentResults,
+                                                            prompt: prompt,
+                                                            timestamp: Date.now(),
+                                                        }, ...prev])
+                                                    }
+                                                    // Restore this revision as current
+                                                    setCurrentResults(revision.results)
+                                                    setPrompt(revision.prompt)
+                                                }}
+                                                className="flex items-center gap-1"
+                                            >
+                                                <RotateCcw size={14} />
+                                                Branch from here
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <ComparisonGrid
+                                        results={revision.results}
+                                        prompt={revision.prompt}
+                                        onReviseResult={(modelId) => handleReviseFromHistory(revision, modelId)}
+                                    />
+                                </Card>
+                            ))}
+                        </div>
+                    )}
                 </div>
             )}
         </div>
