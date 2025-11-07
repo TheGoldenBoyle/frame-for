@@ -151,7 +151,7 @@ export default function LandingPage() {
                     <div className="flex justify-center gap-4 mb-16 animate-fade-in-up stagger-3">
                         <Button
                             size="lg"
-                            onClick={() => router.push(user ? '/dashboard' : '/signup')}
+                            onClick={() => router.push(user ? '/dashboard/playground' : '/signup')}
                             className="shimmer-effect glow-on-hover"
                         >
                             {t.landing.tryItFree}

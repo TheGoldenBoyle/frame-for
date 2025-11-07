@@ -156,7 +156,7 @@ export default function ImagePlaygroundPage() {
                 <div className="mx-auto max-w-4xl">
                     <div className="flex items-center justify-between mb-8">
                         <Button variant="ghost" onClick={() => router.push('/dashboard')}>
-                            ← Back to Dashboard
+                            Dashboard
                         </Button>
                         <Button variant="ghost" onClick={handleStartOver}>
                             Transform Another

@@ -116,7 +116,7 @@ export default function ProStudioPage() {
                 <div className="mx-auto max-w-7xl">
                     <div className="flex items-center justify-between mb-8">
                         <Button variant="ghost" onClick={() => router.push('/dashboard')}>
-                            ← Back to Dashboard
+                            Dashboard
                         </Button>
                         <Button variant="ghost" onClick={handleStartOver}>
                             Start Over
