@@ -92,7 +92,7 @@ export const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(
                     <span>{value.length} / {maxLength} characters</span>
 
   
-                    <div className="flex flex-col md:justify-between md:items-center gap-2 w-full md:w-auto">
+                    <div className="flex flex-col md:justify-between md:flex-row md:items-center gap-2 w-full md:w-auto">
                         {!enhancedResult && (
                             <p className="text-sm text-muted italic md:text-center">
                                 Free — recommended AI enhancement

@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/Card'
 import { Loader } from '@/components/ui/Loader'
 import { ResultCard } from "@/components/ResultCard"
 import { motion, useMotionValue, animate } from 'framer-motion'
-import { LayoutGrid, Film, Download, Maximize2 } from 'lucide-react'
+import { LayoutGrid, Film, Download, Maximize2, Edit3 } from 'lucide-react'
 import { useShare } from '@/hooks/useShare'
 
 type PlaygroundResult = {
@@ -220,6 +220,8 @@ export default function GalleryPage() {
 														<ResultCard
 															imageUrl={result.imageUrl!}
 															modelName={result.modelName}
+															prompt={photo.prompt} // ✅ Added
+															playgroundPhotoId={photo.id} // ✅ Added
 														/>
 													</div>
 												))}
@@ -256,6 +258,20 @@ export default function GalleryPage() {
 									<span className="hidden sm:inline">Grid</span>
 								</Button>
 
+								{/* Edit Button */}
+								<motion.button
+									whileHover={{ scale: 1.05 }}
+									whileTap={{ scale: 0.95 }}
+									onClick={() => {
+										const image = allImages[activeIndex]
+										router.push(`/dashboard/playground?edit=${image.photoId}`)
+									}}
+									className="rounded-lg bg-surface p-2 hover:bg-primary/10 transition-colors"
+									title="Edit in Playground"
+								>
+									<Edit3 size={18} className="text-text" />
+								</motion.button>
+
 								{/* Download Button */}
 								<motion.button
 									whileHover={{ scale: 1.05 }}
@@ -264,7 +280,7 @@ export default function GalleryPage() {
 										const image = allImages[activeIndex]
 										downloadImage(
 											image.imageUrl,
-											`${image.modelName}-${image.photoId}.png`,
+											`BildOro-${image.modelName}-${image.photoId}.png`,
 											true
 										)
 									}}
@@ -276,28 +292,6 @@ export default function GalleryPage() {
 								>
 									<Download size={18} className="text-text" />
 								</motion.button>
-
-								{/* Share Button */}
-								{/* <motion.button
-									whileHover={{ scale: 1.05 }}
-									whileTap={{ scale: 0.95 }}
-									onClick={() => {
-										const image = allImages[activeIndex]
-										shareToX({
-											imageUrl: image.imageUrl,
-											prompt: image.prompt,
-											modelName: image.modelName,
-											addWatermark: true,
-										})
-									}}
-									disabled={isSharing}
-									className={`rounded-lg bg-surface p-2 hover:bg-primary/10 transition-colors ${
-										isSharing ? 'opacity-50 cursor-not-allowed' : ''
-									}`}
-									title="Share to X"
-								>
-									<Share2 size={18} className="text-text" />
-								</motion.button> */}
 
 								<motion.button
 									whileHover={{ scale: 1.05 }}
@@ -374,6 +368,7 @@ export default function GalleryPage() {
 											className="relative h-full overflow-hidden rounded-2xl bg-surface border-2 border-border shadow-2xl cursor-grab active:cursor-grabbing"
 											whileHover={{ y: -12 }}
 											transition={{ duration: 0.2 }}
+											onClick={() => router.push(`/dashboard/playground?edit=${image.photoId}`)}
 										>
 											<div className="h-full overflow-hidden">
 												<img
