@@ -109,7 +109,7 @@ export default function LoginPage() {
                         <div className="mt-6">
                             <Button
                                 type="button"
-                                variant="outline"
+                                variant="ghost"
                                 onClick={handleGoogleSignIn}
                                 className="w-full text-center"
                             >
@@ -118,7 +118,7 @@ export default function LoginPage() {
 
                             {/* <Button
                                 type="button"
-                                variant="outline"
+                                variant="ghost"
                                 onClick={handleTwitterSignIn}
                                 className="w-full"
                             >

@@ -139,7 +139,7 @@ export default function SignupPage() {
                             {/* <div className="mt-6">
                                 <Button
                                     type="button"
-                                    variant="outline"
+                                    variant="ghost"
                                     onClick={handleGoogleSignIn}
                                     className="w-full"
                                 >
@@ -148,7 +148,7 @@ export default function SignupPage() {
 
                                 {/* <Button
                                     type="button"
-                                    variant="outline"
+                                    variant="ghost"
                                     onClick={handleTwitterSignIn}
                                     className="w-full"
                                 >

@@ -90,7 +90,7 @@ export function PricingCards({ onPurchase, loading = false }: PricingCardsProps)
                 <Button
                     onClick={() => onPurchase('onetime')}
                     className="w-full"
-                    variant="outline"
+                    variant="ghost"
                     size="lg"
                     disabled={loading}
                 >

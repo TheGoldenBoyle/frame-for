@@ -273,7 +273,7 @@ export default function DashboardPage() {
                             <Button
                                 onClick={() => handlePurchaseTokens('onetime')}
                                 disabled={purchaseLoading}
-                                variant="outline"
+                                variant="ghost"
                                 className="w-full"
                             >
                                 Buy Tokens
@@ -292,7 +292,7 @@ export default function DashboardPage() {
                     <div className="grid gap-2 lg:w-1/2 lg:grid-cols-2 lg:gap-4">
                         <Button
                             onClick={handleLogout}
-                            variant="outline"
+                            variant="ghost"
                             className="flex flex-col items-center justify-center"
                         >
                             <LogOut className="w-4 h-4 mr-2" />
@@ -301,7 +301,7 @@ export default function DashboardPage() {
 
                         <Button
                             onClick={handleDeleteAccount}
-                            variant="outline"
+                            variant="ghost"
                             className={`flex flex-col items-center justify-center ${showDeleteConfirm
                                     ? 'border-red-500 text-red-500 hover:bg-red-50'
                                     : ''

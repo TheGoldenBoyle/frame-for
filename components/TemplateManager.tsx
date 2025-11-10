@@ -86,14 +86,14 @@ export const TemplateManager = ({
                 <div className="flex gap-2">
                   <Button
                     size="sm"
-                    variant="outline"
+                    variant="ghost"
                     onClick={() => handleEdit(template)}
                   >
                     Edit
                   </Button>
                   <Button
                     size="sm"
-                    variant="outline"
+                    variant="ghost"
                     onClick={() => handleSelect(template)}
                   >
                     Use

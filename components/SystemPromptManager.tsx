@@ -289,7 +289,7 @@ Example:
 
                         {!activePrompt?.isDefault && (
                             <Button
-                                variant="outline"
+                                variant="ghost"
                                 onClick={handleResetToDefault}
                                 disabled={saving}
                                 className=""

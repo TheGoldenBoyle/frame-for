@@ -63,7 +63,7 @@ export function ResultsGrid({ results, batchId, prompt, onRevisionComplete }: Re
                                 {successfulResults.length} {successfulResults.length === 1 ? 'image' : 'images'} generated
                             </span>
                             {successfulResults.length > 1 && (
-                                <Button variant="outline" size="sm" onClick={handleDownloadAll}>
+                                <Button variant="ghost" size="sm" onClick={handleDownloadAll}>
                                     Download All
                                 </Button>
                             )}
@@ -97,7 +97,7 @@ export function ResultsGrid({ results, batchId, prompt, onRevisionComplete }: Re
                                 </div>
                                 <div className="p-4">
                                     <Button
-                                        variant="outline"
+                                        variant="ghost"
                                         size="sm"
                                         onClick={() => handleImageClick(result)}
                                         className="w-full"
