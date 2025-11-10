@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Card } from './ui/Card'
+import { Film } from 'lucide-react'
 
 type GenerationLoaderProps = {
     modelCount?: number
@@ -7,9 +8,12 @@ type GenerationLoaderProps = {
     hasImage?: boolean
     prompt?: string
     isRevision?: boolean
+    isVideo?: boolean
+    videoDuration?: number
 }
 
 const MODEL_DISPLAY_NAMES: Record<string, string> = {
+    // Image models
     'nano-banana': 'Nano Banana',
     'flux-dev': 'Flux Dev',
     'flux-pro': 'Flux Pro',
@@ -19,6 +23,10 @@ const MODEL_DISPLAY_NAMES: Record<string, string> = {
     'seedream-4': 'Seedream 4',
     'ideogram-v3-turbo': 'Ideogram v3 Turbo',
     'recraft-v3': 'Recraft v3',
+    // Video models
+    'veo-3.1-fast': 'Veo 3.1 Fast',
+    'kling-2.5-turbo-pro': 'Kling 2.5 Turbo Pro',
+    'wan-2.5': 'WAN 2.5',
 }
 
 export function GenerationLoader({ 
@@ -26,12 +34,29 @@ export function GenerationLoader({
     modelNames = [],
     hasImage = false,
     prompt = '',
-    isRevision = false
+    isRevision = false,
+    isVideo = false,
+    videoDuration = 5
 }: GenerationLoaderProps) {
     const [loadingStep, setLoadingStep] = useState(0)
     const [progress, setProgress] = useState(0)
 
-    const loadingSteps = isRevision
+    const loadingSteps = isVideo
+        ? [
+            'Analyzing source image...',
+            `Initializing ${modelCount > 1 ? modelNames.length + ' video models' : 'video model'}...`,
+            'Understanding motion context...',
+            'Calculating frame transitions...',
+            'Generating keyframes...',
+            'Interpolating motion...',
+            'Rendering video frames...',
+            'Processing temporal consistency...',
+            'Applying motion blur...',
+            'Optimizing video quality...',
+            'Encoding final video...',
+            'Almost done...'
+          ]
+        : isRevision
         ? [
             'Analyzing your changes...',
             'Initializing Nano Banana AI...',
@@ -65,8 +90,9 @@ export function GenerationLoader({
           ]
 
     useEffect(() => {
-        const stepDuration = isRevision ? 1500 : 2000
-        const progressInterval = 50
+        // Video generation takes longer
+        const stepDuration = isVideo ? 3000 : isRevision ? 1500 : 2000
+        const progressInterval = isVideo ? 100 : 50
 
         const stepTimer = setInterval(() => {
             setLoadingStep((prev) => {
@@ -79,9 +105,11 @@ export function GenerationLoader({
 
         const progressTimer = setInterval(() => {
             setProgress((prev) => {
-                const increment = Math.random() * 3
-                if (prev < 90) {
-                    return Math.min(prev + increment, 90)
+                // Video generation progresses slower
+                const increment = isVideo ? Math.random() * 1.5 : Math.random() * 3
+                const maxProgress = isVideo ? 85 : 90
+                if (prev < maxProgress) {
+                    return Math.min(prev + increment, maxProgress)
                 }
                 return prev
             })
@@ -91,7 +119,7 @@ export function GenerationLoader({
             clearInterval(stepTimer)
             clearInterval(progressTimer)
         }
-    }, [loadingSteps.length, isRevision])
+    }, [loadingSteps.length, isRevision, isVideo])
 
     const displayModelNames = isRevision 
         ? 'Nano Banana'
@@ -99,17 +127,30 @@ export function GenerationLoader({
             .map(id => MODEL_DISPLAY_NAMES[id] || id)
             .join(', ')
 
+    const estimatedTime = isVideo 
+        ? videoDuration === 8 
+            ? '90-180 seconds'
+            : '60-120 seconds'
+        : isRevision 
+            ? '5-15 seconds'
+            : '10-40 seconds'
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm">
             <Card className="max-w-lg mx-4 w-full">
                 <div className="space-y-6">
-                    {/* Spinner */}
+                    {/* Spinner with optional film icon for video */}
                     <div className="flex justify-center">
                         <div className="relative w-16 h-16">
+                            {isVideo && (
+                                <div className="absolute inset-0 flex items-center justify-center z-10">
+                                    <Film className="w-8 h-8 text-primary animate-pulse" />
+                                </div>
+                            )}
                             <div className="absolute inset-0 border-3 border-primary/15 rounded-full"></div>
                             <div 
                                 className="absolute inset-0 border-3 border-transparent border-t-primary border-r-primary/50 rounded-full animate-spin"
-                                style={{ animationDuration: '0.8s' }}
+                                style={{ animationDuration: isVideo ? '1.2s' : '0.8s' }}
                             ></div>
                         </div>
                     </div>
@@ -117,11 +158,15 @@ export function GenerationLoader({
                     {/* Title and Models */}
                     <div className="text-center">
                         <h3 className="mb-2 text-xl font-bold text-text">
-                            {isRevision 
-                                ? 'Revising Your Image'
-                                : modelCount > 1 
-                                    ? `Generating ${modelCount} Images` 
-                                    : 'Creating Your Image'
+                            {isVideo
+                                ? modelCount > 1 
+                                    ? `Generating ${modelCount} Videos` 
+                                    : 'Creating Your Video'
+                                : isRevision 
+                                    ? 'Revising Your Image'
+                                    : modelCount > 1 
+                                        ? `Generating ${modelCount} Images` 
+                                        : 'Creating Your Image'
                             }
                         </h3>
                         {(modelNames.length > 0 || isRevision) && (
@@ -129,7 +174,12 @@ export function GenerationLoader({
                                 Using: {displayModelNames}
                             </p>
                         )}
-                        <p className="text-sm text-">{loadingSteps[loadingStep]}</p>
+                        {isVideo && videoDuration && (
+                            <p className="text-xs text-muted mb-1">
+                                Duration: {videoDuration}s video
+                            </p>
+                        )}
+                        <p className="text-sm text-muted">{loadingSteps[loadingStep]}</p>
                     </div>
 
                     {/* Progress Bar */}
@@ -140,20 +190,59 @@ export function GenerationLoader({
                         ></div>
                     </div>
 
+                    {/* Progress Percentage for Video (takes longer) */}
+                    {isVideo && (
+                        <div className="text-center">
+                            <span className="text-sm font-medium text-primary">
+                                {Math.round(progress)}%
+                            </span>
+                        </div>
+                    )}
+
                     {/* Prompt Preview */}
                     {prompt && (
-                        <div className="p-3 text-xs text-muted dark:bg-background rounded-lg border border-border">
-                            <span className="font-medium">{isRevision ? 'Revision:' : 'Prompt:'}</span> {prompt.slice(0, 100)}{prompt.length > 100 ? '...' : ''}
+                        <div className="p-3 text-xs text-muted bg-surface/50 rounded-lg border border-border">
+                            <span className="font-medium">
+                                {isVideo ? 'Motion:' : isRevision ? 'Revision:' : 'Prompt:'}
+                            </span> {prompt.slice(0, 100)}{prompt.length > 100 ? '...' : ''}
                         </div>
                     )}
 
                     {/* Info */}
-                    <p className="text-xs text-center text-gray-500 dark:text-gray-400">
-                        {isRevision 
-                            ? 'This will take about 5-15 seconds'
-                            : 'This may take 10-40 seconds depending on model complexity'
-                        }
-                    </p>
+                    <div className="space-y-2">
+                        <p className="text-xs text-center text-muted">
+                            Estimated time: {estimatedTime}
+                        </p>
+                        {isVideo && (
+                            <p className="text-xs text-center text-muted">
+                                💡 Video generation takes longer than images. 
+                                {modelCount > 1 && ` Processing ${modelCount} models simultaneously.`}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Model Status Indicators (for multiple models) */}
+                    {modelCount > 1 && modelNames.length > 0 && (
+                        <div className="pt-4 border-t border-border">
+                            <p className="text-xs font-medium text-muted mb-2 text-center">
+                                {isVideo ? 'Video Models' : 'Image Models'} Processing:
+                            </p>
+                            <div className="flex flex-wrap justify-center gap-2">
+                                {modelNames.map((modelId, index) => (
+                                    <div
+                                        key={modelId}
+                                        className="px-3 py-1 text-xs rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center gap-2"
+                                        style={{
+                                            animationDelay: `${index * 0.2}s`
+                                        }}
+                                    >
+                                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                                        {MODEL_DISPLAY_NAMES[modelId] || modelId}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </Card>
         </div>

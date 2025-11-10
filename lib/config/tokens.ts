@@ -19,6 +19,10 @@ export const TOKEN_CONFIG = {
 		PRO_STUDIO_PER_IMAGE: 3,
 		PRO_STUDIO_REVISION: 2,
 		IMAGE_PLAYGROUND: 1,
+
+		VIDEO_VEO_3_1: 5,        
+		VIDEO_KLING_2_5: 3,     
+		VIDEO_WAN_2_5: 2,        
 	},
 
 	CONTACT: {

@@ -26,6 +26,32 @@ export function toComparisonResult(
   return null;
 }
 
+// Video Generation Types
+export type VideoGenerationResult = {
+  modelId: string;
+  modelName: string;
+  videoUrl: string | null;
+  error?: string;
+};
+
+export type VideoGeneration = {
+  id: string;
+  userId: string;
+  sourceImageUrl: string;
+  prompt: string | null;
+  results: VideoGenerationResult[];
+  modelIds: string[];
+  duration: number;
+  resolution: string;
+  generateAudio: boolean;
+  sourceType: string;
+  sourceId: string | null;
+  tokensCost: number;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type Locale = 'en' | 'de';
 
 export type User = {

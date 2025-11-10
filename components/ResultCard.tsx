@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
-import { Download, Edit3, Maximize2, X, Share2, Copy } from 'lucide-react'
+import { Download, Edit3, Maximize2, X, Share2, Copy, Video } from 'lucide-react'
 import { useShare } from '@/hooks/useShare'
 
 type ResultCardProps = {
@@ -115,6 +115,21 @@ export function ResultCard({
         }
     }
 
+    const handleGenerateVideo = () => {
+        // Navigate to image-to-video page with this image
+        const params = new URLSearchParams({
+            imageUrl: encodeURIComponent(imageUrl),
+            sourceType: playgroundPhotoId ? 'playground' : 'gallery',
+        })
+        if (playgroundPhotoId) {
+            params.append('sourceId', playgroundPhotoId)
+        }
+        if (prompt) {
+            params.append('prompt', prompt)
+        }
+        router.push(`/dashboard/image-to-video?${params.toString()}`)
+    }
+
     const handleFullscreen = () => {
         setIsFullscreen(true)
     }
@@ -182,6 +197,24 @@ export function ResultCard({
                                 </div>
                             </div>
 
+                            {/* Hover Video Button Overlay */}
+                            <div
+                                className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
+                                    isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
+                                }`}
+                            >
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleGenerateVideo()
+                                    }}
+                                    className="flex items-center gap-2 bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-full font-semibold shadow-2xl transform hover:scale-105 transition-all"
+                                >
+                                    <Video className="size-5" />
+                                    <span>Generate Video</span>
+                                </button>
+                            </div>
+
                             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl pointer-events-none" />
                             <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl pointer-events-none" />
                         </div>
@@ -206,6 +239,15 @@ export function ResultCard({
                     >
                         <Edit3 className="size-4" />
                         <span className="text-xs font-medium hidden md:inline">Edit</span>
+                    </button>
+
+                    <button
+                        onClick={handleGenerateVideo}
+                        title="Generate Video"
+                        className="flex-1 flex items-center justify-center gap-1.5 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg px-2 py-2 transition-all duration-200 hover:scale-105 active:scale-95"
+                    >
+                        <Video className="size-4" />
+                        <span className="text-xs font-medium hidden md:inline">Video</span>
                     </button>
                     
                     <button
@@ -311,6 +353,17 @@ export function ResultCard({
                             title="Edit / Revise"
                         >
                             <Edit3 className="size-4 md:size-5" />
+                        </button>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                handleGenerateVideo()
+                                handleCloseFullscreen()
+                            }}
+                            className="bg-black/60 hover:bg-primary backdrop-blur-sm text-white rounded-full p-2.5 md:p-3 transition-all hover:scale-110 active:scale-95 group/video"
+                            title="Generate Video"
+                        >
+                            <Video className="size-4 md:size-5 group-hover/video:animate-pulse" />
                         </button>
                         <button
                             onClick={(e) => {
