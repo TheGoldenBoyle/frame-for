@@ -4,7 +4,7 @@ import { createClient } from "@/lib/superbase-server"
 
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
 		const supabase = await createClient()
@@ -17,7 +17,8 @@ export async function GET(
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 		}
 
-		const photoId = params.id
+		// Await the params
+		const { id: photoId } = await params
 
 		// Fetch the specific playground photo
 		const playgroundPhoto = await prisma.playgroundPhoto.findUnique({
