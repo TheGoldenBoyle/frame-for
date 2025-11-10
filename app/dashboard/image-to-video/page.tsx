@@ -58,7 +58,7 @@ export default function ImageToVideoPage() {
 	const [sourceId, setSourceId] = useState<string | null>(null)
 	const [prompt, setPrompt] = useState('')
 	const [selectedModels, setSelectedModels] = useState<string[]>([])
-	const [duration, setDuration] = useState<5 | 8>(5)
+	const [duration, setDuration] = useState<"short" | "long">("short")
 	const [resolution, setResolution] = useState<'720p' | '1080p'>('720p')
 	const [generateAudio, setGenerateAudio] = useState(false)
 	const [generating, setGenerating] = useState(false)
@@ -86,8 +86,8 @@ export default function ImageToVideoPage() {
 			prev.includes(modelId)
 				? prev.filter((id) => id !== modelId)
 				: prev.length < 3
-				? [...prev, modelId]
-				: prev
+					? [...prev, modelId]
+					: prev
 		)
 	}
 
@@ -142,7 +142,7 @@ export default function ImageToVideoPage() {
 			}
 
 			setResults(data.results || [])
-			
+
 			// Refresh token balance
 			if (!!tokens) {
 				tokens -= data.tokensUsed || totalCost
@@ -244,16 +244,14 @@ export default function ImageToVideoPage() {
 							{/* Duration & Resolution */}
 							<div className="grid grid-cols-2 gap-4 mb-4">
 								<div>
-									<label className="block text-sm font-medium text-text mb-2">
-										Duration
-									</label>
+									<label className="block text-sm font-medium text-text mb-2">Duration</label>
 									<select
 										value={duration}
-										onChange={(e) => setDuration(Number(e.target.value) as 5 | 8)}
+										onChange={(e) => setDuration(e.target.value as 'short' | 'long')}
 										className="w-full px-4 py-2 rounded-lg border border-border bg-surface text-text focus:ring-2 focus:ring-primary"
 									>
-										<option value={4}>4 seconds</option>
-										<option value={6}>6 seconds</option>
+										<option value="short">Short</option>
+										<option value="long">Long</option>
 									</select>
 								</div>
 								<div>
@@ -303,11 +301,10 @@ export default function ImageToVideoPage() {
 									<motion.button
 										key={model.id}
 										onClick={() => toggleModel(model.id)}
-										className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-											selectedModels.includes(model.id)
+										className={`w-full p-4 rounded-lg border-2 transition-all text-left ${selectedModels.includes(model.id)
 												? 'border-primary bg-primary/10'
 												: 'border-border bg-surface hover:border-primary/50'
-										}`}
+											}`}
 										whileHover={{ scale: 1.02 }}
 										whileTap={{ scale: 0.98 }}
 									>

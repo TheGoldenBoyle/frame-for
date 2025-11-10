@@ -11,6 +11,18 @@ const replicate = new Replicate({
 	auth: process.env.REPLICATE_API_TOKEN!,
 })
 
+const MODEL_DURATION_MAP: Record<string, { short: number; long: number }> = {
+    "veo-3.1-fast": { short: 4, long: 8 },     
+    "kling-2.5-turbo-pro": { short: 5, long: 10 },
+    "wan-2.5": { short: 4, long: 8 },       
+};
+
+function getModelDuration(modelId: string, selectedDuration: "short" | "long") {
+    const mapping = MODEL_DURATION_MAP[modelId]
+    if (!mapping) return 5 // fallback
+    return mapping[selectedDuration]
+  }
+
 type ReplicateModel = `${string}/${string}` | `${string}/${string}:${string}`
 
 const VIDEO_MODEL_CONFIG: Record<string, { path: ReplicateModel; name: string; supportsAudio: boolean }> = {
@@ -32,73 +44,69 @@ const VIDEO_MODEL_CONFIG: Record<string, { path: ReplicateModel; name: string; s
 }
 
 async function generateVideoWithModel(
-	modelId: string,
-	modelPath: ReplicateModel,
-	imageUrl: string,
-	prompt: string,
-	duration: number,
-	resolution: string,
-	generateAudio: boolean
-): Promise<string> {
-	// normalize duration: Replicate only accepts 4, 6, or 8
-	const validDuration = [4, 6, 8].includes(duration) ? duration : 8
-
-	// map resolution to aspect ratio (optional, but safe)
-	const aspectRatio = resolution === "1080p" ? "16:9" : "9:16"
-
-	if (modelId === "veo-3.1-fast") {
-		const output = await replicate.run(modelPath, {
-			input: {
-				prompt: prompt || "Bring this image to life with natural motion",
-				reference_images: [{ value: imageUrl }],
-				duration: validDuration,
-				aspect_ratio: aspectRatio,
-				resolution: resolution === "1080p" ? "1080p" : "720p",
-				generate_audio: generateAudio,
-			},
-		})
-
-		if (typeof output === "string") return output
-		if (Array.isArray(output)) return output[0]
-		throw new Error("Unexpected output format from veo-3.1-fast")
-	}
-
-	if (modelId === "kling-2.5-turbo-pro") {
-		const output = await replicate.run(modelPath, {
-			input: {
-				prompt: prompt || "Natural motion, cinematic camera movement",
-				image: imageUrl,
-				duration: validDuration,
-				aspect_ratio: aspectRatio,
-				negative_prompt: "distorted, blurry, low quality, artifacts",
-			},
-		})
-		if (typeof output === "string") return output
-		if (Array.isArray(output)) return output[0]
-		throw new Error("Unexpected output format from kling-2.5-turbo-pro")
-	}
-
-	if (modelId === "wan-2.5") {
-		const output = await replicate.run(modelPath, {
-			input: {
-				image: imageUrl,
-				prompt: prompt || "Smooth natural motion",
-				duration: validDuration,
-				resolution: resolution === "1080p" ? "1080p" : "720p",
-				negative_prompt: "distorted, blurry, static, frozen",
-				enable_prompt_expansion: true,
-			},
-		})
-		if (typeof output === "string") return output
-		if (Array.isArray(output)) return output[0]
-		throw new Error("Unexpected output format from wan-2.5")
-	}
-
-	throw new Error(`Unknown model: ${modelId}`)
-}
-
+    modelId: string,
+    modelPath: ReplicateModel,
+    imageUrl: string,
+    prompt: string,
+    duration: number, 
+    resolution: string,
+    generateAudio: boolean
+  ): Promise<string> {
+    const aspectRatio = resolution === "1080p" ? "16:9" : "9:16"
+  
+    if (modelId === "veo-3.1-fast") {
+      const output = await replicate.run(modelPath, {
+        input: {
+          prompt: prompt || "Bring this image to life with natural motion",
+          reference_images: [{ value: imageUrl }],
+          duration,
+          aspect_ratio: aspectRatio,
+          resolution: resolution === "1080p" ? "1080p" : "720p",
+          generate_audio: generateAudio,
+        },
+      })
+      if (typeof output === "string") return output
+      if (Array.isArray(output)) return output[0]
+      throw new Error("Unexpected output format from veo-3.1-fast")
+    }
+  
+    if (modelId === "kling-2.5-turbo-pro") {
+      const output = await replicate.run(modelPath, {
+        input: {
+          prompt: prompt || "Natural motion, cinematic camera movement",
+          image: imageUrl,
+          duration,
+          aspect_ratio: aspectRatio,
+          negative_prompt: "distorted, blurry, low quality, artifacts",
+        },
+      })
+      if (typeof output === "string") return output
+      if (Array.isArray(output)) return output[0]
+      throw new Error("Unexpected output format from kling-2.5-turbo-pro")
+    }
+  
+    if (modelId === "wan-2.5") {
+      const output = await replicate.run(modelPath, {
+        input: {
+          image: imageUrl,
+          prompt: prompt || "Smooth natural motion",
+          duration,
+          resolution: resolution === "1080p" ? "1080p" : "720p",
+          negative_prompt: "distorted, blurry, static, frozen",
+          enable_prompt_expansion: true,
+        },
+      })
+      if (typeof output === "string") return output
+      if (Array.isArray(output)) return output[0]
+      throw new Error("Unexpected output format from wan-2.5")
+    }
+  
+    throw new Error(`Unknown model: ${modelId}`)
+  }
+  
 
 export async function POST(request: NextRequest) {
+
 	try {
 		const supabase = await createClient()
 		const {
@@ -111,11 +119,11 @@ export async function POST(request: NextRequest) {
 		}
 
 		const formData = await request.formData()
+        const selectedDuration = (formData.get("duration")?.toString() || "short") as "short" | "long"
 		const imageUrl = getString(formData, "imageUrl")
 		const prompt = formData.get("prompt")?.toString() || ""
 		const modelIdsString = getString(formData, "modelIds")
 		const modelIds = JSON.parse(modelIdsString) as string[]
-		const duration = parseInt(formData.get("duration")?.toString() || "5")
 		const resolution = formData.get("resolution")?.toString() || "720p"
 		const generateAudio = formData.get("generateAudio")?.toString() === "true"
 		const sourceType = formData.get("sourceType")?.toString() || "playground"
@@ -174,15 +182,15 @@ export async function POST(request: NextRequest) {
 				try {
 					console.log(`🎬 Generating video with ${config.name}: "${prompt.substring(0, 100)}..."`)
 					
-					const generatedUrl = await generateVideoWithModel(
-						modelId,
-						config.path,
-						imageUrl,
-						prompt,
-						duration,
-						resolution,
-						generateAudio && config.supportsAudio
-					)
+                    const generatedUrl = await generateVideoWithModel(
+                        modelId,
+                        config.path,
+                        imageUrl,
+                        prompt,
+                        getModelDuration(modelId, selectedDuration),
+                        resolution,
+                        generateAudio && config.supportsAudio
+                    )
 					
 					// Fetch the generated video
 					const response = await fetch(generatedUrl)
@@ -284,6 +292,9 @@ export async function POST(request: NextRequest) {
 			`Video generation with ${successfulResults.length}/${modelIds.length} successful models`
 		)
 
+		// Calculate actual duration used (use the first model's duration)
+		const actualDuration = getModelDuration(modelIds[0], selectedDuration)
+
 		// Create database record
 		const videoGeneration = await prisma.videoGeneration.create({
 			data: {
@@ -292,7 +303,7 @@ export async function POST(request: NextRequest) {
 				prompt: prompt || null,
 				results: results as any,
 				modelIds: modelIds,
-				duration,
+				duration: actualDuration,
 				resolution,
 				generateAudio,
 				sourceType,

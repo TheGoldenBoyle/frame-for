@@ -9,7 +9,7 @@ type GenerationLoaderProps = {
     prompt?: string
     isRevision?: boolean
     isVideo?: boolean
-    videoDuration?: number
+    videoDuration?: "short" | "long"
 }
 
 const MODEL_DISPLAY_NAMES: Record<string, string> = {
@@ -36,7 +36,7 @@ export function GenerationLoader({
     prompt = '',
     isRevision = false,
     isVideo = false,
-    videoDuration = 5
+    videoDuration = "short"
 }: GenerationLoaderProps) {
     const [loadingStep, setLoadingStep] = useState(0)
     const [progress, setProgress] = useState(0)
@@ -128,7 +128,7 @@ export function GenerationLoader({
             .join(', ')
 
     const estimatedTime = isVideo 
-        ? videoDuration === 8 
+        ? videoDuration === "long" 
             ? '90-180 seconds'
             : '60-120 seconds'
         : isRevision 
