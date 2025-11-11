@@ -6,7 +6,6 @@ import { canAcceptNewSignups } from "@/lib/revenue-tracker"
 import { TOKEN_CONFIG } from "@/lib/config/tokens"
 
 function validateUsername(username: string): string | null {
-    // Username validation rules
     if (!username || username.length < 3) {
         return "Username must be at least 3 characters long"
     }
@@ -37,7 +36,6 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // Validate username format
         const usernameError = validateUsername(username)
         if (usernameError) {
             return NextResponse.json(
@@ -46,7 +44,6 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // Check if username is already taken
         const existingUsername = await prisma.user.findUnique({
             where: { username }
         })
@@ -103,11 +100,10 @@ export async function POST(request: NextRequest) {
                 email: data.user.email!,
                 userId: data.user.id,
                 signupDate: new Date()
-            }).catch(err => console.error('Failed to send signup notification:', err))
+            }).catch(err => console.error('Failed to send signup notification:', err.message))
 
-            // Send welcome email to the new user
             sendWelcomeEmail(data.user.email!, username)
-                .catch(err => console.error('Failed to send welcome email:', err))
+                .catch(err => console.error('Failed to send welcome email:', err.message))
         }
 
         return NextResponse.json({ 
