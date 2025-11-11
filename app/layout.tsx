@@ -72,7 +72,7 @@ export const metadata: Metadata = {
         siteName: 'BildOro',
         images: [
             {
-                url: '/og-new.png',
+                url: '/og-newest.png',
                 width: 1200,
                 height: 630,
                 alt: 'BildOro - Easy Access to Latest AI Image Generation Models'
@@ -84,7 +84,7 @@ export const metadata: Metadata = {
         title: 'BildOro - Easy Access to Latest AI Models',
         description: 'Break free from restrictions. Instant, affordable access to the latest AI image generation models.',
         creator: '@theGoldenBoyle',
-        images: ['/og-new.png']
+        images: ['/og-newest.png']
     },
     robots: {
         index: true,
