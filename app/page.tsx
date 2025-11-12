@@ -117,13 +117,6 @@ export default function LandingPage() {
                                 </p>
                             )}
                         </form>
-
-                        <p className="text-sm text-muted">
-                            {t.landing.questionsContact}{' '}
-                            <a href="https://x.com/thegoldenboyle" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                                @theGoldenBoyle
-                            </a>
-                        </p>
                     </div>
                 </main>
                 <Footer />
@@ -156,20 +149,13 @@ export default function LandingPage() {
                         >
                             {t.landing.tryItFree}
                         </Button>
-                        <Button
-                            variant="ghost"
-                            size="lg"
-                            onClick={() => window.open('https://x.com/theGoldenBoyle', '_blank')}
-                        >
-                            {t.landing.followJourney}
-                        </Button>
                     </div>
 
                     <div className="relative max-w-4xl mx-auto animate-fade-in-up stagger-4">
                         <div className="aspect-video bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 rounded-2xl flex items-center justify-center shadow-elevated-gold overflow-hidden">
                             <iframe
                                 className="w-full h-full absolute inset-0 rounded-2xl"
-                                src="https://www.youtube.com/embed/tXDXnj8P9X4?rel=0&modestbranding=1"
+                                src="https://www.youtube.com/embed/NiERkRcXle4?rel=0&modestbranding=1"
                                 title={t.landing.videoTitle}
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowFullScreen
@@ -189,18 +175,8 @@ export default function LandingPage() {
                     <p className="text-xl text-muted mb-10 max-w-xl mx-auto animate-fade-in-up">
                         {t.landing.ctaSubtitle}
                     </p>
-                    <div className="grid md:grid-cols-2 gap-4 mb-16 animate-fade-in-up stagger-3">
-
-                        {/* Ghost / ghost Button */}
-                        <Button
-                            variant="ghost"
-                            size="lg"
-                            onClick={() => window.open('https://x.com/theGoldenBoyle', '_blank')}
-                        >
-                            @theGoldenBoyle
-                        </Button>
-                        {/* Primary Try For Free */}
-                        <div className="flex flex-col items-center relative w-full">
+                    <div className="flex justify-center mb-16 animate-fade-in-up stagger-3">
+                        <div className="flex flex-col items-center relative w-full max-w-md">
                             <Button
                                 size="lg"
                                 onClick={() => router.push('/signup')}
